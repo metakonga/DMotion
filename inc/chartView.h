@@ -8,28 +8,62 @@
 #include <QGraphicsPixmapItem>
 #include <QGraphicsRectItem>
 #include <QGraphicsLineItem>
+#include <QTableWidget>
 #include "MCHSpline.h"
-#include "chart.h"
+//#include "chart.h"
 #include "axis.h"
 
-class chartView : public QChartView
+QT_BEGIN_NAMESPACE
+class QGraphicsScene;
+class QMouseEvent;
+class QResizeEvent;
+QT_END_NAMESPACE
+
+QT_CHARTS_BEGIN_NAMESPACE
+class QChart;
+QT_CHARTS_END_NAMESPACE
+
+class Callout;
+
+QT_CHARTS_USE_NAMESPACE
+
+class chartView : public QGraphicsView
 {
+	Q_OBJECT
+
 public:
-	chartView(Chart* c = 0);
+	chartView(QWidget* parent = 0);
 	~chartView();
 
+	enum ChartMode{ REALTIME_EDIT_CHART = 0, ONLY_DISPLAY_CHART };
+	void addSeries(QLineSeries *_series);
+	void setAxisRange(double x_min, double x_max, double y_min, double y_max);
 	bool setChartData(QVector<double>* x, QVector<double>* y, int d = 1);
+	void setTableWidget(QTableWidget* _table) { table = _table; }
+	void setChartMode(ChartMode _cmode);
 
 private:
-	void mousePressEvent(QMouseEvent *event);
-	void mouseReleaseEvent(QMouseEvent *event);
+	//void mousePressEvent(QMouseEvent *event);
+	//void mouseReleaseEvent(QMouseEvent *event);
 	void mouseMoveEvent(QMouseEvent *event);
+	void wheelEvent(QWheelEvent *event);
+	void keyPressEvent(QKeyEvent *event);
+	void resizeEvent(QResizeEvent *event);
 
 	int checkingNearPoint(double px, double py);
+	void updateSeries(double newXmax, double newTmax);
+
+	public slots:
+	void keepCallout();
+	void tooltip(QPointF, bool);
+
 
 private:
+	ChartMode cmode;
 	bool onMousePress;
+	bool onMouseMiddleButton;
 	QPointF movingPos;
+	QPointF nonMovingPos;
 	int checked_point_number;
 	double previous_checking_distance;
 	axis *ax;
@@ -43,7 +77,13 @@ private:
 	QGraphicsSimpleTextItem *m_coordHoverX;
 	QGraphicsSimpleTextItem *m_coordHoverY;
 
+	QGraphicsScene *m_scene;
+	QChart *m_chart;
 	MCHSpline *mchs;
+	QTableWidget *table;
+	Callout *m_tooltip;
+	QList<Callout *> m_callouts;
+
 };
 
 #endif

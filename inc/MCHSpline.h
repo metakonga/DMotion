@@ -21,6 +21,7 @@ public:
 	QVector<double>* xSource() { return &x_src; }
 	QVector<double>* ySource() { return &y_src; }
 	void update_curve(int idx, QPointF& new_p, QLineSeries* series);
+	double limitation() { return limit; }
 
 private:
 	double h00(double t)

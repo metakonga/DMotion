@@ -50,11 +50,15 @@ bool MCHSpline::monotonic_cubic_Hermite_spline(QPointF& new_p)
 
 bool MCHSpline::monotonic_cubic_Hermite_spline(int idx, QPointF& new_p)
 {
+	int n = x_src.size();
 	x_src.replace(idx, new_p.x());
 	y_src.replace(idx, new_p.y());
 	if (new_p.x() > limit)
 		limit = new_p.x();
-	int n = x_src.size();
+	if (idx == n - 1)
+	{
+		limit = new_p.x();
+	}
 	double _m = 0;
 	if (n > 2)
 	{
@@ -76,7 +80,9 @@ bool MCHSpline::monotonic_cubic_Hermite_spline(int idx, QPointF& new_p)
 		
 		if (idx >= 1 && idx <= n - 2)
 		{
-			for (int i = idx - 1; i <= idx + 1; i++)
+			int s = idx - 1 == 0 ? 1 : idx - 1;
+			int e = (idx + 1) == (n - 1) ? idx : idx + 1;
+			for (int i = s; i <= e; i++)
 			{
 				m[i] = (y_src[i] - y_src[i - 1]) / (2.0*(x_src[i] - x_src[i - 1])) + (y_src[i + 1] - y_src[i]) / (2.0*(x_src[i + 1] - x_src[i]));
 			}
@@ -201,9 +207,14 @@ void MCHSpline::calculate_curve_auto(QLineSeries* series, int sid, bool _base /*
 void MCHSpline::calculate_curve_auto(QLineSeries* series, int sid, int eid)
 {
 	///find()
-	int start_id = start_ids.at(sid + 1);
+	int n = x_src.size();
 	int cnt = 0;
-	for (int i = sid; i < eid; i++)
+	int s = (sid == 0) ? 0 : sid - 1;
+	int e = (eid == x_src.size()) ? eid - 1 : eid;
+	int start_id = start_ids.at(s);
+	//int 
+	series->clear();
+	for (int i = 0; i < n - 1; i++)
 	{
 		double cur_x = x_src[i];
 		double next_x = x_src[i + 1];
@@ -220,8 +231,8 @@ void MCHSpline::calculate_curve_auto(QLineSeries* series, int sid, int eid)
 			double t = (x - cur_x) / h;
 			//x_out->push_back(x);
 			double y = cur_y * h00(t) + h * m.at(i) * h10(t) + next_y * h01(t) + h * m.at(i + 1) * h11(t);
-			series->append(x, y);
-			series->replace(start_id + cnt, QPointF(x, y));
+			//series->append(x, y);
+			series->append(QPointF(x, y));
 			cnt++;
 			//y_out->push_back(y);
 		}

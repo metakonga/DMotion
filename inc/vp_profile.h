@@ -1,26 +1,27 @@
 #ifndef VP_PROFILE_H
 #define VP_PROFILE_H
 
-#include <QDockWidget>
+#include <QDialog>
 #include "MCHSpline.h"
 #include "chartView.h"
 #include "integrator.h"
 
-class vp_profile: public QDockWidget
+class vp_profile : public QDialog
 {
+	Q_OBJECT
+
 public:
 	vp_profile(QWidget* parent = 0);
 	~vp_profile();
 
+	private slots:
+	void finishDialog(int);
+
 private:
-//	Chart *cht;
-// 	QVector<double> *T;
-// 	QVector<double> *V;
-// 	QVector<double> *P;
-// 	//QVector<double> *yPos;
+	int xSize;
+	int ySize;
 	chartView *vcht;
-// 	MCHSpline *mchs;
-// 	integrator *itor;
+	QTableWidget *table;
 };
 
 #endif

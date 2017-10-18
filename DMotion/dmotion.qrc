@@ -1,5 +1,26 @@
 <RCC>
     <qresource prefix="/">
         <file>Resources/check_icon.png</file>
+        <file>Resources/new.png</file>
+        <file>Resources/shading.png</file>
+        <file>Resources/wireFrame.png</file>
+        <file>Resources/axoView.png</file>
+        <file>Resources/backView.png</file>
+        <file>Resources/bottomView.png</file>
+        <file>Resources/fitAll.png</file>
+        <file>Resources/frontView.png</file>
+        <file>Resources/globalPanning.png</file>
+        <file>Resources/leftView.png</file>
+        <file>Resources/rightView.png</file>
+        <file>Resources/topView.png</file>
+        <file>Resources/transparency.png</file>
+        <file>Resources/plot.png</file>
+        <file>Resources/ani_fast.png</file>
+        <file>Resources/ani_morefast.png</file>
+        <file>Resources/ani_moreprevious.png</file>
+        <file>Resources/ani_pause.png</file>
+        <file>Resources/ani_play.png</file>
+        <file>Resources/ani_previous.png</file>
+        <file>Resources/material.png</file>
     </qresource>
 </RCC>

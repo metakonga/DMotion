@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>600</width>
+    <width>728</width>
     <height>400</height>
    </rect>
   </property>
@@ -19,10 +19,56 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>600</width>
+     <width>728</width>
      <height>21</height>
     </rect>
    </property>
+   <widget class="QMenu" name="menuHome">
+    <property name="title">
+     <string>Home</string>
+    </property>
+    <addaction name="actionAbout_DMotion"/>
+    <addaction name="actionExit"/>
+   </widget>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>File</string>
+    </property>
+    <addaction name="File_New"/>
+    <addaction name="File_Open"/>
+    <addaction name="File_Save"/>
+    <addaction name="separator"/>
+    <addaction name="File_Import"/>
+   </widget>
+   <widget class="QMenu" name="menuEdit">
+    <property name="title">
+     <string>Edit</string>
+    </property>
+    <addaction name="Edit_VelocityProfile"/>
+   </widget>
+   <widget class="QMenu" name="menuHelp">
+    <property name="title">
+     <string>Help</string>
+    </property>
+   </widget>
+   <widget class="QMenu" name="menuAnalysis">
+    <property name="title">
+     <string>Analysis</string>
+    </property>
+    <addaction name="Analysis_dynamic"/>
+   </widget>
+   <widget class="QMenu" name="menuTool">
+    <property name="title">
+     <string>Tool</string>
+    </property>
+    <addaction name="Tool_Graph"/>
+   </widget>
+   <addaction name="menuHome"/>
+   <addaction name="menuFile"/>
+   <addaction name="menuEdit"/>
+   <addaction name="menuTool"/>
+   <addaction name="menuAnalysis"/>
+   <addaction name="menuHelp"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <attribute name="toolBarArea">
@@ -33,6 +79,77 @@
    </attribute>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
+  <widget class="QDockWidget" name="DW_Modeling">
+   <property name="allowedAreas">
+    <set>Qt::RightDockWidgetArea</set>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>2</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents">
+    <layout class="QGridLayout" name="gridLayout"/>
+   </widget>
+  </widget>
+  <action name="Edit_VelocityProfile">
+   <property name="text">
+    <string>Velocity profile</string>
+   </property>
+  </action>
+  <action name="File_New">
+   <property name="text">
+    <string>New</string>
+   </property>
+  </action>
+  <action name="File_Open">
+   <property name="text">
+    <string>Open</string>
+   </property>
+  </action>
+  <action name="File_Save">
+   <property name="text">
+    <string>Save</string>
+   </property>
+  </action>
+  <action name="actionAbout_DMotion">
+   <property name="text">
+    <string>About DMotion</string>
+   </property>
+  </action>
+  <action name="actionExit">
+   <property name="text">
+    <string>Exit</string>
+   </property>
+  </action>
+  <action name="File_Import_STEP">
+   <property name="text">
+    <string>STEP</string>
+   </property>
+  </action>
+  <action name="File_Import_IGES">
+   <property name="text">
+    <string>IGES</string>
+   </property>
+  </action>
+  <action name="File_Import_2">
+   <property name="text">
+    <string>Import</string>
+   </property>
+  </action>
+  <action name="File_Import">
+   <property name="text">
+    <string>Import</string>
+   </property>
+  </action>
+  <action name="Analysis_dynamic">
+   <property name="text">
+    <string>Dynamic</string>
+   </property>
+  </action>
+  <action name="Tool_Graph">
+   <property name="text">
+    <string>Graph</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources>
