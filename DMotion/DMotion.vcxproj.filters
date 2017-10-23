@@ -311,5 +311,8 @@
     <ClInclude Include="..\inc\plotWindow.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="dm_backup.hpp">
+      <Filter>Header Files\model</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

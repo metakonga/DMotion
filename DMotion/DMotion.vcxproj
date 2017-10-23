@@ -498,6 +498,9 @@
     <ClInclude Include="..\inc\translateJoint.h" />
     <ClInclude Include="..\inc\vector.hpp" />
     <ClInclude Include="..\inc\animation_controller.h" />
+    <ClInclude Include="dm_backup.hpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="GeneratedFiles\ui_dmotion.h" />
   </ItemGroup>
   <ItemGroup>

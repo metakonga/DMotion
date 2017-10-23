@@ -17,9 +17,9 @@ public:
 	virtual void init()
 	{
 		model::setModelName("dual motion");
-		hardPoint *active_link = createHardPoint("active_link", 0, 0, 0);
-		hardPoint *link_cam = createHardPoint("link_cam", 0.38424, -0.04956, 0);
-		hardPoint *cam_ground = createHardPoint("cam_ground", 0.29739, 0, 0);
+		hardPoint *active_link = createHardPoint("active_link", 1.043, 0, 0);
+		hardPoint *link_cam = createHardPoint("link_cam", 1.42724496697479, -0.0495610265684507, 0);
+		hardPoint *cam_ground = createHardPoint("cam_ground", 1.340390464239, 0, 0);
 		rigidBody *ground = createRigidBody("ground");
 		ground->setGround(true);
 
@@ -31,7 +31,7 @@ public:
 		//gp_Pnt pos = getHalfBetween2HP(hp0, hp1);
 		active->setPosition(1.00165423949275, 0.000002362435193444, 0.0);
 		active->setShapePath("C:/DMotion/data/active1.igs");
-		
+
 
 		rigidBody *link = createRigidBody("link");
 		link->setMass(1.886852634);
@@ -41,7 +41,7 @@ public:
 		//pos = getHalfBetween2HP(hp1, hp2);
 		link->setPosition(1.2318071684038, -0.0349156464194469, 0.0);
 		link->setShapePath("C:/DMotion/data/active2.igs");
-		
+
 
 		rigidBody *cam = createRigidBody("cam");
 		cam->setMass(3.154198326);
