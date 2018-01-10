@@ -117,9 +117,9 @@ void plotDialog::clicked(QModelIndex index)
 				if (item->text() == "FM Reaction force") v = jrdt.fm;
 				else if (item->text() == "FX Reaction force") v = jrdt.fx;
 				else if (item->text() == "FY Reaction force") v = jrdt.fy;
-				else if (item->text() == "TM Reaction force") v = jrdt.rm;
-				else if (item->text() == "TX Reaction force") v = jrdt.rx;
-				else if (item->text() == "TY Reaction force") v = jrdt.ry;
+// 				else if (item->text() == "TM Reaction force") v = jrdt.rm;
+// 				else if (item->text() == "TX Reaction force") v = jrdt.rx;
+// 				else if (item->text() == "TY Reaction force") v = jrdt.ry;
 				
 				y_min = v < y_min ? v : y_min;
 				y_max = v > y_max ? v : y_max;
@@ -182,20 +182,20 @@ void plotDialog::setModel(model* _md)
 	//QList<QStandardItem*> g_object;
 	g_model->appendRow(r_body);
 	g_model->appendRow(b_joint);
-	QVectorIterator<rigidBody*> bodies = md->RigidBodies();
+	QMapIterator<QString, rigidBody*> bodies = md->RigidBodies();
 	while (bodies.hasNext())
 	{
-		rigidBody *rb = bodies.next();
+		rigidBody *rb = bodies.next().value();
 		QStandardItem *o = new QStandardItem(rb->Name());
 		r_body->appendRow(o);
 		setBodyRoot(o);
 	}
-	QVectorIterator<constraint*> cons = md->Constraints();
+	QMapIterator<QString, constraint*> cons = md->Constraints();
 // 	QStandardItem *react = new QStandardItem("Reaction");
 // 	->appendRow(react);
 	while (cons.hasNext())
 	{
-		constraint* c = cons.next();
+		constraint* c = cons.next().value();
 		QStandardItem *o = new QStandardItem(c->Name());
 		b_joint->appendRow(o);
 		setJointForceRoot(o);

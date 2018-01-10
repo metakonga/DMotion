@@ -1,16 +1,16 @@
 /****************************************************************************
-** Meta object code from reading C++ file 'DynaMic.h'
+** Meta object code from reading C++ file 'kinematics.h'
 **
 ** Created by: The Qt Meta Object Compiler version 67 (Qt 5.7.0)
 **
 ** WARNING! All changes made in this file will be lost!
 *****************************************************************************/
 
-#include "../../../inc/DynaMic.h"
+#include "../../../inc/kinematics.h"
 #include <QtCore/qbytearray.h>
 #include <QtCore/qmetatype.h>
 #if !defined(Q_MOC_OUTPUT_REVISION)
-#error "The header file 'DynaMic.h' doesn't include <QObject>."
+#error "The header file 'kinematics.h' doesn't include <QObject>."
 #elif Q_MOC_OUTPUT_REVISION != 67
 #error "This file was generated using the moc from 5.7.0. It"
 #error "cannot be used with the include files from this version of Qt."
@@ -18,33 +18,32 @@
 #endif
 
 QT_BEGIN_MOC_NAMESPACE
-struct qt_meta_stringdata_DynaMic_t {
-    QByteArrayData data[8];
-    char stringdata0[57];
+struct qt_meta_stringdata_kinematics_t {
+    QByteArrayData data[7];
+    char stringdata0[61];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
-    qptrdiff(offsetof(qt_meta_stringdata_DynaMic_t, stringdata0) + ofs \
+    qptrdiff(offsetof(qt_meta_stringdata_kinematics_t, stringdata0) + ofs \
         - idx * sizeof(QByteArrayData)) \
     )
-static const qt_meta_stringdata_DynaMic_t qt_meta_stringdata_DynaMic = {
+static const qt_meta_stringdata_kinematics_t qt_meta_stringdata_kinematics = {
     {
-QT_MOC_LITERAL(0, 0, 7), // "DynaMic"
-QT_MOC_LITERAL(1, 8, 14), // "finishedThread"
-QT_MOC_LITERAL(2, 23, 0), // ""
-QT_MOC_LITERAL(3, 24, 11), // "sendProcess"
-QT_MOC_LITERAL(4, 36, 1), // "m"
-QT_MOC_LITERAL(5, 38, 12), // "sendPlotData"
-QT_MOC_LITERAL(6, 51, 2), // "xv"
-QT_MOC_LITERAL(7, 54, 2) // "yv"
+QT_MOC_LITERAL(0, 0, 10), // "kinematics"
+QT_MOC_LITERAL(1, 11, 14), // "finishedThread"
+QT_MOC_LITERAL(2, 26, 0), // ""
+QT_MOC_LITERAL(3, 27, 11), // "sendProcess"
+QT_MOC_LITERAL(4, 39, 1), // "m"
+QT_MOC_LITERAL(5, 41, 13), // "sendCaseCount"
+QT_MOC_LITERAL(6, 55, 5) // "count"
 
     },
-    "DynaMic\0finishedThread\0\0sendProcess\0"
-    "m\0sendPlotData\0xv\0yv"
+    "kinematics\0finishedThread\0\0sendProcess\0"
+    "m\0sendCaseCount\0count"
 };
 #undef QT_MOC_LITERAL
 
-static const uint qt_meta_data_DynaMic[] = {
+static const uint qt_meta_data_kinematics[] = {
 
  // content:
        7,       // revision
@@ -61,49 +60,49 @@ static const uint qt_meta_data_DynaMic[] = {
        1,    0,   34,    2, 0x06 /* Public */,
        3,    2,   35,    2, 0x06 /* Public */,
        3,    1,   40,    2, 0x26 /* Public | MethodCloned */,
-       5,    2,   43,    2, 0x06 /* Public */,
+       5,    1,   43,    2, 0x06 /* Public */,
 
  // signals: parameters
     QMetaType::Void,
     QMetaType::Void, QMetaType::Char, QMetaType::QString,    2,    4,
     QMetaType::Void, QMetaType::Char,    2,
-    QMetaType::Void, QMetaType::Double, QMetaType::Double,    6,    7,
+    QMetaType::Void, QMetaType::Int,    6,
 
        0        // eod
 };
 
-void DynaMic::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
+void kinematics::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
 {
     if (_c == QMetaObject::InvokeMetaMethod) {
-        DynaMic *_t = static_cast<DynaMic *>(_o);
+        kinematics *_t = static_cast<kinematics *>(_o);
         Q_UNUSED(_t)
         switch (_id) {
         case 0: _t->finishedThread(); break;
         case 1: _t->sendProcess((*reinterpret_cast< char(*)>(_a[1])),(*reinterpret_cast< QString(*)>(_a[2]))); break;
         case 2: _t->sendProcess((*reinterpret_cast< char(*)>(_a[1]))); break;
-        case 3: _t->sendPlotData((*reinterpret_cast< double(*)>(_a[1])),(*reinterpret_cast< double(*)>(_a[2]))); break;
+        case 3: _t->sendCaseCount((*reinterpret_cast< int(*)>(_a[1]))); break;
         default: ;
         }
     } else if (_c == QMetaObject::IndexOfMethod) {
         int *result = reinterpret_cast<int *>(_a[0]);
         void **func = reinterpret_cast<void **>(_a[1]);
         {
-            typedef void (DynaMic::*_t)();
-            if (*reinterpret_cast<_t *>(func) == static_cast<_t>(&DynaMic::finishedThread)) {
+            typedef void (kinematics::*_t)();
+            if (*reinterpret_cast<_t *>(func) == static_cast<_t>(&kinematics::finishedThread)) {
                 *result = 0;
                 return;
             }
         }
         {
-            typedef void (DynaMic::*_t)(char , QString );
-            if (*reinterpret_cast<_t *>(func) == static_cast<_t>(&DynaMic::sendProcess)) {
+            typedef void (kinematics::*_t)(char , QString );
+            if (*reinterpret_cast<_t *>(func) == static_cast<_t>(&kinematics::sendProcess)) {
                 *result = 1;
                 return;
             }
         }
         {
-            typedef void (DynaMic::*_t)(double , double );
-            if (*reinterpret_cast<_t *>(func) == static_cast<_t>(&DynaMic::sendPlotData)) {
+            typedef void (kinematics::*_t)(int );
+            if (*reinterpret_cast<_t *>(func) == static_cast<_t>(&kinematics::sendCaseCount)) {
                 *result = 3;
                 return;
             }
@@ -111,26 +110,26 @@ void DynaMic::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, voi
     }
 }
 
-const QMetaObject DynaMic::staticMetaObject = {
-    { &QThread::staticMetaObject, qt_meta_stringdata_DynaMic.data,
-      qt_meta_data_DynaMic,  qt_static_metacall, Q_NULLPTR, Q_NULLPTR}
+const QMetaObject kinematics::staticMetaObject = {
+    { &QThread::staticMetaObject, qt_meta_stringdata_kinematics.data,
+      qt_meta_data_kinematics,  qt_static_metacall, Q_NULLPTR, Q_NULLPTR}
 };
 
 
-const QMetaObject *DynaMic::metaObject() const
+const QMetaObject *kinematics::metaObject() const
 {
     return QObject::d_ptr->metaObject ? QObject::d_ptr->dynamicMetaObject() : &staticMetaObject;
 }
 
-void *DynaMic::qt_metacast(const char *_clname)
+void *kinematics::qt_metacast(const char *_clname)
 {
     if (!_clname) return Q_NULLPTR;
-    if (!strcmp(_clname, qt_meta_stringdata_DynaMic.stringdata0))
-        return static_cast<void*>(const_cast< DynaMic*>(this));
+    if (!strcmp(_clname, qt_meta_stringdata_kinematics.stringdata0))
+        return static_cast<void*>(const_cast< kinematics*>(this));
     return QThread::qt_metacast(_clname);
 }
 
-int DynaMic::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
+int kinematics::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
 {
     _id = QThread::qt_metacall(_c, _id, _a);
     if (_id < 0)
@@ -148,22 +147,22 @@ int DynaMic::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
 }
 
 // SIGNAL 0
-void DynaMic::finishedThread()
+void kinematics::finishedThread()
 {
     QMetaObject::activate(this, &staticMetaObject, 0, Q_NULLPTR);
 }
 
 // SIGNAL 1
-void DynaMic::sendProcess(char _t1, QString _t2)
+void kinematics::sendProcess(char _t1, QString _t2)
 {
     void *_a[] = { Q_NULLPTR, const_cast<void*>(reinterpret_cast<const void*>(&_t1)), const_cast<void*>(reinterpret_cast<const void*>(&_t2)) };
     QMetaObject::activate(this, &staticMetaObject, 1, _a);
 }
 
 // SIGNAL 3
-void DynaMic::sendPlotData(double _t1, double _t2)
+void kinematics::sendCaseCount(int _t1)
 {
-    void *_a[] = { Q_NULLPTR, const_cast<void*>(reinterpret_cast<const void*>(&_t1)), const_cast<void*>(reinterpret_cast<const void*>(&_t2)) };
+    void *_a[] = { Q_NULLPTR, const_cast<void*>(reinterpret_cast<const void*>(&_t1)) };
     QMetaObject::activate(this, &staticMetaObject, 3, _a);
 }
 QT_END_MOC_NAMESPACE

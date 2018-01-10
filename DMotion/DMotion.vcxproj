@@ -143,26 +143,41 @@
     <ClCompile Include="..\src\axis.cpp" />
     <ClCompile Include="..\src\callout.cpp" />
     <ClCompile Include="..\src\columnViewItem.cpp" />
+    <ClCompile Include="..\src\constantConstraint.cpp" />
     <ClCompile Include="..\src\constraint.cpp" />
+    <ClCompile Include="..\src\designVariable.cpp" />
     <ClCompile Include="..\src\document.cpp" />
     <ClCompile Include="..\src\chart.cpp" />
     <ClCompile Include="..\src\chartView.cpp" />
     <ClCompile Include="..\src\commandWindow.cpp" />
     <ClCompile Include="..\src\drivingConstraint.cpp" />
-    <ClCompile Include="..\src\DynaMic.cpp" />
+    <ClCompile Include="..\src\DualMotion.cpp" />
+    <ClCompile Include="..\src\errors.cpp" />
+    <ClCompile Include="..\src\hcmDesignVariable.cpp" />
+    <ClCompile Include="..\src\kinematics.cpp" />
     <ClCompile Include="..\src\geometry.cpp" />
     <ClCompile Include="..\src\geometry_wedge.cpp" />
     <ClCompile Include="..\src\integrator.cpp" />
     <ClCompile Include="..\src\materialDialog.cpp" />
     <ClCompile Include="..\src\MCHSpline.cpp" />
+    <ClCompile Include="..\src\messageBox.cpp" />
     <ClCompile Include="..\src\model.cpp" />
+    <ClCompile Include="..\src\newDialog.cpp" />
+    <ClCompile Include="..\src\nhcmDesignVariable.cpp" />
+    <ClCompile Include="..\src\optimumCase.cpp" />
+    <ClCompile Include="..\src\optimumDesignDoc.cpp" />
+    <ClCompile Include="..\src\partHeader.cpp" />
     <ClCompile Include="..\src\plotDialog.cpp" />
     <ClCompile Include="..\src\plotWindow.cpp" />
+    <ClCompile Include="..\src\pointFollower.cpp" />
+    <ClCompile Include="..\src\resultTable.cpp" />
     <ClCompile Include="..\src\revoluteJoint.cpp" />
     <ClCompile Include="..\src\rigidBody.cpp" />
+    <ClCompile Include="..\src\selectReactionDialog.cpp" />
     <ClCompile Include="..\src\translate.cpp" />
     <ClCompile Include="..\src\translateJoint.cpp" />
     <ClCompile Include="..\src\transparency.cpp" />
+    <ClCompile Include="..\src\verticalConstraint.cpp" />
     <ClCompile Include="..\src\view.cpp" />
     <ClCompile Include="..\src\vp_profile.cpp" />
     <ClCompile Include="dmotion.cpp" />
@@ -178,7 +193,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="GeneratedFiles\Debug\moc_DynaMic.cpp">
+    <ClCompile Include="GeneratedFiles\Debug\moc_kinematics.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
@@ -186,7 +201,23 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_newDialog.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="GeneratedFiles\Debug\moc_plotDialog.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_plotWindow.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_resultTable.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_selectReactionDialog.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
@@ -224,7 +255,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="GeneratedFiles\Release\moc_DynaMic.cpp">
+    <ClCompile Include="GeneratedFiles\Release\moc_kinematics.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClCompile>
@@ -232,7 +263,23 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_newDialog.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="GeneratedFiles\Release\moc_plotDialog.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_plotWindow.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_resultTable.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_selectReactionDialog.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClCompile>
@@ -294,8 +341,80 @@
   <ItemGroup>
     <ClInclude Include="..\inc\algebraMath.h" />
     <ClInclude Include="..\inc\axis.h" />
+    <ClInclude Include="..\inc\dual_motion_hole.hpp" />
+    <ClInclude Include="..\inc\errors.h" />
+    <ClInclude Include="..\inc\hcmDesignVariable.h" />
+    <ClInclude Include="..\inc\messageBox.h" />
+    <CustomBuild Include="..\inc\newDialog.h">
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Moc%27ing newDialog.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -D_WINDOWS -DHAVE_D3D -DHAVE_VTK -DHAVE_FREEIMAGE -DHAVE_GL2PS -DHAVE_TBB -DUNICODE -DWIN32 -DWIN64 -DQT_DLL -DQT_CORE_LIB -DQT_GUI_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB "-I.\GeneratedFiles" "-I." "-I$(QTDIR57_32)\include" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR57_32)\include\QtCore" "-I$(QTDIR57_32)\include\QtGui" "-I$(QTDIR57_32)\include\QtWidgets" "-I$(QTDIR57_32)\include\QtCharts" "-IC:\DMotion\inc" "-IC:\Qt57\5.7\msvc2013\include\ActiveQt" "-IC:\OpenCASCADE7.1.0-vc10-64\opencascade-7.1.0\inc"</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Moc%27ing newDialog.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -D_WINDOWS -DHAVE_D3D -DHAVE_VTK -DHAVE_FREEIMAGE -DHAVE_GL2PS -DHAVE_TBB -DUNICODE -DWIN32 -DWIN64 -DQT_DLL -DQT_CORE_LIB -DQT_GUI_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB "-I.\GeneratedFiles" "-I." "-I$(QTDIR57)\include" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR57)\include\QtCore" "-I$(QTDIR57)\include\QtGui" "-I$(QTDIR57)\include\QtWidgets" "-I$(QTDIR57)\include\QtCharts" "-IC:\DMotion\inc" "-IC:\Qt57\5.7\msvc2013_64\include\ActiveQt" "-IC:\OpenCASCADE7.1.0-vc10-64\opencascade-7.1.0\inc" "-IC:\OpenCASCADE7.1.0-vc10-64\opencascade-7.1.0\samples\qt\Common\src" "-I$(ICPP_COMPILER17)\mkl\include"</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Moc%27ing newDialog.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DWIN64 -DQT_DLL -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB "-I.\GeneratedFiles" "-I." "-I$(QTDIR57_32)\include" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR57_32)\include\QtCore" "-I$(QTDIR57_32)\include\QtGui" "-I$(QTDIR57_32)\include\QtOpenGL" "-I$(QTDIR57_32)\include\QtWidgets" "-I$(QTDIR57_32)\include\QtCharts" "-IC:\DMotion\inc"</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Moc%27ing newDialog.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DWIN64 -DQT_DLL -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB "-I.\GeneratedFiles" "-I." "-I$(QTDIR57_32)\include" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR57_32)\include\QtCore" "-I$(QTDIR57_32)\include\QtGui" "-I$(QTDIR57_32)\include\QtOpenGL" "-I$(QTDIR57_32)\include\QtWidgets" "-I$(QTDIR57_32)\include\QtCharts" "-IC:\DMotion\inc" "-IC:\Qt57\5.7\msvc2013_64\include\ActiveQt" "-IC:\OpenCASCADE7.1.0-vc10-64\opencascade-7.1.0\inc" "-IC:\OpenCASCADE7.1.0-vc10-64\opencascade-7.1.0\samples\qt\Common\src" "-I$(ICPP_COMPILER17)\mkl\include"</Command>
+    </CustomBuild>
+    <CustomBuild Include="..\inc\nhcmDesignVariable.h">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+      </Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+      </Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+      </Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      </Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      </Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      </Command>
+    </CustomBuild>
+    <ClInclude Include="..\inc\opResultButton.h" />
+    <ClInclude Include="GeneratedFiles\ui_newModel.h" />
+    <ClInclude Include="GeneratedFiles\ui_velocityProfile.h" />
+    <CustomBuild Include="..\inc\selectReactionDialog.h">
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Moc%27ing selectReactionDialog.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -D_WINDOWS -DHAVE_D3D -DHAVE_VTK -DHAVE_FREEIMAGE -DHAVE_GL2PS -DHAVE_TBB -DUNICODE -DWIN32 -DWIN64 -DQT_DLL -DQT_CORE_LIB -DQT_GUI_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB "-I.\GeneratedFiles" "-I." "-I$(QTDIR57_32)\include" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR57_32)\include\QtCore" "-I$(QTDIR57_32)\include\QtGui" "-I$(QTDIR57_32)\include\QtWidgets" "-I$(QTDIR57_32)\include\QtCharts" "-IC:\DMotion\inc" "-IC:\Qt57\5.7\msvc2013\include\ActiveQt" "-IC:\OpenCASCADE7.1.0-vc10-64\opencascade-7.1.0\inc"</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Moc%27ing selectReactionDialog.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -D_WINDOWS -DHAVE_D3D -DHAVE_VTK -DHAVE_FREEIMAGE -DHAVE_GL2PS -DHAVE_TBB -DUNICODE -DWIN32 -DWIN64 -DQT_DLL -DQT_CORE_LIB -DQT_GUI_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB "-I.\GeneratedFiles" "-I." "-I$(QTDIR57)\include" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR57)\include\QtCore" "-I$(QTDIR57)\include\QtGui" "-I$(QTDIR57)\include\QtWidgets" "-I$(QTDIR57)\include\QtCharts" "-IC:\DMotion\inc" "-IC:\Qt57\5.7\msvc2013_64\include\ActiveQt" "-IC:\OpenCASCADE7.1.0-vc10-64\opencascade-7.1.0\inc" "-IC:\OpenCASCADE7.1.0-vc10-64\opencascade-7.1.0\samples\qt\Common\src" "-I$(ICPP_COMPILER17)\mkl\include"</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Moc%27ing selectReactionDialog.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DWIN64 -DQT_DLL -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB "-I.\GeneratedFiles" "-I." "-I$(QTDIR57_32)\include" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR57_32)\include\QtCore" "-I$(QTDIR57_32)\include\QtGui" "-I$(QTDIR57_32)\include\QtOpenGL" "-I$(QTDIR57_32)\include\QtWidgets" "-I$(QTDIR57_32)\include\QtCharts" "-IC:\DMotion\inc"</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Moc%27ing selectReactionDialog.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DWIN64 -DQT_DLL -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB "-I.\GeneratedFiles" "-I." "-I$(QTDIR57_32)\include" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR57_32)\include\QtCore" "-I$(QTDIR57_32)\include\QtGui" "-I$(QTDIR57_32)\include\QtOpenGL" "-I$(QTDIR57_32)\include\QtWidgets" "-I$(QTDIR57_32)\include\QtCharts" "-IC:\DMotion\inc" "-IC:\Qt57\5.7\msvc2013_64\include\ActiveQt" "-IC:\OpenCASCADE7.1.0-vc10-64\opencascade-7.1.0\inc" "-IC:\OpenCASCADE7.1.0-vc10-64\opencascade-7.1.0\samples\qt\Common\src" "-I$(ICPP_COMPILER17)\mkl\include"</Command>
+    </CustomBuild>
+    <ClInclude Include="..\inc\MyTableWidgetItem.h" />
+    <ClInclude Include="GeneratedFiles\ui_selectReaction.h" />
     <CustomBuild Include="..\inc\columnViewItem.h" />
     <ClInclude Include="..\inc\callout.h" />
+    <ClInclude Include="..\inc\constantConstraint.h" />
     <ClInclude Include="..\inc\constraint.h" />
     <CustomBuild Include="..\inc\document.h">
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
@@ -360,29 +479,35 @@
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
     </CustomBuild>
     <ClInclude Include="..\inc\commandWindow.h" />
-    <CustomBuild Include="..\inc\DynaMic.h">
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Moc%27ing DynaMic.h...</Message>
+    <CustomBuild Include="..\inc\kinematics.h">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Moc%27ing kinematics.h...</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -D_WINDOWS -DHAVE_D3D -DHAVE_VTK -DHAVE_FREEIMAGE -DHAVE_GL2PS -DHAVE_TBB -DUNICODE -DWIN32 -DWIN64 -DQT_DLL -DQT_CORE_LIB -DQT_GUI_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB "-I.\GeneratedFiles" "-I." "-I$(QTDIR57_32)\include" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR57_32)\include\QtCore" "-I$(QTDIR57_32)\include\QtGui" "-I$(QTDIR57_32)\include\QtWidgets" "-I$(QTDIR57_32)\include\QtCharts" "-IC:\DMotion\inc" "-IC:\Qt57\5.7\msvc2013\include\ActiveQt" "-IC:\OpenCASCADE7.1.0-vc10-64\opencascade-7.1.0\inc"</Command>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Moc%27ing DynaMic.h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Moc%27ing kinematics.h...</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -D_WINDOWS -DHAVE_D3D -DHAVE_VTK -DHAVE_FREEIMAGE -DHAVE_GL2PS -DHAVE_TBB -DUNICODE -DWIN32 -DWIN64 -DQT_DLL -DQT_CORE_LIB -DQT_GUI_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB "-I.\GeneratedFiles" "-I." "-I$(QTDIR57)\include" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR57)\include\QtCore" "-I$(QTDIR57)\include\QtGui" "-I$(QTDIR57)\include\QtWidgets" "-I$(QTDIR57)\include\QtCharts" "-IC:\DMotion\inc" "-IC:\Qt57\5.7\msvc2013_64\include\ActiveQt" "-IC:\OpenCASCADE7.1.0-vc10-64\opencascade-7.1.0\inc" "-IC:\OpenCASCADE7.1.0-vc10-64\opencascade-7.1.0\samples\qt\Common\src"</Command>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Moc%27ing DynaMic.h...</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -D_WINDOWS -DHAVE_D3D -DHAVE_VTK -DHAVE_FREEIMAGE -DHAVE_GL2PS -DHAVE_TBB -DUNICODE -DWIN32 -DWIN64 -DQT_DLL -DQT_CORE_LIB -DQT_GUI_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB "-I.\GeneratedFiles" "-I." "-I$(QTDIR57)\include" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR57)\include\QtCore" "-I$(QTDIR57)\include\QtGui" "-I$(QTDIR57)\include\QtWidgets" "-I$(QTDIR57)\include\QtCharts" "-IC:\DMotion\inc" "-IC:\Qt57\5.7\msvc2013_64\include\ActiveQt" "-IC:\OpenCASCADE7.1.0-vc10-64\opencascade-7.1.0\inc" "-IC:\OpenCASCADE7.1.0-vc10-64\opencascade-7.1.0\samples\qt\Common\src" "-I$(ICPP_COMPILER17)\mkl\include"</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Moc%27ing kinematics.h...</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DWIN64 -DQT_DLL -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB "-I.\GeneratedFiles" "-I." "-I$(QTDIR57_32)\include" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR57_32)\include\QtCore" "-I$(QTDIR57_32)\include\QtGui" "-I$(QTDIR57_32)\include\QtOpenGL" "-I$(QTDIR57_32)\include\QtWidgets" "-I$(QTDIR57_32)\include\QtCharts" "-IC:\DMotion\inc"</Command>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Moc%27ing DynaMic.h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Moc%27ing kinematics.h...</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DWIN64 -DQT_DLL -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB "-I.\GeneratedFiles" "-I." "-I$(QTDIR57_32)\include" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR57_32)\include\QtCore" "-I$(QTDIR57_32)\include\QtGui" "-I$(QTDIR57_32)\include\QtOpenGL" "-I$(QTDIR57_32)\include\QtWidgets" "-I$(QTDIR57_32)\include\QtCharts" "-IC:\DMotion\inc"</Command>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DWIN64 -DQT_DLL -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB "-I.\GeneratedFiles" "-I." "-I$(QTDIR57_32)\include" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR57_32)\include\QtCore" "-I$(QTDIR57_32)\include\QtGui" "-I$(QTDIR57_32)\include\QtOpenGL" "-I$(QTDIR57_32)\include\QtWidgets" "-I$(QTDIR57_32)\include\QtCharts" "-IC:\DMotion\inc" "-IC:\Qt57\5.7\msvc2013_64\include\ActiveQt" "-IC:\OpenCASCADE7.1.0-vc10-64\opencascade-7.1.0\inc" "-IC:\OpenCASCADE7.1.0-vc10-64\opencascade-7.1.0\samples\qt\Common\src" "-I$(ICPP_COMPILER17)\mkl\include"</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath);$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(QTDIR)\bin\moc.exe;%(FullPath);$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath);$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(QTDIR)\bin\moc.exe;%(FullPath);$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
     </CustomBuild>
+    <ClInclude Include="..\inc\designVariable.h" />
     <ClInclude Include="..\inc\dmotion_types.h" />
     <ClInclude Include="..\inc\drivingConstraint.h" />
+    <ClInclude Include="..\inc\DualMotion.h" />
     <ClInclude Include="..\inc\dual_motion.hpp" />
     <ClInclude Include="..\inc\geometry.h" />
     <ClInclude Include="..\inc\geometry_wedge.h" />
+    <ClInclude Include="..\inc\optimumCase.h" />
+    <ClInclude Include="..\inc\optimumDesignDoc.h" />
+    <ClInclude Include="..\inc\partCam.h" />
+    <ClInclude Include="..\inc\partHeader.h" />
     <ClInclude Include="..\inc\integrator.h" />
     <CustomBuild Include="..\inc\materialDialog.h">
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
@@ -472,7 +597,6 @@
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DWIN64 -DQT_DLL -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB "-I.\GeneratedFiles" "-I." "-I$(QTDIR57_32)\include" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR57_32)\include\QtCore" "-I$(QTDIR57_32)\include\QtGui" "-I$(QTDIR57_32)\include\QtOpenGL" "-I$(QTDIR57_32)\include\QtWidgets" "-I$(QTDIR57_32)\include\QtCharts" "-IC:\DMotion\inc"</Command>
     </CustomBuild>
-    <ClInclude Include="..\inc\model.h" />
     <CustomBuild Include="..\inc\plotDialog.h">
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Moc%27ing plotDialog.h...</Message>
@@ -491,13 +615,52 @@
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DWIN64 -DQT_DLL -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB "-I.\GeneratedFiles" "-I." "-I$(QTDIR57_32)\include" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR57_32)\include\QtCore" "-I$(QTDIR57_32)\include\QtGui" "-I$(QTDIR57_32)\include\QtOpenGL" "-I$(QTDIR57_32)\include\QtWidgets" "-I$(QTDIR57_32)\include\QtCharts" "-IC:\DMotion\inc"</Command>
     </CustomBuild>
-    <ClInclude Include="..\inc\plotWindow.h" />
+    <CustomBuild Include="..\inc\model.h" />
+    <ClInclude Include="..\inc\partLink.h" />
+    <CustomBuild Include="..\inc\plotWindow.h">
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Moc%27ing plotWindow.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -D_WINDOWS -DHAVE_D3D -DHAVE_VTK -DHAVE_FREEIMAGE -DHAVE_GL2PS -DHAVE_TBB -DUNICODE -DWIN32 -DWIN64 -DQT_DLL -DQT_CORE_LIB -DQT_GUI_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB "-I.\GeneratedFiles" "-I." "-I$(QTDIR57_32)\include" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR57_32)\include\QtCore" "-I$(QTDIR57_32)\include\QtGui" "-I$(QTDIR57_32)\include\QtWidgets" "-I$(QTDIR57_32)\include\QtCharts" "-IC:\DMotion\inc" "-IC:\Qt57\5.7\msvc2013\include\ActiveQt" "-IC:\OpenCASCADE7.1.0-vc10-64\opencascade-7.1.0\inc"</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Moc%27ing plotWindow.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -D_WINDOWS -DHAVE_D3D -DHAVE_VTK -DHAVE_FREEIMAGE -DHAVE_GL2PS -DHAVE_TBB -DUNICODE -DWIN32 -DWIN64 -DQT_DLL -DQT_CORE_LIB -DQT_GUI_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB "-I.\GeneratedFiles" "-I." "-I$(QTDIR57)\include" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR57)\include\QtCore" "-I$(QTDIR57)\include\QtGui" "-I$(QTDIR57)\include\QtWidgets" "-I$(QTDIR57)\include\QtCharts" "-IC:\DMotion\inc" "-IC:\Qt57\5.7\msvc2013_64\include\ActiveQt" "-IC:\OpenCASCADE7.1.0-vc10-64\opencascade-7.1.0\inc" "-IC:\OpenCASCADE7.1.0-vc10-64\opencascade-7.1.0\samples\qt\Common\src" "-I$(ICPP_COMPILER17)\mkl\include"</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Moc%27ing plotWindow.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DWIN64 -DQT_DLL -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB "-I.\GeneratedFiles" "-I." "-I$(QTDIR57_32)\include" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR57_32)\include\QtCore" "-I$(QTDIR57_32)\include\QtGui" "-I$(QTDIR57_32)\include\QtOpenGL" "-I$(QTDIR57_32)\include\QtWidgets" "-I$(QTDIR57_32)\include\QtCharts" "-IC:\DMotion\inc"</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Moc%27ing plotWindow.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DWIN64 -DQT_DLL -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB "-I.\GeneratedFiles" "-I." "-I$(QTDIR57_32)\include" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR57_32)\include\QtCore" "-I$(QTDIR57_32)\include\QtGui" "-I$(QTDIR57_32)\include\QtOpenGL" "-I$(QTDIR57_32)\include\QtWidgets" "-I$(QTDIR57_32)\include\QtCharts" "-IC:\DMotion\inc" "-IC:\Qt57\5.7\msvc2013_64\include\ActiveQt" "-IC:\OpenCASCADE7.1.0-vc10-64\opencascade-7.1.0\inc" "-IC:\OpenCASCADE7.1.0-vc10-64\opencascade-7.1.0\samples\qt\Common\src" "-I$(ICPP_COMPILER17)\mkl\include"</Command>
+    </CustomBuild>
+    <ClInclude Include="..\inc\pointFollower.h" />
+    <CustomBuild Include="..\inc\resultTable.h">
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Moc%27ing resultTable.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -D_WINDOWS -DHAVE_D3D -DHAVE_VTK -DHAVE_FREEIMAGE -DHAVE_GL2PS -DHAVE_TBB -DUNICODE -DWIN32 -DWIN64 -DQT_DLL -DQT_CORE_LIB -DQT_GUI_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB "-I.\GeneratedFiles" "-I." "-I$(QTDIR57_32)\include" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR57_32)\include\QtCore" "-I$(QTDIR57_32)\include\QtGui" "-I$(QTDIR57_32)\include\QtWidgets" "-I$(QTDIR57_32)\include\QtCharts" "-IC:\DMotion\inc" "-IC:\Qt57\5.7\msvc2013\include\ActiveQt" "-IC:\OpenCASCADE7.1.0-vc10-64\opencascade-7.1.0\inc"</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Moc%27ing resultTable.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -D_WINDOWS -DHAVE_D3D -DHAVE_VTK -DHAVE_FREEIMAGE -DHAVE_GL2PS -DHAVE_TBB -DUNICODE -DWIN32 -DWIN64 -DQT_DLL -DQT_CORE_LIB -DQT_GUI_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB "-I.\GeneratedFiles" "-I." "-I$(QTDIR57)\include" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR57)\include\QtCore" "-I$(QTDIR57)\include\QtGui" "-I$(QTDIR57)\include\QtWidgets" "-I$(QTDIR57)\include\QtCharts" "-IC:\DMotion\inc" "-IC:\Qt57\5.7\msvc2013_64\include\ActiveQt" "-IC:\OpenCASCADE7.1.0-vc10-64\opencascade-7.1.0\inc" "-IC:\OpenCASCADE7.1.0-vc10-64\opencascade-7.1.0\samples\qt\Common\src" "-I$(ICPP_COMPILER17)\mkl\include"</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Moc%27ing resultTable.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DWIN64 -DQT_DLL -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB "-I.\GeneratedFiles" "-I." "-I$(QTDIR57_32)\include" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR57_32)\include\QtCore" "-I$(QTDIR57_32)\include\QtGui" "-I$(QTDIR57_32)\include\QtOpenGL" "-I$(QTDIR57_32)\include\QtWidgets" "-I$(QTDIR57_32)\include\QtCharts" "-IC:\DMotion\inc"</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Moc%27ing resultTable.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DWIN64 -DQT_DLL -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB "-I.\GeneratedFiles" "-I." "-I$(QTDIR57_32)\include" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR57_32)\include\QtCore" "-I$(QTDIR57_32)\include\QtGui" "-I$(QTDIR57_32)\include\QtOpenGL" "-I$(QTDIR57_32)\include\QtWidgets" "-I$(QTDIR57_32)\include\QtCharts" "-IC:\DMotion\inc" "-IC:\Qt57\5.7\msvc2013_64\include\ActiveQt" "-IC:\OpenCASCADE7.1.0-vc10-64\opencascade-7.1.0\inc" "-IC:\OpenCASCADE7.1.0-vc10-64\opencascade-7.1.0\samples\qt\Common\src" "-I$(ICPP_COMPILER17)\mkl\include"</Command>
+    </CustomBuild>
     <ClInclude Include="..\inc\revoluteJoint.h" />
     <ClInclude Include="..\inc\rigidBody.h" />
     <ClInclude Include="..\inc\slider_crank.hpp" />
     <ClInclude Include="..\inc\translateJoint.h" />
     <ClInclude Include="..\inc\vector.hpp" />
     <ClInclude Include="..\inc\animation_controller.h" />
+    <ClInclude Include="..\inc\verticalConstraint.h" />
     <ClInclude Include="dm_backup.hpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClInclude>
@@ -522,6 +685,66 @@
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\rcc.exe" -name "%(Filename)" -no-compress "%(FullPath)" -o .\GeneratedFiles\qrc_%(Filename).cpp</Command>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(QTDIR)\bin\rcc.exe" -name "%(Filename)" -no-compress "%(FullPath)" -o .\GeneratedFiles\qrc_%(Filename).cpp</Command>
       <SubType>Designer</SubType>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="selectReaction.ui">
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\uic.exe;%(AdditionalInputs)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Uic%27ing %(Identity)...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\GeneratedFiles\ui_%(Filename).h;%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\uic.exe" -o ".\GeneratedFiles\ui_%(Filename).h" "%(FullPath)"</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(QTDIR)\bin\uic.exe;%(AdditionalInputs)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Uic%27ing %(Identity)...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.\GeneratedFiles\ui_%(Filename).h;%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">"$(QTDIR)\bin\uic.exe" -o ".\GeneratedFiles\ui_%(Filename).h" "%(FullPath)"</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\uic.exe;%(AdditionalInputs)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Uic%27ing %(Identity)...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\GeneratedFiles\ui_%(Filename).h;%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\uic.exe" -o ".\GeneratedFiles\ui_%(Filename).h" "%(FullPath)"</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(QTDIR)\bin\uic.exe;%(AdditionalInputs)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Uic%27ing %(Identity)...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.\GeneratedFiles\ui_%(Filename).h;%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(QTDIR)\bin\uic.exe" -o ".\GeneratedFiles\ui_%(Filename).h" "%(FullPath)"</Command>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="velocityProfile.ui">
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\uic.exe;%(AdditionalInputs)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Uic%27ing %(Identity)...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\GeneratedFiles\ui_%(Filename).h;%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\uic.exe" -o ".\GeneratedFiles\ui_%(Filename).h" "%(FullPath)"</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(QTDIR)\bin\uic.exe;%(AdditionalInputs)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Uic%27ing %(Identity)...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.\GeneratedFiles\ui_%(Filename).h;%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">"$(QTDIR)\bin\uic.exe" -o ".\GeneratedFiles\ui_%(Filename).h" "%(FullPath)"</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\uic.exe;%(AdditionalInputs)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Uic%27ing %(Identity)...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\GeneratedFiles\ui_%(Filename).h;%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\uic.exe" -o ".\GeneratedFiles\ui_%(Filename).h" "%(FullPath)"</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(QTDIR)\bin\uic.exe;%(AdditionalInputs)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Uic%27ing %(Identity)...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.\GeneratedFiles\ui_%(Filename).h;%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(QTDIR)\bin\uic.exe" -o ".\GeneratedFiles\ui_%(Filename).h" "%(FullPath)"</Command>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="newModel.ui">
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\uic.exe;%(AdditionalInputs)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Uic%27ing %(Identity)...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\GeneratedFiles\ui_%(Filename).h;%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\uic.exe" -o ".\GeneratedFiles\ui_%(Filename).h" "%(FullPath)"</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(QTDIR)\bin\uic.exe;%(AdditionalInputs)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Uic%27ing %(Identity)...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.\GeneratedFiles\ui_%(Filename).h;%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">"$(QTDIR)\bin\uic.exe" -o ".\GeneratedFiles\ui_%(Filename).h" "%(FullPath)"</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\uic.exe;%(AdditionalInputs)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Uic%27ing %(Identity)...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\GeneratedFiles\ui_%(Filename).h;%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\uic.exe" -o ".\GeneratedFiles\ui_%(Filename).h" "%(FullPath)"</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(QTDIR)\bin\uic.exe;%(AdditionalInputs)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Uic%27ing %(Identity)...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.\GeneratedFiles\ui_%(Filename).h;%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(QTDIR)\bin\uic.exe" -o ".\GeneratedFiles\ui_%(Filename).h" "%(FullPath)"</Command>
     </CustomBuild>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

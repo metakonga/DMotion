@@ -95,6 +95,11 @@ namespace math
 		vecd3 d = b - a;
 		return sqrt(dot(d, d));
 	}
+
+	inline double length(vecd3& a)
+	{
+		return sqrt(dot(a, a));
+	}
 }
 
 #endif

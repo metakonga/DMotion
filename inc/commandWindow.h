@@ -11,6 +11,7 @@ public:
 	commandWindow(QWidget* parent);
 	~commandWindow();
 
+	static void clear();
 	static void write(QString str);
 	static void printLine();
 

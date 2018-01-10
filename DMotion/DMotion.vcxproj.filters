@@ -53,6 +53,12 @@
     <Filter Include="Source Files\dialog">
       <UniqueIdentifier>{52a68c95-500b-4f13-a006-a1b1c869c39a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\rigidBody">
+      <UniqueIdentifier>{02844a0c-5569-4056-88a9-aec88d23761d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\rigidBody">
+      <UniqueIdentifier>{a19f4906-312d-4080-bd8c-d6b896dac7c1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -97,9 +103,6 @@
     <ClCompile Include="..\src\commandWindow.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\DynaMic.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\view.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -129,12 +132,6 @@
     </ClCompile>
     <ClCompile Include="..\src\rigidBody.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Debug\moc_DynaMic.cpp">
-      <Filter>Generated Files\Debug</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Release\moc_DynaMic.cpp">
-      <Filter>Generated Files\Release</Filter>
     </ClCompile>
     <ClCompile Include="..\src\model.cpp">
       <Filter>Source Files</Filter>
@@ -199,6 +196,84 @@
     <ClCompile Include="..\src\plotWindow.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\pointFollower.cpp">
+      <Filter>Source Files\constraint</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\verticalConstraint.cpp">
+      <Filter>Source Files\constraint</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\constantConstraint.cpp">
+      <Filter>Source Files\constraint</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\partHeader.cpp">
+      <Filter>Source Files\rigidBody</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\DualMotion.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_kinematics.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_kinematics.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\kinematics.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_plotWindow.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_plotWindow.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\optimumDesignDoc.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\designVariable.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\optimumCase.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\resultTable.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_resultTable.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_resultTable.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_selectReactionDialog.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_selectReactionDialog.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\messageBox.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\errors.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\selectReactionDialog.cpp">
+      <Filter>Source Files\dialog</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_newDialog.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_newDialog.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\newDialog.cpp">
+      <Filter>Source Files\dialog</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\nhcmDesignVariable.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\hcmDesignVariable.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="dmotion.h">
@@ -222,9 +297,6 @@
     <CustomBuild Include="..\inc\transparency.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
-    <CustomBuild Include="..\inc\DynaMic.h">
-      <Filter>Header Files</Filter>
-    </CustomBuild>
     <CustomBuild Include="..\inc\document.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
@@ -242,6 +314,36 @@
     </CustomBuild>
     <CustomBuild Include="..\inc\materialDialog.h">
       <Filter>Header Files\dialog</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\inc\kinematics.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\inc\model.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\inc\plotWindow.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\inc\resultTable.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="selectReaction.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\inc\selectReactionDialog.h">
+      <Filter>Header Files\dialog</Filter>
+    </CustomBuild>
+    <CustomBuild Include="velocityProfile.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="newModel.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\inc\newDialog.h">
+      <Filter>Header Files\dialog</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\inc\nhcmDesignVariable.h">
+      <Filter>Header Files</Filter>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
@@ -267,9 +369,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\inc\rigidBody.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\inc\model.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\inc\revoluteJoint.h">
@@ -308,11 +407,65 @@
     <ClInclude Include="..\inc\drivingConstraint.h">
       <Filter>Header Files\constraint</Filter>
     </ClInclude>
-    <ClInclude Include="..\inc\plotWindow.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="dm_backup.hpp">
       <Filter>Header Files\model</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\pointFollower.h">
+      <Filter>Header Files\constraint</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\verticalConstraint.h">
+      <Filter>Header Files\constraint</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\constantConstraint.h">
+      <Filter>Header Files\constraint</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\partHeader.h">
+      <Filter>Header Files\rigidBody</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\partLink.h">
+      <Filter>Header Files\rigidBody</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\partCam.h">
+      <Filter>Header Files\rigidBody</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\DualMotion.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\optimumDesignDoc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\designVariable.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\optimumCase.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_selectReaction.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\MyTableWidgetItem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_velocityProfile.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\messageBox.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\errors.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_newModel.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\opResultButton.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\dual_motion_hole.hpp">
+      <Filter>Header Files\model</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\hcmDesignVariable.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

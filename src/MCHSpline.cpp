@@ -174,12 +174,25 @@ bool MCHSpline::monotonic_cubic_Hermite_spline(double lmt, QVector<double>& x_sr
 	return true;
 }
 
+double MCHSpline::getInterpValue(unsigned int id, double rx)
+{
+	double cur_x = x_src[id];
+	double next_x = x_src[id + 1];
+	double cur_y = y_src[id];
+	double next_y = y_src[id + 1];
+	double h = next_x - cur_x;
+	double t = (rx - cur_x) / h;
+	double y = cur_y * h00(t) + h*m.at(id) * h10(t) + next_y * h01(t) + h * m.at(id + 1) * h11(t);
+	return y;
+}
+
 void MCHSpline::calculate_curve_auto(QLineSeries* series, int sid, bool _base /* = false */)
 {
 	int n = x_src.size();
 	if (_base)
 		series->clear();
 	int cnt = 0;
+	double previous = DBL_MAX;
 	for (int i = sid; i < n - 1; i++)
 	{
 		start_ids.push_back(cnt);
@@ -193,12 +206,15 @@ void MCHSpline::calculate_curve_auto(QLineSeries* series, int sid, bool _base /*
 		double inc = h * 0.01;
 		for (x = cur_x; x < next_x; x += inc)
 		{
+			if (x == previous)
+				continue;
 			if (x > limit)
 				break;
 			double t = (x - cur_x) / h;
 			//x_out->push_back(x);
 			double y = cur_y * h00(t) + h * m.at(i) * h10(t) + next_y * h01(t) + h * m.at(i + 1) * h11(t);
 			series->append(x, y);
+			previous = x;
 			cnt++;
 		}
 	}
@@ -239,6 +255,76 @@ void MCHSpline::calculate_curve_auto(QLineSeries* series, int sid, int eid)
 	}
 }
 
+void MCHSpline::calculate_curve_auto(QVector<QPointF>& data)
+{
+	int n = x_src.size();
+// 	if (_base)
+// 		series->clear();
+	int cnt = 0;
+	for (int i = 0; i < n - 1; i++)
+	{
+		start_ids.push_back(cnt);
+		double x0 = x_src[i];
+		double x1 = x_src[i + 1];
+		//int v = (int)(1e-9 + x_src[i + 1]);
+		double y0 = y_src[i];
+		double y1 = y_src[i + 1];
+		double h = x1 - x0;
+		double x = 0;
+		double inc = h * 0.01;
+		for (x = x0; x < x1; x += inc)
+		{
+			if (x > limit)
+				break;
+			double t = (x - x0) / h;
+			//x_out->push_back(x);
+			double dy = y0 * h00(t) + h * m.at(i) * h10(t) + y1 * h01(t) + h * m.at(i + 1) * h11(t);
+// 			double a = 2.0 * y0 + h * m.at(i) - 2.0 * y1 + h * m.at(i + 1);
+// 			double b = -3.0 * y0 - 2.0 * h * m.at(i) + 3.0 * y1 - h * m.at(i + 1);
+// 			double t = (x - x0) / h;
+// 			double inv_h = 1.0 / h;
+// 			double dy = 3.0 * inv_h * a * t * t + 2.0 * inv_h * b * t + m.at(i);
+			data.push_back(QPointF(t, dy));
+			cnt++;
+		}
+	}
+}
+
+void MCHSpline::calculate_curve(QScatterSeries* pseries, QList<QPointF>& rdata, double dh)
+{
+	QVector<QPointF> points = pseries->pointsVector();
+	unsigned int sz = points.size();
+	double previous = DBL_MAX;
+	for (unsigned int i = 0; i < sz-1; i++)
+	{
+		QPointF p = points.at(i);
+		QPointF p_1 = points.at(i + 1);
+		double cur_x = p.x();
+		double next_x = p_1.x();
+		//int v = (int)(1e-9 + x_src[i + 1]);
+		double cur_y = p.y();
+		double next_y = p_1.y();
+		double h = next_x - cur_x;
+		double x = 0;
+		//double inc = h * 0.01;
+		unsigned int cnt = 0;
+		for (x = cur_x; x < next_x; x += dh)
+		{
+			if (abs(x - previous) < 1e-9)
+				continue;
+			if (x > limit)
+				break;
+			double t = (x - cur_x) / h;
+			//x_out->push_back(x);
+			double y = cur_y * h00(t) + h * m.at(i) * h10(t) + next_y * h01(t) + h * m.at(i + 1) * h11(t);
+			//series->append(x, y);
+			rdata.append(QPointF(x, y));
+			previous = x;
+			cnt++;
+		}
+	}
+}
+
 void MCHSpline::setData2LineSeries(QLineSeries* series)
 {
 	int n = x_src.size();
@@ -270,4 +356,73 @@ void MCHSpline::update_curve(int idx, QPointF& new_p, QLineSeries* series)
 	{
 		monotonic_cubic_Hermite_spline(idx, new_p);
 	}
+}
+
+double MCHSpline::getInterpValue(double val)
+{
+	unsigned int i = 0;
+	for (unsigned int j = 0; j < x_src.size() - 1; j++)
+	{
+		double x = x_src.at(j);
+		double nx = x_src.at(j + 1);
+		if (val > x && val < nx)
+			break;
+		i++;
+	}
+	double x0 = x_src[i];
+	double x1 = x_src[i + 1];
+	double y0 = y_src[i];
+	double y1 = y_src[i + 1];
+	double h = x1 - x0;
+	double t = (val - x0) / h;
+	double y = y0 * h00(t) + h*m.at(i) * h10(t) + y1 * h01(t) + h * m.at(i + 1) * h11(t);
+	return y;
+}
+
+double MCHSpline::calculate_derivative(double val)
+{
+	unsigned int i = 0;
+	for (unsigned int j = 0; j < x_src.size() - 1; j++)
+	{
+		double x = x_src.at(j);
+		double nx = x_src.at(j + 1);
+		if (val > x && val < nx)
+			break;
+		i++;
+	}
+	double x0 = x_src.at(i);
+	double x1 = x_src.at(i + 1);
+	double y0 = y_src.at(i);
+	double y1 = y_src.at(i + 1);
+	double h = x1 - x0;
+	double a = 2.0 * y0 + h * m.at(i) - 2.0 * y1 + h * m.at(i + 1);
+	double b = -3.0 * y0 - 2.0 * h * m.at(i) + 3.0 * y1 - h * m.at(i + 1);
+	double t = (val - x0) / h;
+	double inv_h = 1.0 / h;
+	double dy = 3.0 * inv_h * a * t * t + 2.0 * inv_h * b * t + m.at(i);
+	return dy;
+}
+
+double MCHSpline::calculate_dderivative(double val)
+{
+	unsigned int i = 0;
+	for (unsigned int j = 0; j < x_src.size() - 1; j++)
+	{
+		double x = x_src.at(j);
+		double nx = x_src.at(j + 1);
+		if (val > x && val < nx)
+			break;
+		i++;
+	}
+	double x0 = x_src.at(i);
+	double x1 = x_src.at(i + 1);
+	double y0 = y_src.at(i);
+	double y1 = y_src.at(i + 1);
+	double h = x1 - x0;
+	double a = 2.0 * y0 + h * m.at(i) - 2.0 * y1 + h * m.at(i + 1);
+	double b = -3.0 * y0 - 2.0 * h * m.at(i) + 3.0 * y1 - h * m.at(i + 1);
+	double t = (val - x0) / h;
+	double inv_h = 1.0 / (h * h);
+	double dy = 6.0 * inv_h * a * t + 2.0 * inv_h * b;
+	return dy;
 }

@@ -27,6 +27,7 @@ document::~document()
 {
 	if (geometries.size())
 		qDeleteAll(geometries);
+	if (hpTable) delete hpTable; hpTable = NULL;
 }
 
 Handle(TopTools_HSequenceOfShape) document::importIGES(const QString& file)
@@ -79,63 +80,40 @@ Handle(TopTools_HSequenceOfShape) document::importSTEP(const QString& file)
 	return aSequence;
 }
 
-void document::setDisplayDynamicModel(QVector<rigidBody*>& r, QVector<hardPoint*>& d)
+void document::setDisplayDynamicModel(QMap<QString, rigidBody*>& r, QMap<QString, hardPoint*>& d)
 {
-	//geometry_wedge *w = new geometry_wedge("wedge");
-	//geometries["wedge"] = w;
-	//w->Make(10, 10, 10, 5);
-	//DMotion::getAISContext()->Display(w->AIS(), false);
-	//DMotion::getAISContext()->SetDisplayMode(w->AIS(), 1, false);
-	
-	
-	hpTable = new QTableWidget(0, 3);
-	QFrame *frame = new QFrame;
-	QGridLayout *grid = new QGridLayout;
-	QVBoxLayout *hpTable_layout = new QVBoxLayout;
-	QLabel *L_hpTable = new QLabel("Hard Point Data");
-	hpTable->setSelectionBehavior(QAbstractItemView::SelectItems);
-	QStringList labels;
-	labels << "Name" << "X Data" << "Y Data";
-	hpTable->setHorizontalHeaderLabels(labels);
-	hpTable->verticalHeader()->hide();
-	hpTable->setShowGrid(true);
-	hpTable->horizontalHeader()->setDefaultSectionSize(70);
-	//hpTable->setTextElideMode(Qt::ElideMiddle);
-	
-	
-	int nr = 0;
-	QVectorIterator<hardPoint*> hps(d);
+	QMapIterator<QString, hardPoint*> hps(d);
 	while (hps.hasNext())
 	{
-		hardPoint* hp = hps.next();
+		hardPoint* hp = hps.next().value();
 		TopoDS_Shape s;
-		s = BRepPrimAPI_MakeSphere(2);
+		s = BRepPrimAPI_MakeSphere(4);
 
 		Handle(AIS_Shape) ais_s = new AIS_Shape(s);
 		gp_Trsf t;
 		vecd3 p = 1000.0 * hp->loc;
 		t = ais_s->LocalTransformation();
 		t.SetTranslation(gp_Vec(p.X(), p.Y(), 0.0));
-		
-		//ais_s->SetTr
+
 		ais_s->SetLocalTransformation(t);
 		t = ais_s->LocalTransformation();
 		hardPoints[hp->name] = ais_s;
 		DMotion::getAISContext()->Display(ais_s, false);
 		DMotion::getAISContext()->SetDisplayMode(ais_s, 1, false);
-		hpTable->insertRow(nr);
-		hpTable->setItem(nr, 0, new QTableWidgetItem(hp->name));
-		hpTable->setItem(nr, 1, new QTableWidgetItem(QString("%1").arg(p.X(), 4, 'f', 2, '0')));
-		hpTable->setItem(nr, 2, new QTableWidgetItem(QString("%1").arg(p.Y(), 4, 'f', 2, '0')));
-		nr++;
-		//QLineEdit *LE_X = new QLineEdit;
+		//DMotion::getAISContext()->EraseAll(false);
 	}
-
-	QVectorIterator<rigidBody*> rbs(r);
+	//DMotion::getAISContext()->ClearLocalContext(AIS_CM_All);
+// 	DMotion::getAISContext()->UpdateCurrentViewer();
+	//hardPoints.erase(hardPoints.begin());
+	//DMotion::getAISContext()->Delete();
+	/*qDeleteAll(hardPoints);*/
+	QMapIterator<QString, rigidBody*> rbs(r);
 	while (rbs.hasNext())
 	{
-		rigidBody* rb = rbs.next();
+		rigidBody* rb = rbs.next().value();
 		QString shapePath = rb->ShapePath();
+		if (shapePath == "None")
+			continue;
 		if (!shapePath.isEmpty())
 		{
 			int type = -1;
@@ -162,62 +140,9 @@ void document::setDisplayDynamicModel(QVector<rigidBody*>& r, QVector<hardPoint*
 			DMotion::getAISContext()->SetDisplayMode(ais_s, 1, false);
 		}
 	}
-
-	hpTable->selectAll();
-	QListIterator<QTableWidgetItem*> tw(hpTable->selectedItems());
-	while (tw.hasNext())
-	{
-		tw.next()->setTextAlignment(Qt::AlignCenter);
-	}
-	hpTable->clearSelection();
-	hpTable_layout->addWidget(L_hpTable);
-	hpTable_layout->addWidget(hpTable);
-	grid->addLayout(hpTable_layout, 0, 0);
-	frame->setLayout(grid);
-	grid->setMargin(0);
-	DMotion::getApplicationUI()->DW_Modeling->setWidget(frame);
 }
 
-// Translate* document::createTranslator()
-// {
-// 	Translate* anTrans = new Translate(this/*, "Translator"*/);
-// 	return anTrans;
-// }
+void document::setDesignVariableInterface()
+{
 
-// int DMotion::translationFormat(QString& fileName)
-// {
-// 	int type = -1;
-// 	int begin = fileName.lastIndexOf(".");
-// 	QString ext = fileName.mid(begin);
-// 	if (ext == ".igs" || ext == ".iges")
-// 	{
-// 		type = Translate::FormatIGES;
-// 	}
-// 	else if (ext == ".step" || ext == ".stp")
-// 	{
-// 		type = Translate::FormatSTEP;
-// 	}
-// 	return type;
-// }
-
-// bool document::translate(const QString& file, const int format, const bool import)
-//{
-//	static Translate* anTrans = createTranslator();
-//	// 	DocumentCommon* doc = qobject_cast<MDIWindow*>(getWorkspace()->activeSubWindow()->widget())->getDocument();
-//	// 	Handle(AIS_InteractiveContext) context = doc->getContext();
-//	bool status;
-//	if (import)
-//		status = anTrans->importModel(file, format, DMotion::getAISContext());
-//	//	else
-//	//		status = anTrans->exportModel(file, format, myContext);
-//
-//	if (!status)
-//	{
-//		QString msg = QObject::tr("Translation error");
-//		if (!anTrans->info().isEmpty())
-//			msg += QString("\n") + anTrans->info();
-//		//QMessageBox::critical(this, QObject::tr("Error"), msg, QObject::tr("Ok"), QString::null, QString::null, 0, 0);
-//	}
-//
-//	return status;
-//}
+}

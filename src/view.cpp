@@ -43,7 +43,8 @@ view::view(Handle(AIS_InteractiveContext) theContext, QWidget* parent)
 	globPanCursor(NULL),
 	zoomCursor(NULL),
 	rotCursor(NULL),
-	myViewActions(NULL)
+	myViewActions(NULL),
+	myViewToolBar(NULL)
 {
 	myContext = theContext;
 
@@ -299,7 +300,7 @@ void view::initViewActions()
 {
 	myViewActions = new QList<QAction*>();
 	QAction* a;
-
+	myViewToolBar = DMotion::getApplication()->addToolBar("View Operations");
 	a = new QAction(QIcon(":/Resources/fitAll.png"), tr("&fit all"), this);
 	a->setStatusTip(tr("fit all"));
 	connect(a, SIGNAL(triggered()), this, SLOT(fitAll()));
@@ -345,10 +346,10 @@ void view::initViewActions()
 // 	connect(a, SIGNAL(triggered()), this, SLOT(axo()));
 // 	myViewActions->insert(VIEW_AXO, a);
 
-	QToolBar *viewToolBar = DMotion::getApplication()->getMainToolBar();
+	//QToolBar *viewToolBar = DMotion::getApplication()->getMainToolBar();
 	for (int i = 0; i < myViewActions->size(); i++)
 	{
-		viewToolBar->addAction(myViewActions->at(i));
+		myViewToolBar->addAction(myViewActions->at(i));
 	}
 }
 

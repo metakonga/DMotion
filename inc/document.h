@@ -27,12 +27,14 @@ public:
 	QMap<QString, Handle(AIS_Shape)>& getHardPoints() { return hardPoints; }
 	QMap<QString, Handle(AIS_Shape)> getRigidBodies() { return rigidBodies; }
 	QTableWidget* getHPTable() { return hpTable; }
-	void setDisplayDynamicModel(QVector<rigidBody*>& r, QVector<hardPoint*>& d);
+	void setDisplayDynamicModel(QMap<QString, rigidBody*>& r, QMap<QString, hardPoint*>& d);
+	
 	//bool translate(const QString& file, const int format, const bool import);
 
 private:
 	Handle(TopTools_HSequenceOfShape) importIGES(const QString&);
 	Handle(TopTools_HSequenceOfShape) importSTEP(const QString&);
+	void setDesignVariableInterface();
 
 private:
 	QMap<QString, Handle(AIS_Shape)> hardPoints;

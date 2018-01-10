@@ -8,6 +8,7 @@ revoluteJoint::revoluteJoint(QString _name)
 	constraint::nnz = 8;
 	constraint::nTotalNNZ += constraint::nnz;
 	jrforce = new double[constraint::nrow];
+	memset(jrforce, 0, sizeof(double) * constraint::nrow);
 }
 
 revoluteJoint::~revoluteJoint()
@@ -15,19 +16,19 @@ revoluteJoint::~revoluteJoint()
 
 }
 
-void revoluteJoint::setBaseMarker(vecd3 q, vecd3 r)
-{
-	baseMarker.s = math::global2local(ib->TM(), pos - ib->Position());
-	baseMarker.actionAxis = math::cross(q, r);
-}
+// void revoluteJoint::setBaseMarker(vecd3 q, vecd3 r)
+// {
+// 	baseMarker.s = math::global2local(ib->TM(), pos - ib->Position());
+// 	baseMarker.actionAxis = math::cross(q, r);
+// }
+// 
+// void revoluteJoint::setActionMarker(vecd3 q, vecd3 r)
+// {
+// 	actionMarker.s = math::global2local(jb->TM(), pos - jb->Position());
+// 	actionMarker.actionAxis = math::cross(q, r);
+// }
 
-void revoluteJoint::setActionMarker(vecd3 q, vecd3 r)
-{
-	actionMarker.s = math::global2local(jb->TM(), pos - jb->Position());
-	actionMarker.actionAxis = math::cross(q, r);
-}
-
-void revoluteJoint::constraintJacobian(VECD &q, VECD &qd, SMATD &lhs, unsigned int r)
+void revoluteJoint::constraintJacobian(VECD &q, VECD &qd, SMATD &lhs, unsigned int r, bool isjp)
 {
 	unsigned int ci = ib->ID() * 3;
 	unsigned int cj = jb->ID() * 3;
@@ -60,7 +61,7 @@ void revoluteJoint::constraintJacobian(VECD &q, VECD &qd, SMATD &lhs, unsigned i
 	
 }
 
-void revoluteJoint::constraintEquation(VECD &q, VECD &rhs, unsigned int i, double mul)
+int revoluteJoint::constraintEquation(VECD &q, VECD &rhs, unsigned int i, double mul)
 {
 	unsigned int ci = ib->ID() * 3;
 	unsigned int cj = jb->ID() * 3;
@@ -69,9 +70,12 @@ void revoluteJoint::constraintEquation(VECD &q, VECD &rhs, unsigned int i, doubl
 	transformationMatrix Aj = TM(q(cj + 2));
 	vecd3 pi(q(ci), q(ci + 1), q(ci + 2));
 	vecd3 pj(q(cj), q(cj + 1), q(cj + 2));
+	vecd3 p1 = pi + math::local2global(Ai, baseMarker.s);
+	vecd3 p2 = pj + math::local2global(Aj, actionMarker.s);
 	vecd3 ce = pi + math::local2global(Ai, baseMarker.s) - pj - math::local2global(Aj, actionMarker.s);
 	rhs(i) = mul * ce.X();
 	rhs(i + 1) = mul * ce.Y();
+	return 0;
 }
 
 void revoluteJoint::derivative(VECD &q, VECD &qd, VECD &rhs, unsigned int i)
@@ -82,9 +86,17 @@ void revoluteJoint::derivative(VECD &q, VECD &qd, VECD &rhs, unsigned int i)
 	//setSinCos(ib->Angle(), jb->Angle());
 	transformationMatrix Ai = TM(q(ci + 2));
 	transformationMatrix Aj = TM(q(cj + 2));
+	double thi = q(ci + 2);
+	double thj = q(cj + 2);
 	double wi = qd(ci + 2);
 	double wj = qd(cj + 2);
 	vecd3 Qd = wi * wi * math::local2global(Ai, baseMarker.s) - wj * wj * math::local2global(Aj, actionMarker.s);
+	double Qd1
+		= wi * wi * (cos(thi) * baseMarker.s.X() - sin(thi) * baseMarker.s.Y())
+		- wj * wj * (cos(thj) * actionMarker.s.X() - sin(thj) * actionMarker.s.Y());
+	double Qd2
+		= wi * wi * (sin(thi) * baseMarker.s.X() + cos(thi) * baseMarker.s.Y())
+		- wj * wj * (sin(thj) * actionMarker.s.X() + cos(thj) * actionMarker.s.Y());
 // 	double Qd1 = wi * wi * (Ai[0] * baseMarker.s.X() + Ai[1] * baseMarker.s.Y()) -
 // 		         wj * wj * (Aj[0] * actionMarker.s.X() + Aj[1] * actionMarker.s.Y());
 // 	double Qd2 = wi * wi * (Ai[2] * baseMarker.s.X() + Ai[3] * baseMarker.s.Y()) -

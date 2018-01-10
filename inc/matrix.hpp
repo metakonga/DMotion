@@ -22,6 +22,7 @@ namespace algebra
 		matrix(size_t r, size_t c) : nsize(r*c), nrow(r), ncol(c), elements(0)
 		{
 			elements = new element_t[nsize];
+			memset(elements, 0, sizeof(double) * nsize);
 		}
 		matrix(size_t r, size_t c, element_t init) : nsize(r*c), nrow(r), ncol(c), elements(0)
 		{

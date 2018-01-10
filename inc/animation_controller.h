@@ -12,6 +12,7 @@ public:
 	static int CurrentFrame() { return currentFrame; }
 	static int TotalFrame() { return totalFrame; }
 	static bool IsPlay() { return _isPlay; }
+	static void initFrame() { currentFrame = 0; }
 	static void next() 
 	{ 
 		currentFrame = currentFrame == totalFrame ? currentFrame : currentFrame + 1;  

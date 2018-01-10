@@ -4,6 +4,7 @@
 #include <QWidget>
 #include <QAction>
 #include <QCursor>
+#include <QToolBar>
 // #include <QList>
 
 #include <AIS_InteractiveContext.hxx>
@@ -146,6 +147,7 @@ private:
 	QList<QAction*>*                myRaytraceActions;
 	QMenu*                          myBackMenu;
  	QRubberBand*                    myRectBand; //!< selection rectangle rubber band
+	QToolBar*						myViewToolBar;
 	QCursor* defCursor;
 	QCursor* handCursor;
 	QCursor* panCursor;

@@ -1,0 +1,136 @@
+#ifndef DUAL_MOTION_HPP
+#define DUAL_MOTION_HPP
+
+#include "model.h"
+
+double motion(double t)
+{
+	return 0.1 * t;
+}
+
+class dual_motion : public model
+{
+public:
+	dual_motion() : model() { init(); }
+	~dual_motion(){}
+
+	virtual void init()
+	{
+		model::setModelName("dual motion");
+		hardPoint *active_link = createHardPoint("active_link", 0, 0, 0);
+		hardPoint *link_cam = createHardPoint("link_cam", 0.38424, -0.04956, 0);
+		hardPoint *cam_ground = createHardPoint("cam_ground", 0.29739, 0, 0);
+		hardPoint *cam_passive = createHardPoint("cam_passive", 0.17739, 0.0, 0.0);
+		hardPoint *passive_dummy = createHardPoint("passive_dummy", 0.000509901920295489, 0.00773584919364184, 0.0);
+		rigidBody *ground = createRigidBody("ground");
+		model::setCoordinateNumber(13);
+		ground->setGround(true);
+
+		rigidBody *active = createRigidBody("active");
+		active->setMass(1.930655807);
+		active->setInertia(0.002253619676);
+		//double ang = getAngleBetween2HP(hp0, hp1);
+		active->setAngle(0.0);
+		//gp_Pnt pos = getHalfBetween2HP(hp0, hp1);
+		active->setPosition(-0.0414557605072536, 0.00000236243519342979, 0.0);
+		active->setCoordinateNumber(3);
+		active->setShapePath("C:/DMotion/data/ver2/Active head.step");
+
+
+		rigidBody *link = createRigidBody("link");
+		link->setMass(1.886852634);
+		link->setInertia(0.028338286);
+		//ang = getAngleBetween2HP(hp1, hp2);
+		link->setAngle(0);
+		//pos = getHalfBetween2HP(hp1, hp2);
+		link->setPosition(0.188697168403797, -0.0349156464194469, 0.0);
+		link->setCoordinateNumber(3);
+		link->setShapePath("C:/DMotion/data/ver2/Active_link.step");
+
+
+		rigidBody *cam = createRigidBody("cam");
+		cam->setMass(3.8124);
+		cam->setInertia(0.0230813979);
+		cam->setPosition(0.262163603372142, -0.030311213723227, 0.0);
+		cam->setAngle(0);
+		cam->setCoordinateNumber(4);
+		cam->setShapePath("C:/DMotion/data/ver2/CAM.step");
+
+		rigidBody *passive = createRigidBody("passive");
+		passive->setMass(4.11545567);
+		passive->setInertia(0.05849749842);
+		passive->setPosition(0.000509901920295489, 0.00773584919364184, 0.0);
+		passive->setAngle(0);
+		passive->setCoordinateNumber(3);
+		passive->setShapePath("C:/DMotion/data/ver2/Passive.step");
+
+
+		translateJoint *ground_active_tra = createTraslateJoint("ground_active_tra");
+		gp_Pnt pos = active->Position();
+		ground_active_tra->setPosition(pos.X(), pos.Y(), pos.Z());
+		ground_active_tra->setBaseBody(ground);
+		ground_active_tra->setActionBody(active);
+		ground_active_tra->setBaseMarker(vecd3(1.0, 0, 0), vecd3(0, 0, -1.0));
+		ground_active_tra->setActionMarker(vecd3(0, 0, -1.0), vecd3(0, -1.0, 0));
+		ground_active_tra->defineAngleConstraint();
+		//	ground_active_tra->setIgnoreRotationConstraint(false);
+
+		revoluteJoint *active_link_rev = createRevoluteJoint("active_link_rev");
+		pos = active_link->loc;
+		active_link_rev->setPosition(pos.X(), pos.Y(), pos.Z());
+		active_link_rev->setBaseBody(active);
+		active_link_rev->setActionBody(link);
+		active_link_rev->setBaseMarker(vecd3(1.0, 0, 0), vecd3(0, 1.0, 0));
+		//double len = getLengthBetween2HP(hp0, hp1);
+		active_link_rev->setActionMarker(vecd3(-1.0, 0, 0), vecd3(0, 1.0, 0));
+		active_link_rev->bindHardPoint(active_link);
+
+		revoluteJoint *link_cam_rev = createRevoluteJoint("link_cam_rev");
+		pos = link_cam->loc;
+		link_cam_rev->setPosition(pos.X(), pos.Y(), pos.Z());
+		link_cam_rev->setBaseBody(link);
+		link_cam_rev->setActionBody(cam);
+		link_cam_rev->setBaseMarker(vecd3(1.0, 0, 0), vecd3(0, 1.0, 0));
+		link_cam_rev->setActionMarker(vecd3(-1.0, 0, 0), vecd3(0, 1.0, 0));
+		link_cam_rev->bindHardPoint(link_cam);
+
+		revoluteJoint *cam_ground_rev = createRevoluteJoint("cam_ground_rev");
+		pos = cam_ground->loc;
+		cam_ground_rev->setPosition(pos.X(), pos.Y(), pos.Z());
+		cam_ground_rev->setBaseBody(cam);
+		cam_ground_rev->setActionBody(ground);
+		cam_ground_rev->setBaseMarker(vecd3(1.0, 0, 0), vecd3(0, 1.0, 0));
+		cam_ground_rev->setActionMarker(vecd3(-1.0, 0, 0), vecd3(0, 1.0, 0));
+		cam_ground_rev->bindHardPoint(cam_ground);
+
+		translateJoint *ground_passive_tra = createTraslateJoint("ground_passive_tra");
+		pos = passive->Position();
+		ground_passive_tra->setPosition(pos.X(), pos.Y(), pos.Z());
+		ground_passive_tra->setBaseBody(passive);
+		ground_passive_tra->setActionBody(ground);
+		ground_passive_tra->setBaseMarker(vecd3(1.0, 0, 0), vecd3(0, 0, -1.0));
+		ground_passive_tra->setActionMarker(vecd3(0, 0, -1.0), vecd3(0, 1.0, 0));
+		ground_passive_tra->defineAngleConstraint();
+
+		pointFollower* pf = createPointFollower("cam_profile");
+		pos = cam_passive->loc;
+		pf->setPosition(pos.X(), pos.Y(), pos.Z());
+		pf->setBaseBody(passive);
+		pf->setActionBody(cam);
+		pf->setBaseMarker(vecd3(1.0, 0, 0), vecd3(0, 1.0, 0));
+		//pf->setActionMarker(vecd3(-1.0, 0, 0), vecd3(0, 1.0, 0));
+		//pf->defineFollower("C:/DMotion/data/cam_profile_x.txt", cam_ground->loc);
+		pf->defineDegreeLength("C:/DMotion/data/cam_profile_user1.txt");
+		// 		constantConstraint* passive_rotation_fix = createConstantConstraint("passive_rotation_fix");
+		// 		passive_rotation_fix->setPosition(passive->Position().X(), passive->Position().Y(), 0.0);
+		// 		passive_rotation_fix->setBaseBody(passive);
+		// 		passive_rotation_fix->setTargetAxis(constantConstraint::CONST_ROT);
+		// 		passive_rotation_fix->setConstantValue(passive->Angle());
+
+		drivingConstraint *active_driving = createDrivingConstraint("active_driving");
+		active_driving->setTargetBody(active, AXIS_X);
+		//active_driving->setConstantVelocity(-0.2);
+		active_driving->setVelocityProfile("C:/DMotion/data/main_velocity.txt");
+	}
+};
+#endif

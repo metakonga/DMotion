@@ -1,27 +1,45 @@
 #ifndef MODEL_H
 #define MODEL_H
 
-//#include <QMap>
 #include <QVector>
 #include <QString>
 #include <gp_Pnt.hxx>
 #include "rigidBody.h"
+#include "pointFollower.h"
 #include "revoluteJoint.h"
 #include "translateJoint.h"
+#include "verticalConstraint.h"
 #include "drivingConstraint.h"
+#include "constantConstraint.h"
+#include "designVariable.h"
 
 //class QStandardItem;
 
 class model
 {
 public:
-	model();
+	model(modelType mt = ORIGINAL_CAM_TYPE);
 	~model();
 
 	void setModelName(QString _modelName);
+	void setModelPath(QString _modelPath);
 	QString ModelName();
+	QString ModelPath();
 	QVector<resultDataType>* bodyResultData(QString _name);
 	QVector<jointResultDataType>* jointResultData(QString _name);
+
+	void setCoordinateNumber(unsigned int nc);
+	void setCamAngleDesignVariable(double lo, double up);
+	void setCamAngleDesignVariableEnable(bool b);
+
+	void setGeneralizedCoordinate(unsigned int step, VECD& q, VECD& qd, VECD& qdd);
+	bool updateDesignVariable(QString &hps, bool isFirst = false);
+	bool IsEmptyEnableDesignVariable();
+	bool IsSatisfyCamAngle();
+	void initializeDesignVariable();
+	double NoSatisfiedCamAngle();
+
+	//reactionForceType Constraint2ReactionType(QString _name, coordinateType ctype);
 
 	hardPoint* createHardPoint(QString _name, double x, double y, double z);
 	vecd3 getHalfBetween2HP(hardPoint* hpi, hardPoint* hpj);
@@ -35,24 +53,51 @@ public:
 	revoluteJoint* createRevoluteJoint(QString _name);
 	translateJoint* createTraslateJoint(QString _name);
 	drivingConstraint* createDrivingConstraint(QString _name);
+	pointFollower* createPointFollower(QString _name);
+	verticalConstraint* createVerticalConstraint(QString _name);
+	constantConstraint* createConstantConstraint(QString _name);
+	designVariable* createDesignVariable(QString _name);
 
-	QVector<rigidBody*>& RigidBodies();
-	QVector<constraint*>& Constraints();
-	QVector<hardPoint*>& HardPoints();
-	QVector<drivingConstraint*>& DrivingConstraints();
+	pointFollower* PointFollower();
+
+	QList<QString>& HardPointList();
+	QList<QString>& BodyList();
+	QList<QString>& ConstraintList();
+	QMap<QString, rigidBody*>& RigidBodies();
+	QMap<QString, constraint*>& Constraints();
+	QMap<QString, hardPoint*>& HardPoints();
+	QMap<QString, drivingConstraint*>& DrivingConstraints();
+	QMap<QString, designVariable*>& DesignVariables();
+	QMap<int, reactionForceType>& ReactionMap();
+	//QMap<QString, pointFollower*>& PointFollowers();
+
+	modelType ModelType();
 
 	virtual void init() = 0;
+//	virtual unsigned int kinematicAnalysis() = 0;
 
-private:
+protected:
+	modelType mtype;
+	bool isEmptyEnableDesignVariable;
+	bool isSatisfyCamAngle;
+	unsigned int nCoordinates;
 	QString modelName;
+	QString modelPath;
 	int _isHasGroundModel;
-	QVector<hardPoint*> hardPoints;
-	QVector<rigidBody*> bodies;
-	QVector<constraint*> cons;
-	QVector<drivingConstraint*> drivings;
-// 	QList<QStandardItem*> bodyResultItems;
-// 	QList<QStandardItem*> forceResultItems;
-// 	QList<QStandardItem*> jointResultItems;
+	bool cam_angle_enable;
+	double cam_angle_lower;
+	double cam_angle_upper;
+	double noSatisfiedCamAngle;
 
+	QList<QString> hpList;
+	QList<QString> bodyList;
+	QList<QString> constList;
+	QMap<QString, hardPoint*> hardPoints;
+	QMap<QString, rigidBody*> bodies;
+	QMap<QString, constraint*> cons;
+	QMap<QString, designVariable*> designs;
+	pointFollower* pfollower;
+	QMap<QString, drivingConstraint*> drivings;
+	QMap<int, reactionForceType> reactionMap;
 };
 #endif

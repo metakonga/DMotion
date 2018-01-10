@@ -22,5 +22,11 @@
         <file>Resources/ani_play.png</file>
         <file>Resources/ani_previous.png</file>
         <file>Resources/material.png</file>
+        <file>Resources/ani_init.png</file>
+        <file>Resources/open.png</file>
+        <file>Resources/save.png</file>
+        <file>Resources/solve.png</file>
+        <file>Resources/caseSave.png</file>
+        <file>Resources/hole_type.png</file>
     </qresource>
 </RCC>

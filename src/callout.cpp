@@ -57,7 +57,7 @@ void Callout::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, Q
 		Q_UNUSED(widget)
 		QPainterPath path;
 	path.addRoundedRect(m_rect, 5, 5);
-
+	
 	QPointF anchor = mapFromParent(m_chart->mapToPosition(m_anchor));
 	if (!m_rect.contains(anchor)) {
 		QPointF point1, point2;

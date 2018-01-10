@@ -17,6 +17,11 @@ commandWindow::~commandWindow()
 
 }
 
+void commandWindow::clear()
+{
+	e->clear();
+}
+
 void commandWindow::write(QString str)
 {
 	e->appendPlainText(str);
@@ -24,5 +29,5 @@ void commandWindow::write(QString str)
 
 void commandWindow::printLine()
 {
-	e->appendPlainText("------------------------------------------------------------------");
+	e->appendPlainText("-------------------------------------------------------------------------------------------------------");
 }

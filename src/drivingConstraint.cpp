@@ -17,16 +17,34 @@ drivingConstraint::drivingConstraint(QString _name)
 	constraint::nnz = 1;
 	constraint::nTotalNNZ += constraint::nnz;
 	jrforce = new double;
+	memset(jrforce, 0, sizeof(double) * constraint::nrow);
 }
 
 drivingConstraint::~drivingConstraint()
 {
-
+	velProfile.clear();
+	dvelProfile.clear();
+	ddvelProfile.clear();
 }
 
 void drivingConstraint::runFunction(double ct)
 {
 
+}
+
+double drivingConstraint::MaxVelocityTime()
+{
+	return maxTime;
+}
+
+double drivingConstraint::MaxVelocity()
+{
+	return maxAbsVel;
+}
+
+QString drivingConstraint::FilePath()
+{
+	return file;
 }
 
 void drivingConstraint::setConstantVelocity(double _c_vel)
@@ -61,9 +79,25 @@ void drivingConstraint::bindTime(double _dt, double* _ct, unsigned int* _cs)
 	cs = _cs;
 }
 
+QVector<double>& drivingConstraint::VelocityProfile()
+{
+	return velProfile;
+}
+
 double drivingConstraint::ConstantVelocity()
 {
 	return c_vel;
+}
+
+void drivingConstraint::initializeDrivingPosition()
+{
+	vecd3 pos = targetBody->Position();
+	switch (ctype)
+	{
+	case AXIS_X: p_pos = pos.X(); break;
+	case AXIS_Y: p_pos = pos.Y(); break;
+	case AXIS_Z: p_pos = pos.Z(); break;
+	}
 }
 
 void drivingConstraint::setPreviousPosition()
@@ -71,10 +105,14 @@ void drivingConstraint::setPreviousPosition()
 	p_pos = (*gp);
 }
 
-void drivingConstraint::constraintEquation(VECD &q, VECD &rhs, unsigned int i, double mul)
+int drivingConstraint::constraintEquation(VECD &q, VECD &rhs, unsigned int i, double mul)
 {
 	if (velProfile.size())
 	{
+		if ((*cs) == velProfile.size())
+		{
+			return -1;
+		}
 		double pv = (*cs) == 0 ? 0 : velProfile.at((*cs) - 1);
 		double cv = velProfile.at((*cs));
 		rhs(i) = (*gp) - p_pos - 0.5 * (pv + cv) * dt;
@@ -82,9 +120,10 @@ void drivingConstraint::constraintEquation(VECD &q, VECD &rhs, unsigned int i, d
 	}
 	else
 		rhs(i) = (*gp) - pos_0 - c_vel * (*ct);
+	return 0;
 }
 
-void drivingConstraint::constraintJacobian(VECD &q, VECD &qd, SMATD &lhs, unsigned int r)
+void drivingConstraint::constraintJacobian(VECD &q, VECD &qd, SMATD &lhs, unsigned int r, bool isjp)
 {
 	unsigned int c1 = targetBody->ID() * 3;
 	if (c1)
@@ -96,7 +135,7 @@ void drivingConstraint::constraintJacobian(VECD &q, VECD &qd, SMATD &lhs, unsign
 
 void drivingConstraint::derivative(VECD &q, VECD &qd, VECD &rhs, unsigned int i)
 {
-	rhs(i) = 0.0;
+	rhs(i) = dvelProfile.at(*cs);
 }
 
 void drivingConstraint::lagrangianJacobian(VECD &q, MATD &lhs, unsigned int i, double lm0, double lm1, double mul)
@@ -104,16 +143,54 @@ void drivingConstraint::lagrangianJacobian(VECD &q, MATD &lhs, unsigned int i, d
 
 }
 
-void drivingConstraint::setVelocityProfile(QString _path)
+bool drivingConstraint::setVelocityProfile(QString _path)
 {
 	QFile qf(_path);
 	qf.open(QIODevice::ReadOnly);
+	if (!qf.isOpen())
+		return false;
 	QTextStream qts(&qf);
 	double v = 0;
+	double t = 0;
+	maxAbsVel = 0;
+	maxTime = 0;
+	if (velProfile.size())
+		velProfile.clear();
+
 	while (!qts.atEnd())
 	{
-		qts >> v;
-		velProfile.push_back(v);
+		qts >> t >> v;
+		if (abs(v) > maxAbsVel)
+		{
+			maxTime = t;
+			maxAbsVel = abs(v);
+		}			
+		velProfile.append(v);
+		//t += 0.00001;
 	}
-	qf.close();
+	if (dvelProfile.size())
+		dvelProfile.clear();
+	if (ddvelProfile.size())
+		ddvelProfile.clear();
+	dvelProfile.push_back(0);
+	ddvelProfile.push_back(0);
+	for (unsigned int i = 1; i < velProfile.size() - 1; i++)
+	{
+		double pv = velProfile.at(i - 1);
+		double nv = velProfile.at(i + 1);
+		double cv = 0.5 * (nv - pv) / 0.00001;
+		dvelProfile.push_back(cv);
+	}
+	dvelProfile.push_back(0);
+	for (unsigned int i = 1; i < velProfile.size() - 1; i++)
+	{
+		double pv = dvelProfile.at(i - 1);
+		double nv = dvelProfile.at(i + 1);
+		double cv = 0.5 * (nv - pv) / 0.00001;
+		ddvelProfile.push_back(cv);
+	}
+	ddvelProfile.push_back(0);
+ 	qf.close();
+	file = _path;
+	return true;
 }

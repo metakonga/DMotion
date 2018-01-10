@@ -3,12 +3,14 @@
 translateJoint::translateJoint(QString _name)
 	: constraint(_name, TRANSLATION)
 	, dangle(0)
+	, _onRotConst(true)
 {
 	constraint::nDimension += 2;
 	constraint::nrow = 2;
 	constraint::nnz = 8;
 	constraint::nTotalNNZ += constraint::nnz;
 	jrforce = new double[constraint::nrow];
+	memset(jrforce, 0, sizeof(double) * constraint::nrow);
 }
 
 translateJoint::~translateJoint()
@@ -16,28 +18,46 @@ translateJoint::~translateJoint()
 
 }
 
-void translateJoint::setBaseMarker(vecd3 q, vecd3 r)
-{
-	baseMarker.s = math::global2local(ib->TM(), pos - ib->Position());
-	baseMarker.actionAxis = math::cross(q, r);
-}
-
-void translateJoint::setActionMarker(vecd3 q, vecd3 r)
-{
-	actionMarker.s = math::global2local(jb->TM(), pos - jb->Position());
-	actionMarker.actionAxis = math::cross(q, r);
-}
+// void translateJoint::setBaseMarker(vecd3 q, vecd3 r)
+// {
+// 	baseMarker.s = math::global2local(ib->TM(), pos - ib->Position());
+// 	baseMarker.actionAxis = math::cross(q, r);
+// }
+// 
+// void translateJoint::setActionMarker(vecd3 q, vecd3 r)
+// {
+// 	actionMarker.s = math::global2local(jb->TM(), pos - jb->Position());
+// 	actionMarker.actionAxis = math::cross(q, r);
+// }
 
 void translateJoint::defineAngleConstraint()
 {
 	dangle = ib->Angle() - jb->Angle();
 }
 
-void translateJoint::constraintEquation(VECD &q, VECD &rhs, unsigned int i, double mul)
+void translateJoint::setIgnoreRotationConstraint(bool b)
+{
+	if (b == false)
+	{
+		constraint::nDimension -= 1;
+		constraint::nrow -= 1;
+	}
+		
+	_onRotConst = b;
+}
+
+bool translateJoint::IgnoreRotationConstraint()
+{
+	return _onRotConst;
+}
+
+int translateJoint::constraintEquation(VECD &q, VECD &rhs, unsigned int i, double mul)
 {
 	//setSinCos(ib->Angle(), jb->Angle());
-	unsigned int ci = ib->ID() * 3;
-	unsigned int cj = jb->ID() * 3;
+//	unsigned int ci = ib->ID() == 4 ? ib->ID() * 3 + 1 : ib->ID() * 3;
+//	unsigned int cj = jb->ID() == 4 ? jb->ID() * 3 + 1 : jb->ID() * 3;
+ 	unsigned int ci = ib->ID() * 3;
+ 	unsigned int cj = jb->ID() * 3;
 	double thi = q(ci + 2);
 	double thj = q(cj + 2);
 	transformationMatrix Ai = TM(thi);
@@ -45,8 +65,8 @@ void translateJoint::constraintEquation(VECD &q, VECD &rhs, unsigned int i, doub
 	vecd3 hi = math::local2global(Ai, baseMarker.actionAxis);
 // 	double hix = Ai[0] * baseMarker.actionAxis.X() + Ai[1] * baseMarker.actionAxis.Y();
 // 	double hiy = Ai[2] * baseMarker.actionAxis.X() + Ai[3] * baseMarker.actionAxis.Y();
-	vecd3 pi = ib->Position();
-	vecd3 pj = jb->Position();
+	vecd3 pi = vecd3(q(ci + 0), q(ci + 1), 0.0);// ib->Position();
+	vecd3 pj = vecd3(q(cj + 0), q(cj + 1), 0.0);//jb->Position();
 	vecd3 rij
 		= pi
 		+ math::local2global(Ai, baseMarker.s)
@@ -54,23 +74,26 @@ void translateJoint::constraintEquation(VECD &q, VECD &rhs, unsigned int i, doub
 		- math::local2global(Aj, actionMarker.s);
 	rhs(i) = mul * (thi - thj - dangle);
 	rhs(i + 1) = mul * math::dot(hi, rij);// hix * rij.X() + hiy * rij.Y();
+	return 0;
 }
 
-void translateJoint::constraintJacobian(VECD &q, VECD &qd, SMATD &lhs, unsigned int i)
+void translateJoint::constraintJacobian(VECD &q, VECD &qd, SMATD &lhs, unsigned int i, bool isjp)
 {	
-	unsigned int ci = ib->ID() * 3;
-	unsigned int cj = jb->ID() * 3;
+// 	unsigned int ci = ib->ID() == 4 ? ib->ID() * 3 + 1 : ib->ID() * 3;
+// 	unsigned int cj = jb->ID() == 4 ? jb->ID() * 3 + 1 : jb->ID() * 3;
+ 	unsigned int ci = ib->ID() * 3;
+ 	unsigned int cj = jb->ID() * 3;
 	double thi = q(ci + 2);
 	double thj = q(cj + 2);
 	//setSinCos(thi, thj);
 	transformationMatrix Ai = TM(thi);
 	transformationMatrix Aj = TM(thj);
 	/*setSinCos(qd(ci + 2), qd(cj + 2));*/
-	transformationMatrix dAi = derivateTM(qd(ci + 2));
-	transformationMatrix dAj = derivateTM(qd(cj + 2));
+	transformationMatrix dAi = derivateTM(q(ci + 2));
+	transformationMatrix dAj = derivateTM(q(cj + 2));
 	
-	vecd3 pi(q(ci), q(ci + 1), q(ci + 2));
-	vecd3 pj(q(cj), q(cj + 1), q(cj + 2));
+	vecd3 pi(q(ci), q(ci + 1), 0.0);
+	vecd3 pj(q(cj), q(cj + 1), 0.0);
 	vecd3 hi = math::local2global(Ai, baseMarker.actionAxis);
 	vecd3 rij
 		= pi
@@ -83,25 +106,28 @@ void translateJoint::constraintJacobian(VECD &q, VECD &qd, SMATD &lhs, unsigned 
 		lhs(i, ci + 2) = 1;
 		lhs(i + 1, ci) = hi.X();
 		lhs(i + 1, ci + 1) = hi.Y();
-		lhs(i + 1, ci + 2)
-			= math::dot(rij, math::local2global(dAi, baseMarker.actionAxis))
-			+ math::dot(hi, math::local2global(dAi, baseMarker.s));
+		lhs(i + 1, ci + 2) = math::dot(hi, math::local2global(dAi, baseMarker.s));
 	}
 	if (cj)
 	{
+		unsigned int aid = 0;
+// 		if (isjp && name == "4_ground_passive_tra")
+// 			aid = 1;
 		cj -= 3;
-		lhs(i, cj + 2) = -1;
-		lhs(i + 1, cj) = -hi.X();
-		lhs(i + 1, cj + 1) = -hi.Y();
-		lhs(i + 1, cj + 2) = -math::dot(hi, math::local2global(dAj, actionMarker.s));
+		lhs(i, cj + 2 + aid) = -1;
+		lhs(i + 1, cj + aid) = -hi.X();
+		lhs(i + 1, cj + 1 + aid) = -hi.Y();
+		lhs(i + 1, cj + 2 + aid) = -math::dot(hi, math::local2global(dAj, actionMarker.s));
 	}
 	
 }
 
 void translateJoint::derivative(VECD &q, VECD &qd, VECD &rhs, unsigned int i)
 {
-	unsigned int ci = ib->ID() * 3;
-	unsigned int cj = jb->ID() * 3;
+// 	unsigned int ci = ib->ID() == 4 ? ib->ID() * 3 + 1 : ib->ID() * 3;
+//	unsigned int cj = jb->ID() == 4 ? jb->ID() * 3 + 1 : jb->ID() * 3;
+ 	unsigned int ci = ib->ID() * 3;
+ 	unsigned int cj = jb->ID() * 3;
 	double wi = qd(ci + 2);
 	double wj = qd(cj + 2);
 	//setSinCos(q(ci + 2), q(cj + 2));
@@ -110,10 +136,10 @@ void translateJoint::derivative(VECD &q, VECD &qd, VECD &rhs, unsigned int i)
 	//setSinCos(wi, wj);
 	transformationMatrix dAi = derivateTM(q(ci + 2));
 	transformationMatrix dAj = derivateTM(q(cj + 2));
-	vecd3 pi(q(ci), q(ci + 1), q(ci + 2));
-	vecd3 pj(q(cj), q(cj + 1), q(cj + 2));
-	vecd3 vi(qd(ci), qd(ci + 1), qd(ci + 2));
-	vecd3 vj(qd(cj), qd(cj + 1), qd(cj + 2));
+	vecd3 pi(q(ci), q(ci + 1), 0.0);
+	vecd3 pj(q(cj), q(cj + 1), 0.0);
+	vecd3 vi(qd(ci), qd(ci + 1), 0.0);
+	vecd3 vj(qd(cj), qd(cj + 1), 0.0);
 	vecd3 _hi = baseMarker.actionAxis;
 	vecd3 hi = math::local2global(Ai, _hi);
 	vecd3 _upi = baseMarker.s;
@@ -131,14 +157,21 @@ void translateJoint::derivative(VECD &q, VECD &qd, VECD &rhs, unsigned int i)
 		- wi * wi * (math::dot(_upi, _hi) - math::dot(rij, hi) - math::dot(upi, hi))
 		+ 2.0 * wi * wj * math::dot(math::local2global(dAi, _hi), math::local2global(dAj, _upj))
 		- wj * wj * math::dot(hi, upj);
-	rhs(i) = Qd1;
-	rhs(i + 1) = Qd2;
+	if (!_onRotConst)
+	{
+		rhs(i) = Qd2;
+	}
+	else
+	{
+		rhs(i) = Qd1;
+		rhs(i + 1) = Qd2;
+	}
 } 
 
 void translateJoint::lagrangianJacobian(VECD &q, MATD &lhs, unsigned int i, double lm0, double lm1 /* = 0 */, double mul)
 {
-	unsigned int ci = ib->ID() * 3;
-	unsigned int cj = jb->ID() * 3;
+	unsigned int ci = ib->ID() == 4 ? ib->ID() * 3 + 1 : ib->ID() * 3;
+	unsigned int cj = jb->ID() == 4 ? jb->ID() * 3 + 1 : jb->ID() * 3;
 	double thi = q(ci + 2);
 	double thj = q(cj + 2);
 	transformationMatrix Ai = TM(thi);

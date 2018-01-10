@@ -3,6 +3,7 @@
 
 #include <QVector>
 #include <QLineSeries>
+#include <QScatterSeries>
 
 QT_CHARTS_USE_NAMESPACE
 
@@ -18,10 +19,16 @@ public:
 	void setData2LineSeries(QLineSeries* series);
 	void calculate_curve_auto(QLineSeries* series, int sid, bool _base = false);
 	void calculate_curve_auto(QLineSeries* series, int sid, int eid);
+	void calculate_curve_auto(QVector<QPointF>& data);
+	void calculate_curve(QScatterSeries* pseries, QList<QPointF>& rdata, double h);
 	QVector<double>* xSource() { return &x_src; }
 	QVector<double>* ySource() { return &y_src; }
 	void update_curve(int idx, QPointF& new_p, QLineSeries* series);
 	double limitation() { return limit; }
+	double getInterpValue(unsigned int id, double rx);
+	double getInterpValue(double rx);
+	double calculate_derivative(double x);
+	double calculate_dderivative(double x);
 
 private:
 	double h00(double t)

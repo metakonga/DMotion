@@ -8,16 +8,41 @@ rigidBody::rigidBody(QString _name)
 	, inertia(0)
 	, ang(0)
 	, angv(0)
+	, anga(0)
 	, _isGround(false)
 {
 	setTM();
 	setDerivateTM();
 	id = count++;
+	shapePath = "None";
 }
 
 rigidBody::~rigidBody()
 {
 
+}
+
+void rigidBody::setCoordinateNumber(unsigned int nc)
+{
+	nCoordinates = nc;
+}
+
+void rigidBody::setPosition0()
+{
+	pos0 = pos;
+}
+
+void rigidBody::initializeBody()
+{
+	pos = pos0;
+	vel = vecd3(0.0, 0.0, 0.0);
+	acc = vecd3(0.0, 0.0, 0.0);
+	ang = 0.0;
+	angv = 0.0;
+	anga = 0.0;
+	setTM();
+	setDerivateTM();
+	clearResultData();
 }
 
 void rigidBody::setName(QString _name)
@@ -45,6 +70,11 @@ void rigidBody::setVelocity(double x, double y, double z)
 	vel = vecd3(x, y, z);
 }
 
+void rigidBody::setAcceleration(double x, double y, double z)
+{
+	acc = vecd3(x, y, z);
+}
+
 void rigidBody::setAngle(double v)
 {
 	ang = v;
@@ -56,6 +86,25 @@ void rigidBody::setAngularVelocity(double v)
 {
 	angv = v;
 }
+
+void rigidBody::setAngularAcceleration(double v)
+{
+	anga = v;
+}
+
+unsigned int rigidBody::NCoordinates()
+{
+	return nCoordinates;
+}
+
+resultDataType rigidBody::getResult(unsigned int s)
+{
+	return results.at(s);
+}
+// double rigidBody::getVariableFromResult(unsigned int step, coordinates coo)
+// {
+// 	
+// }
 
 QString rigidBody::Name()
 {
@@ -77,9 +126,19 @@ vecd3 rigidBody::Position()
 	return pos;
 }
 
+vecd3 rigidBody::Position0()
+{
+	return pos0;
+}
+
 vecd3 rigidBody::Velocity()
 {
 	return vel;
+}
+
+vecd3 rigidBody::Acceleration()
+{
+	return acc;
 }
 
 double rigidBody::Angle()
@@ -90,6 +149,11 @@ double rigidBody::Angle()
 double rigidBody::AngularVelocity()
 {
 	return angv;
+}
+
+double rigidBody::AngularAcceleration()
+{
+	return anga;
 }
 
 void rigidBody::setTM()
@@ -153,6 +217,16 @@ QVector<resultDataType>* rigidBody::ResultData()
 void rigidBody::setShapePath(QString _path)
 {
 	shapePath = _path;
+}
+
+void rigidBody::setAnalysis(bool _b)
+{
+	_isAnalysis = _b;
+}
+
+bool rigidBody::IsAnalysis()
+{
+	return _isAnalysis;
 }
 
 QString rigidBody::ShapePath()
