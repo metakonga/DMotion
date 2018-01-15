@@ -1,23 +1,25 @@
 /********************************************************************************
-** Form generated from reading UI file 'dmotionf37264.ui'
+** Form generated from reading UI file 'dmotionqn6392.ui'
 **
-** Created by: Qt User Interface Compiler version 5.7.0
+** Created by: Qt User Interface Compiler version 5.7.1
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
 
-#ifndef DMOTIONF37264_H
-#define DMOTIONF37264_H
+#ifndef DMOTIONQN6392_H
+#define DMOTIONQN6392_H
 
 #include <QtCore/QVariant>
 #include <QtWidgets/QAction>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QButtonGroup>
+#include <QtWidgets/QCheckBox>
 #include <QtWidgets/QComboBox>
 #include <QtWidgets/QDockWidget>
 #include <QtWidgets/QFrame>
 #include <QtWidgets/QGridLayout>
 #include <QtWidgets/QGroupBox>
+#include <QtWidgets/QHBoxLayout>
 #include <QtWidgets/QHeaderView>
 #include <QtWidgets/QLabel>
 #include <QtWidgets/QLineEdit>
@@ -72,6 +74,14 @@ public:
     QVBoxLayout *verticalLayout;
     QRadioButton *RB_OnlyOne;
     QRadioButton *RB_SmallerThanFirst;
+    QGroupBox *groupBox;
+    QWidget *widget;
+    QHBoxLayout *horizontalLayout;
+    QCheckBox *CB_SPACE;
+    QLabel *L_Space_Width;
+    QLineEdit *LE_Space_Width;
+    QLabel *L_Space_Height;
+    QLineEdit *LE_Space_Height;
     QWidget *tab_2;
     QGroupBox *GB_HardPoint;
     QLabel *label;
@@ -110,7 +120,7 @@ public:
     {
         if (DMotionClass->objectName().isEmpty())
             DMotionClass->setObjectName(QStringLiteral("DMotionClass"));
-        DMotionClass->resize(1318, 615);
+        DMotionClass->resize(1321, 615);
         Edit_VelocityProfile = new QAction(DMotionClass);
         Edit_VelocityProfile->setObjectName(QStringLiteral("Edit_VelocityProfile"));
         File_New = new QAction(DMotionClass);
@@ -142,7 +152,7 @@ public:
         DMotionClass->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(DMotionClass);
         menuBar->setObjectName(QStringLiteral("menuBar"));
-        menuBar->setGeometry(QRect(0, 0, 1318, 21));
+        menuBar->setGeometry(QRect(0, 0, 1321, 21));
         menuHome = new QMenu(menuBar);
         menuHome->setObjectName(QStringLiteral("menuHome"));
         menuFile = new QMenu(menuBar);
@@ -164,6 +174,7 @@ public:
         DMotionClass->setStatusBar(statusBar);
         DW_Modeling = new QDockWidget(DMotionClass);
         DW_Modeling->setObjectName(QStringLiteral("DW_Modeling"));
+        DW_Modeling->setFeatures(QDockWidget::AllDockWidgetFeatures);
         DW_Modeling->setAllowedAreas(Qt::RightDockWidgetArea);
         dockWidgetContents = new QWidget();
         dockWidgetContents->setObjectName(QStringLiteral("dockWidgetContents"));
@@ -178,7 +189,7 @@ public:
         DesignTab->setObjectName(QStringLiteral("DesignTab"));
         DesignTabFrame = new QFrame(DesignTab);
         DesignTabFrame->setObjectName(QStringLiteral("DesignTabFrame"));
-        DesignTabFrame->setGeometry(QRect(-1, 10, 489, 531));
+        DesignTabFrame->setGeometry(QRect(0, 0, 489, 531));
         DesignTabFrame->setFrameShape(QFrame::NoFrame);
         DesignTabFrame->setFrameShadow(QFrame::Raised);
         DesignTabFrame->setLineWidth(0);
@@ -206,6 +217,44 @@ public:
         RB_SmallerThanFirst->setObjectName(QStringLiteral("RB_SmallerThanFirst"));
 
         verticalLayout->addWidget(RB_SmallerThanFirst);
+
+        groupBox = new QGroupBox(DesignTabFrame);
+        groupBox->setObjectName(QStringLiteral("groupBox"));
+        groupBox->setGeometry(QRect(2, 77, 481, 51));
+        groupBox->setCheckable(false);
+        widget = new QWidget(groupBox);
+        widget->setObjectName(QStringLiteral("widget"));
+        widget->setGeometry(QRect(10, 20, 461, 22));
+        horizontalLayout = new QHBoxLayout(widget);
+        horizontalLayout->setSpacing(6);
+        horizontalLayout->setContentsMargins(11, 11, 11, 11);
+        horizontalLayout->setObjectName(QStringLiteral("horizontalLayout"));
+        horizontalLayout->setContentsMargins(0, 0, 0, 0);
+        CB_SPACE = new QCheckBox(widget);
+        CB_SPACE->setObjectName(QStringLiteral("CB_SPACE"));
+        CB_SPACE->setChecked(true);
+
+        horizontalLayout->addWidget(CB_SPACE);
+
+        L_Space_Width = new QLabel(widget);
+        L_Space_Width->setObjectName(QStringLiteral("L_Space_Width"));
+
+        horizontalLayout->addWidget(L_Space_Width);
+
+        LE_Space_Width = new QLineEdit(widget);
+        LE_Space_Width->setObjectName(QStringLiteral("LE_Space_Width"));
+
+        horizontalLayout->addWidget(LE_Space_Width);
+
+        L_Space_Height = new QLabel(widget);
+        L_Space_Height->setObjectName(QStringLiteral("L_Space_Height"));
+
+        horizontalLayout->addWidget(L_Space_Height);
+
+        LE_Space_Height = new QLineEdit(widget);
+        LE_Space_Height->setObjectName(QStringLiteral("LE_Space_Height"));
+
+        horizontalLayout->addWidget(LE_Space_Height);
 
         TAB_MODELING->addTab(DesignTab, QString());
         tab_2 = new QWidget();
@@ -273,13 +322,15 @@ public:
         Nozzle_Graph_Frame = new QFrame(GB_DrivingCondition);
         Nozzle_Graph_Frame->setObjectName(QStringLiteral("Nozzle_Graph_Frame"));
         Nozzle_Graph_Frame->setGeometry(QRect(10, 15, 120, 45));
-        Nozzle_Graph_Frame->setFrameShape(QFrame::StyledPanel);
-        Nozzle_Graph_Frame->setFrameShadow(QFrame::Raised);
+        Nozzle_Graph_Frame->setFrameShape(QFrame::NoFrame);
+        Nozzle_Graph_Frame->setFrameShadow(QFrame::Sunken);
+        Nozzle_Graph_Frame->setLineWidth(0);
         Arc_Graph_Frame = new QFrame(GB_DrivingCondition);
         Arc_Graph_Frame->setObjectName(QStringLiteral("Arc_Graph_Frame"));
         Arc_Graph_Frame->setGeometry(QRect(10, 61, 120, 45));
-        Arc_Graph_Frame->setFrameShape(QFrame::StyledPanel);
-        Arc_Graph_Frame->setFrameShadow(QFrame::Raised);
+        Arc_Graph_Frame->setFrameShape(QFrame::NoFrame);
+        Arc_Graph_Frame->setFrameShadow(QFrame::Sunken);
+        Arc_Graph_Frame->setLineWidth(0);
         GB_BodyInformation = new QGroupBox(tab_2);
         GB_BodyInformation->setObjectName(QStringLiteral("GB_BodyInformation"));
         GB_BodyInformation->setGeometry(QRect(12, 10, 261, 221));
@@ -403,50 +454,54 @@ public:
 
     void retranslateUi(QMainWindow *DMotionClass)
     {
-        DMotionClass->setWindowTitle(QApplication::translate("DMotionClass", "DMotion", 0));
-        Edit_VelocityProfile->setText(QApplication::translate("DMotionClass", "Velocity profile", 0));
-        File_New->setText(QApplication::translate("DMotionClass", "New", 0));
-        File_Open->setText(QApplication::translate("DMotionClass", "Open", 0));
-        File_Save->setText(QApplication::translate("DMotionClass", "Save", 0));
-        actionAbout_DMotion->setText(QApplication::translate("DMotionClass", "About DMotion", 0));
-        actionExit->setText(QApplication::translate("DMotionClass", "Exit", 0));
-        File_Import_STEP->setText(QApplication::translate("DMotionClass", "STEP", 0));
-        File_Import_IGES->setText(QApplication::translate("DMotionClass", "IGES", 0));
-        File_Import_2->setText(QApplication::translate("DMotionClass", "Import", 0));
-        File_Import->setText(QApplication::translate("DMotionClass", "Import", 0));
-        Analysis_dynamic->setText(QApplication::translate("DMotionClass", "Dynamic", 0));
-        Tool_Graph->setText(QApplication::translate("DMotionClass", "Graph", 0));
-        actionResult_table->setText(QApplication::translate("DMotionClass", "Result table", 0));
-        menuHome->setTitle(QApplication::translate("DMotionClass", "Home", 0));
-        menuFile->setTitle(QApplication::translate("DMotionClass", "File", 0));
-        menuEdit->setTitle(QApplication::translate("DMotionClass", "Edit", 0));
-        menuHelp->setTitle(QApplication::translate("DMotionClass", "Help", 0));
-        menuAnalysis->setTitle(QApplication::translate("DMotionClass", "Analysis", 0));
-        menuTool->setTitle(QApplication::translate("DMotionClass", "Tool", 0));
-        groupBox_5->setTitle(QApplication::translate("DMotionClass", "Optimum condition", 0));
+        DMotionClass->setWindowTitle(QApplication::translate("DMotionClass", "DMotion", Q_NULLPTR));
+        Edit_VelocityProfile->setText(QApplication::translate("DMotionClass", "Velocity profile", Q_NULLPTR));
+        File_New->setText(QApplication::translate("DMotionClass", "New", Q_NULLPTR));
+        File_Open->setText(QApplication::translate("DMotionClass", "Open", Q_NULLPTR));
+        File_Save->setText(QApplication::translate("DMotionClass", "Save", Q_NULLPTR));
+        actionAbout_DMotion->setText(QApplication::translate("DMotionClass", "About DMotion", Q_NULLPTR));
+        actionExit->setText(QApplication::translate("DMotionClass", "Exit", Q_NULLPTR));
+        File_Import_STEP->setText(QApplication::translate("DMotionClass", "STEP", Q_NULLPTR));
+        File_Import_IGES->setText(QApplication::translate("DMotionClass", "IGES", Q_NULLPTR));
+        File_Import_2->setText(QApplication::translate("DMotionClass", "Import", Q_NULLPTR));
+        File_Import->setText(QApplication::translate("DMotionClass", "Import", Q_NULLPTR));
+        Analysis_dynamic->setText(QApplication::translate("DMotionClass", "Dynamic", Q_NULLPTR));
+        Tool_Graph->setText(QApplication::translate("DMotionClass", "Graph", Q_NULLPTR));
+        actionResult_table->setText(QApplication::translate("DMotionClass", "Result table", Q_NULLPTR));
+        menuHome->setTitle(QApplication::translate("DMotionClass", "Home", Q_NULLPTR));
+        menuFile->setTitle(QApplication::translate("DMotionClass", "File", Q_NULLPTR));
+        menuEdit->setTitle(QApplication::translate("DMotionClass", "Edit", Q_NULLPTR));
+        menuHelp->setTitle(QApplication::translate("DMotionClass", "Help", Q_NULLPTR));
+        menuAnalysis->setTitle(QApplication::translate("DMotionClass", "Analysis", Q_NULLPTR));
+        menuTool->setTitle(QApplication::translate("DMotionClass", "Tool", Q_NULLPTR));
+        groupBox_5->setTitle(QApplication::translate("DMotionClass", "Optimum condition", Q_NULLPTR));
         PB_SelectParameters->setText(QApplication::translate("DMotionClass", "Select\n"
-" parameters", 0));
-        RB_OnlyOne->setText(QApplication::translate("DMotionClass", "Select only one", 0));
-        RB_SmallerThanFirst->setText(QApplication::translate("DMotionClass", "Select smaller case than first", 0));
-        TAB_MODELING->setTabText(TAB_MODELING->indexOf(DesignTab), QApplication::translate("DMotionClass", "Design", 0));
-        GB_HardPoint->setTitle(QApplication::translate("DMotionClass", "Hard point information", 0));
+" parameters", Q_NULLPTR));
+        RB_OnlyOne->setText(QApplication::translate("DMotionClass", "Select only one", Q_NULLPTR));
+        RB_SmallerThanFirst->setText(QApplication::translate("DMotionClass", "Select smaller case than first", Q_NULLPTR));
+        groupBox->setTitle(QApplication::translate("DMotionClass", "Space constraint", Q_NULLPTR));
+        CB_SPACE->setText(QApplication::translate("DMotionClass", "Space", Q_NULLPTR));
+        L_Space_Width->setText(QApplication::translate("DMotionClass", "Width", Q_NULLPTR));
+        L_Space_Height->setText(QApplication::translate("DMotionClass", "Height", Q_NULLPTR));
+        TAB_MODELING->setTabText(TAB_MODELING->indexOf(DesignTab), QApplication::translate("DMotionClass", "Design", Q_NULLPTR));
+        GB_HardPoint->setTitle(QApplication::translate("DMotionClass", "Hard point information", Q_NULLPTR));
         label->setText(QString());
-        L_HardPoint->setText(QApplication::translate("DMotionClass", "Hard point", 0));
-        L_HardPoint_X->setText(QApplication::translate("DMotionClass", "X", 0));
-        L_HardPoint_Y->setText(QApplication::translate("DMotionClass", "Y", 0));
-        GB_DrivingCondition->setTitle(QApplication::translate("DMotionClass", "Driving condition", 0));
-        PB_ImportNozzelVelocity->setText(QApplication::translate("DMotionClass", "Nozzel", 0));
-        PB_ImportArcVelocity->setText(QApplication::translate("DMotionClass", "Arc", 0));
-        GB_BodyInformation->setTitle(QApplication::translate("DMotionClass", "Body information", 0));
-        L_Body->setText(QApplication::translate("DMotionClass", "Body", 0));
-        L_X->setText(QApplication::translate("DMotionClass", "X", 0));
-        L_Y->setText(QApplication::translate("DMotionClass", "Y", 0));
-        L_Angle->setText(QApplication::translate("DMotionClass", "Angle", 0));
-        L_Mass->setText(QApplication::translate("DMotionClass", "Mass", 0));
-        L_Inertai->setText(QApplication::translate("DMotionClass", "Inertia", 0));
-        L_Shape->setText(QApplication::translate("DMotionClass", "Shape", 0));
-        PB_Shape->setText(QApplication::translate("DMotionClass", "Nozzle shpae", 0));
-        TAB_MODELING->setTabText(TAB_MODELING->indexOf(tab_2), QApplication::translate("DMotionClass", "Modeling", 0));
+        L_HardPoint->setText(QApplication::translate("DMotionClass", "Hard point", Q_NULLPTR));
+        L_HardPoint_X->setText(QApplication::translate("DMotionClass", "X", Q_NULLPTR));
+        L_HardPoint_Y->setText(QApplication::translate("DMotionClass", "Y", Q_NULLPTR));
+        GB_DrivingCondition->setTitle(QApplication::translate("DMotionClass", "Driving condition", Q_NULLPTR));
+        PB_ImportNozzelVelocity->setText(QApplication::translate("DMotionClass", "Nozzel", Q_NULLPTR));
+        PB_ImportArcVelocity->setText(QApplication::translate("DMotionClass", "Arc", Q_NULLPTR));
+        GB_BodyInformation->setTitle(QApplication::translate("DMotionClass", "Body information", Q_NULLPTR));
+        L_Body->setText(QApplication::translate("DMotionClass", "Body", Q_NULLPTR));
+        L_X->setText(QApplication::translate("DMotionClass", "X", Q_NULLPTR));
+        L_Y->setText(QApplication::translate("DMotionClass", "Y", Q_NULLPTR));
+        L_Angle->setText(QApplication::translate("DMotionClass", "Angle", Q_NULLPTR));
+        L_Mass->setText(QApplication::translate("DMotionClass", "Mass", Q_NULLPTR));
+        L_Inertai->setText(QApplication::translate("DMotionClass", "Inertia", Q_NULLPTR));
+        L_Shape->setText(QApplication::translate("DMotionClass", "Shape", Q_NULLPTR));
+        PB_Shape->setText(QApplication::translate("DMotionClass", "Nozzle shpae", Q_NULLPTR));
+        TAB_MODELING->setTabText(TAB_MODELING->indexOf(tab_2), QApplication::translate("DMotionClass", "Modeling", Q_NULLPTR));
     } // retranslateUi
 
 };
@@ -457,4 +512,4 @@ namespace Ui {
 
 QT_END_NAMESPACE
 
-#endif // DMOTIONF37264_H
+#endif // DMOTIONQN6392_H

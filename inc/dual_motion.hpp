@@ -121,11 +121,11 @@ public:
 		drivingConstraint *active_driving = createDrivingConstraint("Nozzle_driving");
  		active_driving->setTargetBody(active, AXIS_X);
 // 		//active_driving->setConstantVelocity(-0.1);
- 		active_driving->setVelocityProfile("C:/DMotion/data/NozzleVelocityProfile.txt");
+ 		active_driving->setVelocityProfile("../data/NozzleVelocityProfile.txt");
 
 		drivingConstraint *passive_driving = createDrivingConstraint("Arc_driving");
 		passive_driving->setTargetBody(passive, AXIS_X);
-		passive_driving->setVelocityProfile("C:/DMotion/data/ArcVelocityProfile.txt");
+		passive_driving->setVelocityProfile("../data/ArcVelocityProfile.txt");
 
 		pointFollower* pf = createPointFollower("Arc-Cam PF");
 		pos = cam_passive->loc;

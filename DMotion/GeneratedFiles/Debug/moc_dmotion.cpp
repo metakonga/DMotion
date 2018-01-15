@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'dmotion.h'
 **
-** Created by: The Qt Meta Object Compiler version 67 (Qt 5.7.0)
+** Created by: The Qt Meta Object Compiler version 67 (Qt 5.7.1)
 **
 ** WARNING! All changes made in this file will be lost!
 *****************************************************************************/
@@ -12,7 +12,7 @@
 #if !defined(Q_MOC_OUTPUT_REVISION)
 #error "The header file 'dmotion.h' doesn't include <QObject>."
 #elif Q_MOC_OUTPUT_REVISION != 67
-#error "This file was generated using the moc from 5.7.0. It"
+#error "This file was generated using the moc from 5.7.1. It"
 #error "cannot be used with the include files from this version of Qt."
 #error "(The moc has changed too much.)"
 #endif
@@ -20,7 +20,7 @@
 QT_BEGIN_MOC_NAMESPACE
 struct qt_meta_stringdata_DMotion_t {
     QByteArrayData data[41];
-    char stringdata0[573];
+    char stringdata0[575];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -66,10 +66,10 @@ QT_MOC_LITERAL(33, 426, 24), // "pushActiveVelocityBotton"
 QT_MOC_LITERAL(34, 451, 25), // "pushPassiveVelocityBotton"
 QT_MOC_LITERAL(35, 477, 20), // "pushSelectParameters"
 QT_MOC_LITERAL(36, 498, 12), // "pushCaseSave"
-QT_MOC_LITERAL(37, 511, 11), // "changeModel"
-QT_MOC_LITERAL(38, 523, 15), // "changeComboBody"
-QT_MOC_LITERAL(39, 539, 20), // "changeComboHardPoint"
-QT_MOC_LITERAL(40, 560, 12) // "editLineEdit"
+QT_MOC_LITERAL(37, 511, 15), // "changeComboBody"
+QT_MOC_LITERAL(38, 527, 20), // "changeComboHardPoint"
+QT_MOC_LITERAL(39, 548, 12), // "editLineEdit"
+QT_MOC_LITERAL(40, 561, 13) // "clickedTabBar"
 
     },
     "DMotion\0onToolAction\0\0onLineEditing\0"
@@ -87,8 +87,8 @@ QT_MOC_LITERAL(40, 560, 12) // "editLineEdit"
     "pushActiveVelocityBotton\0"
     "pushPassiveVelocityBotton\0"
     "pushSelectParameters\0pushCaseSave\0"
-    "changeModel\0changeComboBody\0"
-    "changeComboHardPoint\0editLineEdit"
+    "changeComboBody\0changeComboHardPoint\0"
+    "editLineEdit\0clickedTabBar"
 };
 #undef QT_MOC_LITERAL
 
@@ -98,7 +98,7 @@ static const uint qt_meta_data_DMotion[] = {
        7,       // revision
        0,       // classname
        0,    0, // classinfo
-      39,   14, // methods
+      40,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -106,45 +106,46 @@ static const uint qt_meta_data_DMotion[] = {
        0,       // signalCount
 
  // slots: name, argc, parameters, tag, flags
-       1,    0,  209,    2, 0x0a /* Public */,
-       3,    0,  210,    2, 0x0a /* Public */,
-       4,    0,  211,    2, 0x0a /* Public */,
-       5,    0,  212,    2, 0x0a /* Public */,
-       7,    0,  213,    2, 0x0a /* Public */,
-       8,    0,  214,    2, 0x0a /* Public */,
-       9,    0,  215,    2, 0x0a /* Public */,
-      10,    0,  216,    2, 0x0a /* Public */,
-      11,    0,  217,    2, 0x0a /* Public */,
-      12,    0,  218,    2, 0x0a /* Public */,
-      13,    0,  219,    2, 0x0a /* Public */,
-      14,    0,  220,    2, 0x0a /* Public */,
-      15,    0,  221,    2, 0x0a /* Public */,
-      16,    0,  222,    2, 0x0a /* Public */,
-      17,    0,  223,    2, 0x0a /* Public */,
-      18,    0,  224,    2, 0x0a /* Public */,
-      10,    1,  225,    2, 0x0a /* Public */,
-      19,    0,  228,    2, 0x08 /* Private */,
-      20,    0,  229,    2, 0x08 /* Private */,
-      21,    0,  230,    2, 0x08 /* Private */,
-      22,    1,  231,    2, 0x08 /* Private */,
-      22,    0,  234,    2, 0x28 /* Private | MethodCloned */,
-      24,    0,  235,    2, 0x08 /* Private */,
-      25,    0,  236,    2, 0x08 /* Private */,
-      26,    0,  237,    2, 0x08 /* Private */,
-      27,    2,  238,    2, 0x08 /* Private */,
-      28,    1,  243,    2, 0x08 /* Private */,
-      29,    0,  246,    2, 0x08 /* Private */,
-      30,    0,  247,    2, 0x08 /* Private */,
-      31,    1,  248,    2, 0x08 /* Private */,
-      32,    0,  251,    2, 0x08 /* Private */,
-      33,    0,  252,    2, 0x08 /* Private */,
-      34,    0,  253,    2, 0x08 /* Private */,
-      35,    0,  254,    2, 0x08 /* Private */,
-      36,    0,  255,    2, 0x08 /* Private */,
-      37,    0,  256,    2, 0x08 /* Private */,
-      38,    1,  257,    2, 0x08 /* Private */,
-      39,    1,  260,    2, 0x08 /* Private */,
-      40,    0,  263,    2, 0x08 /* Private */,
+       1,    0,  214,    2, 0x0a /* Public */,
+       3,    0,  215,    2, 0x0a /* Public */,
+       4,    0,  216,    2, 0x0a /* Public */,
+       5,    0,  217,    2, 0x0a /* Public */,
+       7,    0,  218,    2, 0x0a /* Public */,
+       8,    0,  219,    2, 0x0a /* Public */,
+       9,    0,  220,    2, 0x0a /* Public */,
+      10,    0,  221,    2, 0x0a /* Public */,
+      11,    0,  222,    2, 0x0a /* Public */,
+      12,    0,  223,    2, 0x0a /* Public */,
+      13,    0,  224,    2, 0x0a /* Public */,
+      14,    0,  225,    2, 0x0a /* Public */,
+      15,    0,  226,    2, 0x0a /* Public */,
+      16,    0,  227,    2, 0x0a /* Public */,
+      17,    0,  228,    2, 0x0a /* Public */,
+      18,    0,  229,    2, 0x0a /* Public */,
+      10,    1,  230,    2, 0x0a /* Public */,
+      19,    0,  233,    2, 0x08 /* Private */,
+      20,    0,  234,    2, 0x08 /* Private */,
+      21,    0,  235,    2, 0x08 /* Private */,
+      22,    1,  236,    2, 0x08 /* Private */,
+      22,    0,  239,    2, 0x28 /* Private | MethodCloned */,
+      24,    1,  240,    2, 0x08 /* Private */,
+      24,    0,  243,    2, 0x28 /* Private | MethodCloned */,
+      25,    0,  244,    2, 0x08 /* Private */,
+      26,    0,  245,    2, 0x08 /* Private */,
+      27,    2,  246,    2, 0x08 /* Private */,
+      28,    1,  251,    2, 0x08 /* Private */,
+      29,    0,  254,    2, 0x08 /* Private */,
+      30,    0,  255,    2, 0x08 /* Private */,
+      31,    1,  256,    2, 0x08 /* Private */,
+      32,    0,  259,    2, 0x08 /* Private */,
+      33,    0,  260,    2, 0x08 /* Private */,
+      34,    0,  261,    2, 0x08 /* Private */,
+      35,    0,  262,    2, 0x08 /* Private */,
+      36,    0,  263,    2, 0x08 /* Private */,
+      37,    1,  264,    2, 0x08 /* Private */,
+      38,    1,  267,    2, 0x08 /* Private */,
+      39,    0,  270,    2, 0x08 /* Private */,
+      40,    1,  271,    2, 0x08 /* Private */,
 
  // slots: parameters
     QMetaType::Void,
@@ -169,6 +170,7 @@ static const uint qt_meta_data_DMotion[] = {
     QMetaType::Void,
     QMetaType::Void, QMetaType::QString,   23,
     QMetaType::Void,
+    QMetaType::Void, QMetaType::QString,   23,
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
@@ -182,10 +184,10 @@ static const uint qt_meta_data_DMotion[] = {
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
-    QMetaType::Void,
     QMetaType::Void, QMetaType::Int,    2,
     QMetaType::Void, QMetaType::Int,    2,
     QMetaType::Void,
+    QMetaType::Void, QMetaType::Int,    2,
 
        0        // eod
 };
@@ -219,23 +221,24 @@ void DMotion::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, voi
         case 19: _t->file_new(); break;
         case 20: _t->file_open((*reinterpret_cast< QString(*)>(_a[1]))); break;
         case 21: _t->file_open(); break;
-        case 22: _t->file_save(); break;
-        case 23: _t->tool_plot(); break;
-        case 24: _t->analysis(); break;
-        case 25: _t->analysisProcess((*reinterpret_cast< char(*)>(_a[1])),(*reinterpret_cast< QString(*)>(_a[2]))); break;
-        case 26: _t->updateProgressBar((*reinterpret_cast< int(*)>(_a[1]))); break;
-        case 27: _t->quitThread(); break;
-        case 28: _t->updateAnimationFrame(); break;
-        case 29: _t->onSetMaterial((*reinterpret_cast< int(*)>(_a[1]))); break;
-        case 30: _t->openResultTable(); break;
-        case 31: _t->pushActiveVelocityBotton(); break;
-        case 32: _t->pushPassiveVelocityBotton(); break;
-        case 33: _t->pushSelectParameters(); break;
-        case 34: _t->pushCaseSave(); break;
-        case 35: _t->changeModel(); break;
+        case 22: _t->file_save((*reinterpret_cast< QString(*)>(_a[1]))); break;
+        case 23: _t->file_save(); break;
+        case 24: _t->tool_plot(); break;
+        case 25: _t->analysis(); break;
+        case 26: _t->analysisProcess((*reinterpret_cast< char(*)>(_a[1])),(*reinterpret_cast< QString(*)>(_a[2]))); break;
+        case 27: _t->updateProgressBar((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 28: _t->quitThread(); break;
+        case 29: _t->updateAnimationFrame(); break;
+        case 30: _t->onSetMaterial((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 31: _t->openResultTable(); break;
+        case 32: _t->pushActiveVelocityBotton(); break;
+        case 33: _t->pushPassiveVelocityBotton(); break;
+        case 34: _t->pushSelectParameters(); break;
+        case 35: _t->pushCaseSave(); break;
         case 36: _t->changeComboBody((*reinterpret_cast< int(*)>(_a[1]))); break;
         case 37: _t->changeComboHardPoint((*reinterpret_cast< int(*)>(_a[1]))); break;
         case 38: _t->editLineEdit(); break;
+        case 39: _t->clickedTabBar((*reinterpret_cast< int(*)>(_a[1]))); break;
         default: ;
         }
     }
@@ -266,13 +269,13 @@ int DMotion::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 39)
+        if (_id < 40)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 39;
+        _id -= 40;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 39)
+        if (_id < 40)
             *reinterpret_cast<int*>(_a[0]) = -1;
-        _id -= 39;
+        _id -= 40;
     }
     return _id;
 }

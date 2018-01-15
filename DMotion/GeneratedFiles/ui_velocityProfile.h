@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'velocityProfile.ui'
 **
-** Created by: Qt User Interface Compiler version 5.7.0
+** Created by: Qt User Interface Compiler version 5.7.1
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
@@ -228,16 +228,16 @@ public:
 
     void retranslateUi(QDialog *VP_Dialog)
     {
-        VP_Dialog->setWindowTitle(QApplication::translate("VP_Dialog", "Velocity profile", 0));
-        GB_ProfileDisplay->setTitle(QApplication::translate("VP_Dialog", "Profile Display", 0));
-        RB_Stroke->setText(QApplication::translate("VP_Dialog", "Stroke", 0));
-        RB_Velocity->setText(QApplication::translate("VP_Dialog", "Velocity", 0));
-        RB_Acceleration->setText(QApplication::translate("VP_Dialog", "Acceleration", 0));
-        GB_ResultDisplay->setTitle(QApplication::translate("VP_Dialog", "Result Display", 0));
-        RB_RelativeVelocity->setText(QApplication::translate("VP_Dialog", "Relative velocity", 0));
-        RB_VelocityRatio->setText(QApplication::translate("VP_Dialog", "Velocity ratio", 0));
-        PB_Import->setText(QApplication::translate("VP_Dialog", "Import", 0));
-        PB_Export->setText(QApplication::translate("VP_Dialog", "Export", 0));
+        VP_Dialog->setWindowTitle(QApplication::translate("VP_Dialog", "Velocity profile", Q_NULLPTR));
+        GB_ProfileDisplay->setTitle(QApplication::translate("VP_Dialog", "Profile Display", Q_NULLPTR));
+        RB_Stroke->setText(QApplication::translate("VP_Dialog", "Stroke", Q_NULLPTR));
+        RB_Velocity->setText(QApplication::translate("VP_Dialog", "Velocity", Q_NULLPTR));
+        RB_Acceleration->setText(QApplication::translate("VP_Dialog", "Acceleration", Q_NULLPTR));
+        GB_ResultDisplay->setTitle(QApplication::translate("VP_Dialog", "Result Display", Q_NULLPTR));
+        RB_RelativeVelocity->setText(QApplication::translate("VP_Dialog", "Relative velocity", Q_NULLPTR));
+        RB_VelocityRatio->setText(QApplication::translate("VP_Dialog", "Velocity ratio", Q_NULLPTR));
+        PB_Import->setText(QApplication::translate("VP_Dialog", "Import", Q_NULLPTR));
+        PB_Export->setText(QApplication::translate("VP_Dialog", "Export", Q_NULLPTR));
     } // retranslateUi
 
 };

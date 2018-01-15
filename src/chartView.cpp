@@ -130,8 +130,11 @@ void chartView::resizeEvent(QResizeEvent *event)
 void chartView::addSeries(QLineSeries *_series)
 {
 	m_chart->addSeries(_series);
-	connect(_series, SIGNAL(clicked(QPointF)), this, SLOT(keepCallout()));
-	connect(_series, SIGNAL(hovered(QPointF, bool)), this, SLOT(tooltip(QPointF, bool)));
+	if (cmode == REALTIME_EDIT_CHART)
+	{
+		connect(_series, SIGNAL(clicked(QPointF)), this, SLOT(keepCallout()));
+		connect(_series, SIGNAL(hovered(QPointF, bool)), this, SLOT(tooltip(QPointF, bool)));
+	}
 	m_chart->setAxisX(ax, _series);
 	m_chart->setAxisY(ay, _series);
 }

@@ -15,6 +15,7 @@
 #include "newDialog.h"
 
 //#include "resultTable.h"
+#include <QDebug>
 #include <QDialog>
 #include <QFileDialog>
 #include <QVBoxLayout>
@@ -82,6 +83,9 @@ DMotion::DMotion(QWidget *parent)
 	, timer(NULL)
 	, rTable(NULL)
 	, dv_nhcm(NULL)
+	, dv_hcm(NULL)
+	, md(NULL)
+	, dcPlot(NULL)
 	//, myFileBar(NULL)
 	, myCasCadeBar(NULL)
 	, myAnimationBar(NULL)
@@ -104,13 +108,11 @@ DMotion::DMotion(QWidget *parent)
 	connect(ui.Tool_Graph, SIGNAL(triggered()), this, SLOT(tool_plot()));
 	createCasCadeOperations();
 	createAnimationOperations();
+	createLineEditOperations();
 
 	pBar = new QProgressBar;
 	ui.statusBar->addWidget(pBar);
 	pBar->hide();
-	//pBar->setValue(50);
-//	connect(ui.Analysis_dynamic, SIGNAL(triggered()), this, SLOT(analysis()));
-//	connect(this, SIGNAL(destroyed(this)), this, SLOT(finishDMotion()));
  	TCollection_ExtendedString a3DName("Visu3D");
  	myViewer = Viewer(a3DName.ToExtString(), "", 1000.0, V3d_XposYnegZpos, Standard_True, Standard_True);
  	myViewer->SetDefaultLights();
@@ -126,16 +128,10 @@ DMotion::DMotion(QWidget *parent)
    	setCentralWidget(vb);
    	
 	
-	ui.DW_Modeling->setMinimumWidth(510);
- 	ui.DW_Modeling->setMaximumWidth(510);
+	ui.DW_Modeling->setMinimumWidth(500);
+ 	ui.DW_Modeling->setMaximumWidth(500);
 
 	myView = new view(myContext, vb);
-	//dual_motion *md0 = new dual_motion;
-	//dual_motion_hole *md1 = new dual_motion_hole;
-	//models[md0->ModelType()] = md0;	
-	//models[md1->ModelType()] = md1;
-	//md = md0;
-	
 	
 	//setPlotComboBox();
 	layout->addWidget(myView);
@@ -149,11 +145,7 @@ DMotion::DMotion(QWidget *parent)
 	connect(ui.PB_SelectParameters, SIGNAL(clicked()), this, SLOT(pushSelectParameters()));
 	connect(ui.CB_Body, SIGNAL(currentIndexChanged(int)), this, SLOT(changeComboBody(int)));
 	connect(ui.CB_HardPoint, SIGNAL(currentIndexChanged(int)), this, SLOT(changeComboHardPoint(int)));
-	//connect(ui.PB_SaveCase, SIGNAL(clicked()), this, SLOT(pushCaseSave()));
-	//connect(ui.LE_X, SIGNAL(editingFinished()), this, SLOT(editBodyX()));
-	//connect(ui.PB_Impor)
 
-	
 	file_new();
 }
 
@@ -173,6 +165,8 @@ DMotion::~DMotion()
 	if (pBar) delete pBar; pBar = NULL;
 	if (md) delete md; md = NULL;
 	if (dv_nhcm) delete dv_nhcm; dv_nhcm = NULL;
+	if (dv_hcm) delete dv_hcm; dv_hcm = NULL;
+	if (dcPlot) delete dcPlot; dcPlot = NULL;
 	//qDeleteAll(models);
 }
 
@@ -183,17 +177,9 @@ void DMotion::initialize(modelType mt)
 	if (md) delete md; md = NULL;
 	if (odd) delete odd; odd = NULL;
 	if (dv_nhcm) delete dv_nhcm; dv_nhcm = NULL;
+	if (dv_hcm) delete dv_hcm; dv_hcm = NULL;
+	if (dcPlot) delete dcPlot; dcPlot = NULL;
 	com::clear();
-// 	myContext->EraseAll();
-// 	myContext->RemoveAll();
-// 	myContext->UpdateCurrentViewer();
-// 	onSelectionChanged();
-// 	for (myContext->InitCurrent(); myContext->MoreCurrent(); myContext->NextCurrent())
-// 	{
-// 		myContext->Erase(myContext->Current());
-// 		myContext->EraseSelected(Standard_False);
-// 		myContext->ClearCurrents();	
-// 	}
 
 	switch (mt)
 	{
@@ -211,11 +197,9 @@ void DMotion::initialize(modelType mt)
 	doc = new document(this);
 	docu = doc;
 	doc->setDisplayDynamicModel(md->RigidBodies(), md->HardPoints());
-	//myContext->RemoveAll();
-	//myContext->UpdateCurrentViewer();
-	//onSelectionChanged();
 	plot = new plotWindow(md, this);
-
+	if (!odd)
+		odd = new optimumDesignDoc(md, plot);
 	initializeDesignVariable();
 	initializeBodyInformation();
 	initializeHardPoint();
@@ -226,8 +210,10 @@ void DMotion::initialize(modelType mt)
 	plot->resize(400, 400);
 	resize(1200, 800);
 	setFocusPolicy(Qt::StrongFocus);
-	if (!odd)
-		odd = new optimumDesignDoc(md, plot);
+
+	if (rTable) delete rTable; rTable = NULL;
+	ui.TAB_MODELING->removeTab(2);
+	myAnimationBar->hide();
 
 	myView->front();
 	myView->fitAll();
@@ -245,8 +231,6 @@ void DMotion::file_new()
 	}
 	else if (ret == 0)
 	{
-		md->setModelName(nd->ModelName());
-		md->setModelPath(nd->Directory() + "/");
 		this->file_open(nd->OpenFilePath());
 	}
 	
@@ -283,57 +267,14 @@ void DMotion::file_open(QString f)
 		{
 			qts >> x >> y >> angle >> mass >> inertia >> shapePath;
 			rigidBody* rb = md->RigidBodies()[str];
-			//vecd3 p = vecd3(x.toDouble(), y.toDouble(), 0.0);
 			rb->setPosition(x.toDouble(), y.toDouble(), 0.0);
 			rb->setAngle(angle.toDouble());
 			rb->setMass(mass.toDouble());
 			rb->setInertia(inertia.toDouble());
 			rb->setShapePath(shapePath);
-			// 			ui.LE_X->setText(x);
-			// 			ui.LE_Y->setText(y);
-			// 			ui.LE_Angle->setText(angle);
-			// 			ui.LE_Mass->setText(mass);
-			// 			ui.LE_Inertia->setText(inertia);
-			// 			md->RigidBodies()["Nozzle"]->setShapePath(shapePath);
 			com::write("Success : Body information of " + str);
 			qts >> str;
 		}
-// 		qts >> str;
-// 		if (str == "Link")
-// 		{
-// 			qts >> x >> y >> angle >> mass >> inertia >> shapePath;
-// 			ui.LE_Link_X->setText(x);
-// 			ui.LE_Link_Y->setText(y);
-// 			ui.LE_Link_Angle->setText(angle);
-// 			ui.LE_Link_Mass->setText(mass);
-// 			ui.LE_Link_Inertia->setText(inertia);
-// 			md->RigidBodies()["Link"]->setShapePath(shapePath);
-// 			com::write("Success : Body information of link");
-// 		}
-// 		qts >> str;
-// 		if (str == "Cam")
-// 		{
-// 			qts >> x >> y >> angle >> mass >> inertia >> shapePath;
-// 			ui.LE_Cam_X->setText(x);
-// 			ui.LE_Cam_Y->setText(y);
-// 			ui.LE_Cam_Angle->setText(angle);
-// 			ui.LE_Cam_Mass->setText(mass);
-// 			ui.LE_Cam_Inertia->setText(inertia);
-// 			md->RigidBodies()["Cam"]->setShapePath(shapePath);
-// 			com::write("Success : Body information of cam");
-// 		}
-// 		qts >> str;
-// 		if (str == "Arc")
-// 		{
-// 			qts >> x >> y >> angle >> mass >> inertia >> shapePath;
-// 			ui.LE_Passive_X->setText(x);
-// 			ui.LE_Passive_Y->setText(y);
-// 			ui.LE_Passive_Angle->setText(angle);
-// 			ui.LE_Passive_Mass->setText(mass);
-// 			ui.LE_Passive_Inertia->setText(inertia);
-// 			md->RigidBodies()["Arc"]->setShapePath(shapePath);
-// 			com::write("Success : Body information of arc");
-// 		}
 	}
 	qts >> str;
 	if (str == "HardPoint_information")
@@ -350,34 +291,6 @@ void DMotion::file_open(QString f)
 			com::write("Success : Information of " + str);
 			qts >> str;
 		}
-// 		if (str == "NozzleLink")
-// 		{
-// 			qts >> x >> y;
-// 			ui.LE_HeadLink_X->setText(x);
-// 			ui.LE_HeadLink_Y->setText(y);
-// 		}
-// 		qts >> str;
-// 		if (str == "LinkCam")
-// 		{
-// 			qts >> x >> y;
-// 			ui.LE_LinkCam_X->setText(x);
-// 			ui.LE_LinkCam_Y->setText(y);
-// 		}
-// 		qts >> str;
-// 		if (str == "CamGround")
-// 		{
-// 			qts >> x >> y;
-// 			ui.LE_CamGround_X->setText(x);
-// 			ui.LE_CamGround_Y->setText(y);
-// 		}
-// 		qts >> str;
-// 		if (str == "CamArc")
-// 		{
-// 			qts >> x >> y;
-// 			ui.LE_CamPassive_X->setText(x);
-// 			ui.LE_CamPassive_Y->setText(y);
-// 		}
-
 	}
 	qts >> str;
 	if (str == "Driving_information")
@@ -388,8 +301,20 @@ void DMotion::file_open(QString f)
 		if (str == "Nozzle")
 		{
 			qts >> path;
-			if (md->DrivingConstraints()["Nozzle_driving"]->setVelocityProfile(path))
+			drivingConstraint* dc = md->DrivingConstraints()["Nozzle_driving"];
+			if (dc->setVelocityProfile(path))
+			{
+				QVector<QPointF> nozzleV;
+				for (int i = 0; i < dc->VelocityProfile().size(); i++)
+				{
+					if (!(i % 10))
+						nozzleV.append(dc->TimeVelocity(i));
+				}
+				if (dcPlot)
+					dcPlot->setArcPlot(nozzleV);
 				com::write("Success : Loading of driving condition(Nozzle)");
+			}
+				
 			else
 				com::write("Fail : Loading of driving condition(Nozzle)");
 
@@ -398,8 +323,19 @@ void DMotion::file_open(QString f)
 		if (str == "Arc")
 		{
 			qts >> path;
-			if (md->DrivingConstraints()["Arc_driving"]->setVelocityProfile(path))
+			drivingConstraint* dc = md->DrivingConstraints()["Arc_driving"];
+			if (dc->setVelocityProfile(path))
+			{
+				QVector<QPointF> arcV;
+				for (int i = 0; i < dc->VelocityProfile().size(); i++)
+				{
+					if (!(i % 10))
+						arcV.append(dc->TimeVelocity(i));
+				}
+				if (dcPlot)
+					dcPlot->setArcPlot(arcV);
 				com::write("Success : Loading of driving condition(Arc)");
+			}				
 			else
 				com::write("Fail : Loading of driving condition(Arc)");
 		}
@@ -413,8 +349,6 @@ void DMotion::file_open(QString f)
 			ui.RB_OnlyOne->setChecked(true);
 		else if (str == "1")
 			ui.RB_SmallerThanFirst->setChecked(true);
-		if (!srdlg)
-			srdlg = new selectReactionDialog(odd);
 		qts >> str >> str;
 		qts >> target;
 		while (target != "end")
@@ -423,18 +357,6 @@ void DMotion::file_open(QString f)
 			srdlg->setCheck((reactionForceType)target.toInt(), check.toInt());
 			qts >> target;
 		}
-// 		qts >> target >> check; if (target == "AT_FY") srdlg->setCheck("AT_FY", check.toInt());
-// 		qts >> target >> check; if (target == "AT_TR") srdlg->setCheck("AT_TR", check.toInt());
-// 		qts >> target >> check; if (target == "ALR_FX") srdlg->setCheck("ALR_FX", check.toInt());
-// 		qts >> target >> check; if (target == "ALR_FY") srdlg->setCheck("ALR_FY", check.toInt());
-// 		qts >> target >> check; if (target == "LCR_FX") srdlg->setCheck("LCR_FX", check.toInt());
-// 		qts >> target >> check; if (target == "LCR_FY") srdlg->setCheck("LCR_FY", check.toInt());
-// 		qts >> target >> check; if (target == "CGR_FX") srdlg->setCheck("CGR_FX", check.toInt());
-// 		qts >> target >> check; if (target == "CGR_FY") srdlg->setCheck("CGR_FY", check.toInt());
-// 		qts >> target >> check; if (target == "PF_FX") srdlg->setCheck("PF_FX", check.toInt());
-// 		qts >> target >> check; if (target == "PF_FY") srdlg->setCheck("PF_FY", check.toInt());
-// 		qts >> target >> check; if (target == "PT_FY") srdlg->setCheck("PT_FY", check.toInt());
-// 		qts >> target >> check; if (target == "PT_TR") srdlg->setCheck("PT_TR", check.toInt());
 	}
 	qts >> str;
 	if (str == "Design_variable")
@@ -443,13 +365,33 @@ void DMotion::file_open(QString f)
 		if (md->ModelType() == ORIGINAL_CAM_TYPE)
 			dv_nhcm->setFromFile(qts);
 	}
+	qts >> str;
+	if (str == "Space_constraint")
+	{
+		qts >> str >> str >> str;
+		int check;
+		QString sw, sh;
+		qts >> check >> sw >> sh;
+		ui.CB_SPACE->setChecked(check);
+		ui.LE_Space_Width->setText(sw);
+		ui.LE_Space_Height->setText(sh);
+	}
 	qf.close();
 }
 
-void DMotion::file_save()
+void DMotion::file_save(QString f)
 {
-	QString dir = md->ModelPath() + md->ModelName() + ".mde";
-	QString fileName = QFileDialog::getSaveFileName(this, tr("save"), dir, tr("Model file(*.mde)"));
+	QString fileName;
+	if (f.isEmpty())
+	{
+		QString dir = md->ModelPath() + md->ModelName() + ".mde";
+		fileName = QFileDialog::getSaveFileName(this, tr("save"), dir, tr("Model file(*.mde)"));
+	}
+	else
+	{
+		fileName = f;
+	}
+	
 	if (fileName.isEmpty())
 		return;
 	//int loc = fileName.lastIndexOf("/");
@@ -457,6 +399,7 @@ void DMotion::file_save()
 	QFile qf(fileName);
 	qf.open(QIODevice::WriteOnly);
 	QTextStream qts(&qf);
+	qts << "Model_type " << (int)md->ModelType() << endl;
 	qts << "Body_information" << endl;
 	qts << "Body PosX PosY Angle Mass Inertia ShapePath" << endl;
 	foreach(QString rb_list, md->BodyList())
@@ -465,10 +408,6 @@ void DMotion::file_save()
 		qts << rb_list << " " << rb->Position().X() << " " << rb->Position().Y() << " " << rb->Angle() << " " << rb->Mass() << " " << rb->Inertia() << " " << rb->ShapePath() << endl;
 	}
 	qts << "end" << endl;
-// 	qts << "Nozzle " << ui.LE_Head_X->text() << " " << ui.LE_Head_Y->text() << " " << ui.LE_Head_Angle->text() << " " << ui.LE_Head_Mass->text() << " " << ui.LE_Head_Inertia->text() << " " << md->RigidBodies()["Nozzle"]->ShapePath() << endl
-// 		<< "Link " << ui.LE_Link_X->text() << " " << ui.LE_Link_Y->text() << " " << ui.LE_Link_Angle->text() << " " << ui.LE_Link_Mass->text() << " " << ui.LE_Link_Inertia->text() << " " << md->RigidBodies()["Link"]->ShapePath() << endl
-// 		<< "Cam " << ui.LE_Cam_X->text() << " " << ui.LE_Cam_Y->text() << " " << ui.LE_Cam_Angle->text() << " " << ui.LE_Cam_Mass->text() << " " << ui.LE_Cam_Inertia->text() << " " << md->RigidBodies()["Cam"]->ShapePath() << endl
-// 		<< "Arc " << ui.LE_Passive_X->text() << " " << ui.LE_Passive_Y->text() << " " << ui.LE_Passive_Angle->text() << " " << ui.LE_Passive_Mass->text() << " " << ui.LE_Passive_Inertia->text() << " " << md->RigidBodies()["Arc"]->ShapePath() << endl;
 
 	qts << "HardPoint_information" << endl;
 	qts << "HardPoint X Y" << endl;
@@ -478,10 +417,6 @@ void DMotion::file_save()
 		qts << hp_list << " " << hp->loc.X() << " " << hp->loc.Y() << endl;
 	}
 	qts << "end" << endl;
-// 	qts << "NozzleLink " << ui.LE_HeadLink_X->text() << " " << ui.LE_HeadLink_Y->text() << endl
-// 		<< "LinkCam " << ui.LE_LinkCam_X->text() << " " << ui.LE_LinkCam_Y->text() << endl
-// 		<< "CamGround " << ui.LE_CamGround_X->text() << " " << ui.LE_CamGround_Y->text() << endl
-// 		<< "CamArc " << ui.LE_CamPassive_X->text() << " " << ui.LE_CamPassive_Y->text() << endl;
 
 	qts << "Driving_information" << endl;
 	qts << "Target File" << endl;
@@ -499,27 +434,17 @@ void DMotion::file_save()
 	while (rList.hasNext())
 	{
 		rList.next();
-		qts << rList.key() << rList.value() << endl;
+		qts << rList.key() << " " << rList.value() << endl;
 	}
-// 		<< "AT_FY " << odd->SelectList()["AT_FY"] << endl
-// 		<< "AT_TR " << odd->SelectList()["AT_TR"] << endl
-// 		<< "ALR_FX " << odd->SelectList()["ALR_FX"] << endl
-// 		<< "ALR_FY " << odd->SelectList()["ALR_FY"] << endl
-// 		<< "LCR_FX " << odd->SelectList()["LCR_FX"] << endl
-// 		<< "LCR_FY " << odd->SelectList()["LCR_FY"] << endl
-// 		<< "CGR_FX " << odd->SelectList()["CGR_FX"] << endl
-// 		<< "CGR_FY " << odd->SelectList()["CGR_FY"] << endl
-// 		<< "PF_FX " << odd->SelectList()["PF_FX"] << endl
-// 		<< "PF_FY " << odd->SelectList()["PF_FY"] << endl
-// 		<< "PT_FY " << odd->SelectList()["PT_FY"] << endl
-// 		<< "PT_TR " << odd->SelectList()["PT_TR"] << endl;
 	qts << "end" << endl;
 
 	qts << "Design_variable" << endl;
 	qts << "Check Target Lower Step Upper" << endl;
 	if (md->ModelType() == ORIGINAL_CAM_TYPE)
 		dv_nhcm->saveToFile(qts);
-	
+	qts << "Space_constraint" << endl;
+	qts << "Check Width Height" << endl;
+	qts << ui.CB_SPACE->isChecked() << " " << ui.LE_Space_Width->text() << " " << ui.LE_Space_Height->text() << endl;
 	qf.close();
 	com::write("Save model file : " + fileName);
 }
@@ -533,19 +458,6 @@ void DMotion::closeEvent(QCloseEvent *event)
 
 void DMotion::openResultTable()
 {
-// 	if (rTable && !_isNewAnalysis)
-// 	{
-// 		if (rTable->isEnabled())
-// 		{
-// 			rTable->raise();
-// 		}
-// 		else
-// 		{
-// 			rTable->show();
-// 			rTable->raise();
-// 		}
-// 		return;
-// 	}
 	if (!rTable)
 		rTable = new resultTable(odd);
 	else
@@ -559,38 +471,13 @@ void DMotion::openResultTable()
 		{
 			dataList.push_back(oc->MaximumReactions()[rft].maximum);
 		}
-// 		for (int i = 0; i < oc->MaximumReactions().size(); i++)
-// 		{
-// 			dataList.push_back(oc->MaximumReactions()[i].maximum);
-// 		}
-// 		stResultSet rs;
-// 		rs.caseName = oc->Name();
-// 		rs.AT_FY = oc->MaximumReactions()["Nozzle Trans.(FY)"].maximum;
-// 		rs.AT_TR = oc->MaximumReactions()["Nozzle Trans.(TR)"].maximum;
-// 
-// 		rs.ALR_FX = oc->MaximumReactions()["Nozzle-Link Rev.(FX)"].maximum;
-// 		rs.ALR_FY = oc->MaximumReactions()["Nozzle-Link Rev.(FY)"].maximum;
-// 
-// 		rs.LCR_FX = oc->MaximumReactions()["Link-Cam Rev.(FX)"].maximum;
-// 		rs.LCR_FY = oc->MaximumReactions()["Link-Cam Rev.(FY)"].maximum;
-// 
-// 		rs.CGR_FX = oc->MaximumReactions()["Cam-Ground Rev.(FX)"].maximum;
-// 		rs.CGR_FY = oc->MaximumReactions()["Cam-Ground Rev.(FY)"].maximum;
-// 
-// 		rs.PT_FY = oc->MaximumReactions()["Arc Trans.(FY)"].maximum;
-// 		rs.PT_TR = oc->MaximumReactions()["Arc Trans.(TR)"].maximum;
-// 
-// 		rs.PF_FX = oc->MaximumReactions()["Arc-Cam PF(FX)"].maximum;
-// 		rs.PF_FY = oc->MaximumReactions()["Arc-Cam PF(FY)"].maximum;
-		//rTable->appendTable(rs);
 		rTable->appendTable(cName, dataList);
 	}
 	ui.TAB_MODELING->addTab(rTable, "Results");
+	connect(ui.TAB_MODELING, SIGNAL(tabBarClicked(int)), this, SLOT(clickedTabBar(int)));
 	rTable->ResultTable()->sortByColumn(0, Qt::SortOrder::AscendingOrder);
 	rTable->ResultTable()->setSortingEnabled(true);
-	rTable->setWindowModality(Qt::NonModal);
-// 	rTable->show();
-// 	rTable->raise();
+	//rTable->setWindowModality(Qt::NonModal);
 	_isNewAnalysis = false;
 }
 
@@ -602,7 +489,14 @@ void DMotion::pushActiveVelocityBotton()
 	{
 		drivingConstraint* ad = md->DrivingConstraints()["Nozzel_driving"];
 		ad->setVelocityProfile(fileName);
-
+		QVector<QPointF> nozzleV;
+		for (int i = 0; i < ad->VelocityProfile().size(); i++)
+		{
+			if (!(i % 10))
+				nozzleV.append(ad->TimeVelocity(i));
+		}
+		if (dcPlot)
+			dcPlot->setNozzlePlot(nozzleV);
 	}
 
 }
@@ -615,6 +509,14 @@ void DMotion::pushPassiveVelocityBotton()
 	{
 		drivingConstraint* pd = md->DrivingConstraints()["Arc_driving"];
 		pd->setVelocityProfile(fileName);
+		QVector<QPointF> arcV;
+		for (int i = 0; i < pd->VelocityProfile().size(); i++)
+		{
+			if (!(i % 10))
+				arcV.append(pd->TimeVelocity(i));
+		}
+		if (dcPlot)
+			dcPlot->setArcPlot(arcV);		
 	}
 }
 
@@ -701,17 +603,6 @@ void DMotion::pushCaseSave()
 	
 }
 
-void DMotion::changeModel()
-{
-// 	switch (md->ModelType())
-// 	{
-// 	case ORIGINAL_CAM_TYPE: md = models[HOLE_CAM_TYPE]; break;
-// 	case HOLE_CAM_TYPE: md = models[ORIGINAL_CAM_TYPE]; break;
-// 	}
-// 	plot->updateByModelChange();
-// 	doc->setDisplayDynamicModel(md->RigidBodies(), md->HardPoints());
-}
-
 void DMotion::changeComboBody(int idx)
 {
 	double radian2degree = 180.0 / M_PI;
@@ -778,7 +669,19 @@ void DMotion::editLineEdit()
 		double inertia = sendBy->text().toDouble();
 		rb->setInertia(inertia * (1.0 / 1000000.0));
 	}
-
+// 	optimumCase* oc = odd->SelectedCase();
+// 	QMap<QString, Handle(AIS_Shape)> hps = DMotion::getDocument()->getHardPoints();
+// 	QMapIterator<QString, Handle(AIS_Shape)> ais(hps);
+// 	while (ais.hasNext())
+// 	{
+// 		ais.next();
+// 		QString hpName = ais.key();
+// 		Handle(AIS_Shape) shape = ais.value();
+// 		vecd3 loc0 = oc->HardPointsResults()[hpName].at(i);
+// 		gp_Trsf t;
+// 		t.SetTranslation(1000.0 * gp_Vec(loc0.X(), loc0.Y(), 0.0));
+// 		shape->SetLocalTransformation(t);
+// 	}
 	if (sendBy == myLineEdits.at(LE_HARDPOINT_X))
 	{
 		str = ui.CB_HardPoint->currentText();
@@ -786,6 +689,11 @@ void DMotion::editLineEdit()
 		double x = sendBy->text().toDouble();
 		hp->loc.SetX(x);
 		hp->loc0 = hp->loc;
+		Handle(AIS_Shape) shape = doc->getHardPoints()[hp->name];
+		gp_Trsf t;
+		t.SetTranslation(gp_Vec(x, hp->loc.Y(), 0.0));
+		shape->SetLocalTransformation(t);
+		myContext->UpdateCurrentViewer();
 	}
 
 	if (sendBy == myLineEdits.at(LE_HARDPOINT_Y))
@@ -795,7 +703,22 @@ void DMotion::editLineEdit()
 		double y = sendBy->text().toDouble();
 		hp->loc.SetY(y);
 		hp->loc0 = hp->loc;
+		Handle(AIS_Shape) shape = doc->getHardPoints()[hp->name];
+		gp_Trsf t;
+		t.SetTranslation(gp_Vec(hp->loc.X(), y , 0.0));
+		shape->SetLocalTransformation(t);
+		myContext->UpdateCurrentViewer();
 	}
+}
+
+void DMotion::clickedTabBar(int idx)
+{
+	QString txt = ui.TAB_MODELING->tabText(idx);
+	if (txt == "Results")
+		ui.DW_Modeling->setMaximumWidth(524287);
+	else
+		ui.DW_Modeling->setMaximumWidth(500);
+
 }
 
 Handle(AIS_InteractiveContext) DMotion::getAISContext()
@@ -886,12 +809,6 @@ void DMotion::createCasCadeOperations()
 	a->setStatusTip(tr("Save the selected case information"));
 	connect(a, SIGNAL(triggered()), this, SLOT(pushCaseSave()));
 	myToolActions.insert(SAVE_CASE, a);
-
-	a = new QAction(QIcon(":/Resources/hole_type.png"), tr("&ChangeModel"), this);
-	a->setStatusTip(tr("Change the dual motion model"));
-	connect(a, SIGNAL(triggered()), this, SLOT(changeModel()));
-	myToolActions.insert(CHANGE_MODEL, a);
-	//a->setPriority(QAction::NormalPriority);
 
 	int i = 0;
 	for (; i < myToolActions.size(); i++)
@@ -1157,6 +1074,19 @@ void DMotion::initializeDesignVariable()
 		dv_nhcm = new nhcmDesignVariable(ui.DesignTabFrame);
 		dv_nhcm->setInitValue();
 	}
+	else if (md->ModelType() == HOLE_CAM_TYPE)
+	{
+		dv_hcm = new hcmDesignVariable(ui.DesignTabFrame);
+		dv_hcm->setInitValue();
+	}
+	if (!srdlg)
+	{
+		srdlg = new selectReactionDialog(odd);
+		srdlg->setupUi(md->ModelType());
+	}
+	ui.LE_Space_Width->setText("618");
+	ui.LE_Space_Height->setText("140");
+	ui.RB_OnlyOne->setChecked(true);
 }
 
 void DMotion::initializeBodyInformation()
@@ -1165,131 +1095,36 @@ void DMotion::initializeBodyInformation()
 	double m2mm = 1000.0;
 	double kgm2kgmm = 1000000.0;
 	changeComboBody(0);
-// 	ui.LE_Head_X->setText(QString("%1").arg(rb->Position().X() * m2mm, 6, 'f', 6));
-// 	ui.LE_Head_Y->setText(QString("%1").arg(rb->Position().Y() * m2mm, 6, 'f', 6));
-// 	ui.LE_Head_Angle->setText(QString("%1").arg(rb->Angle() * radian2degree, 6, 'f', 6));
-// 	ui.LE_Head_Mass->setText(QString("%1").arg(rb->Mass(), 6, 'f', 6));
-// 	ui.LE_Head_Inertia->setText(QString("%1").arg(rb->Inertia() * kgm2kgmm, 6, 'f', 6));
-// 
-// 	rb = md->RigidBodies()["Link"];
-// 	ui.LE_Link_X->setText(QString("%1").arg(rb->Position().X() * m2mm, 6, 'f', 6));
-// 	ui.LE_Link_Y->setText(QString("%1").arg(rb->Position().Y() * m2mm, 6, 'f', 6));
-// 	ui.LE_Link_Angle->setText(QString("%1").arg(rb->Angle() * radian2degree, 6, 'f', 6));
-// 	ui.LE_Link_Mass->setText(QString("%1").arg(rb->Mass(), 6, 'f', 6));
-// 	ui.LE_Link_Inertia->setText(QString("%1").arg(rb->Inertia() * kgm2kgmm, 6, 'f', 6));
-// 
-// 	rb = md->RigidBodies()["Cam"];
-// 	ui.LE_Cam_X->setText(QString("%1").arg(rb->Position().X() * m2mm, 6, 'f', 6));
-// 	ui.LE_Cam_Y->setText(QString("%1").arg(rb->Position().Y() * m2mm, 6, 'f', 6));
-// 	ui.LE_Cam_Angle->setText(QString("%1").arg(rb->Angle() * radian2degree, 6, 'f', 6));
-// 	ui.LE_Cam_Mass->setText(QString("%1").arg(rb->Mass(), 6, 'f', 6));
-// 	ui.LE_Cam_Inertia->setText(QString("%1").arg(rb->Inertia() * kgm2kgmm, 6, 'f', 6));
-// 
-// 	rb = md->RigidBodies()["Arc"];
-// 	ui.LE_Passive_X->setText(QString("%1").arg(rb->Position().X() * m2mm, 6, 'f', 6));
-// 	ui.LE_Passive_Y->setText(QString("%1").arg(rb->Position().Y() * m2mm, 6, 'f', 6));
-// 	ui.LE_Passive_Angle->setText(QString("%1").arg(rb->Angle() * radian2degree, 6, 'f', 6));
-// 	ui.LE_Passive_Mass->setText(QString("%1").arg(rb->Mass(), 6, 'f', 6));
-// 	ui.LE_Passive_Inertia->setText(QString("%1").arg(rb->Inertia() * kgm2kgmm, 6, 'f', 6));
 }
 
 void DMotion::initializeHardPoint()
 {
 	changeComboHardPoint(0);
-	//double m2mm = 1000.0;
-	/*hardPoint* hp = md->HardPoints()["active_link"];*/
-// 	ui.LE_HeadLink_X->setText(QString("%1").arg(hp->loc.X() * m2mm, 6, 'f', 6));
-// 	ui.LE_HeadLink_Y->setText(QString("%1").arg(hp->loc.Y() * m2mm, 6, 'f', 6));
-// 
-// 	hp = md->HardPoints()["link_cam"];
-// 	ui.LE_LinkCam_X->setText(QString("%1").arg(hp->loc.X() * m2mm, 6, 'f', 6));
-// 	ui.LE_LinkCam_Y->setText(QString("%1").arg(hp->loc.Y() * m2mm, 6, 'f', 6));
-// 
-// 	hp = md->HardPoints()["cam_ground"];
-// 	ui.LE_CamGround_X->setText(QString("%1").arg(hp->loc.X() * m2mm, 6, 'f', 6));
-// 	ui.LE_CamGround_Y->setText(QString("%1").arg(hp->loc.Y() * m2mm, 6, 'f', 6));
-// 
-// 	hp = md->HardPoints()["cam_passive"];
-// 	ui.LE_CamPassive_X->setText(QString("%1").arg(hp->loc.X() * m2mm, 6, 'f', 6));
-// 	ui.LE_CamPassive_Y->setText(QString("%1").arg(hp->loc.Y() * m2mm, 6, 'f', 6));
-// 
-// 	connect(ui.LE_HeadLink_X, SIGNAL(editingFinished()), this, SLOT(onLineEditing()));
-// 	connect(ui.LE_HeadLink_Y, SIGNAL(editingFinished()), this, SLOT(onLineEditing()));
-// 	connect(ui.LE_LinkCam_X, SIGNAL(editingFinished()), this, SLOT(onLineEditing()));
-// 	connect(ui.LE_LinkCam_Y, SIGNAL(editingFinished()), this, SLOT(onLineEditing()));
-// 	connect(ui.LE_CamGround_X, SIGNAL(editingFinished()), this, SLOT(onLineEditing()));
-// 	connect(ui.LE_CamGround_Y, SIGNAL(editingFinished()), this, SLOT(onLineEditing()));
-// 	connect(ui.LE_CamPassive_X, SIGNAL(editingFinished()), this, SLOT(onLineEditing()));
-// 	connect(ui.LE_CamPassive_Y, SIGNAL(editingFinished()), this, SLOT(onLineEditing()));
 }
 
 void DMotion::onLineEditing()
 {
-// 	QLineEdit* sentBy = (QLineEdit*)sender();
-// 	QString target = sentBy->objectName();
-// 	QMap<QString, Handle(AIS_Shape)> hps = DMotion::getDocument()->getHardPoints();
-// 	vecd3 loc;
-// 	Handle(AIS_Shape) ais_hp;
-// 	// Nozzle Link
-// 	if (target == "LE_HeadLink_X")
-// 	{
-// 		ais_hp = hps["active_link"];
-// 		loc = vecd3(sentBy->text().toDouble(), ui.LE_HeadLink_Y->text().toDouble(), 0.0);
-// 	}
-// 	if (target == "LE_HeadLink_Y")
-// 	{
-// 		ais_hp = hps["active_link"];
-// 		loc = vecd3(ui.LE_HeadLink_X->text().toDouble(), sentBy->text().toDouble(), 0.0);
-// 	}
-// 
-// 	// Link Cam
-// 	if (target == "LE_LinkCam_X")
-// 	{
-// 		ais_hp = hps["link_cam"];
-// 		loc = vecd3(sentBy->text().toDouble(), ui.LE_LinkCam_Y->text().toDouble(), 0.0);
-// 	}
-// 	if (target == "LE_LinkCam_Y")
-// 	{
-// 		ais_hp = hps["link_cam"];
-// 		loc = vecd3(ui.LE_LinkCam_X->text().toDouble(), sentBy->text().toDouble(), 0.0);
-// 	}
-// 
-// 	// Cam Ground
-// 	if (target == "LE_CamGround_X")
-// 	{
-// 		ais_hp = hps["cam_ground"];
-// 		loc = vecd3(sentBy->text().toDouble(), ui.LE_CamGround_Y->text().toDouble(), 0.0);
-// 	}
-// 	if (target == "LE_CamGround_Y")
-// 	{
-// 		ais_hp = hps["cam_ground"];
-// 		loc = vecd3(ui.LE_CamGround_X->text().toDouble(), sentBy->text().toDouble(), 0.0);
-// 	}
-// 
-// 	// Cam Arc
-// 	if (target == "LE_CamPassive_X")
-// 	{
-// 		ais_hp = hps["cam_passive"];
-// 		loc = vecd3(sentBy->text().toDouble(), ui.LE_CamPassive_Y->text().toDouble(), 0.0);
-// 	}
-// 	if (target == "LE_CamPassive_Y")
-// 	{
-// 		ais_hp = hps["cam_passive"];
-// 		loc = vecd3(ui.LE_CamPassive_X->text().toDouble(), sentBy->text().toDouble(), 0.0);
-// 	}
-// 	gp_Trsf t;
-// 	t.SetTranslation(gp_Vec(loc.X(), loc.Y(), 0.0));
-// 	ais_hp->SetLocalTransformation(t);
-// 	myContext->UpdateCurrentViewer();
+
 }
 
 void DMotion::initializeDrivingCondition()
 {
-// 	drivingConstraint *dc = md->DrivingConstraints()["Nozzle_driving"];
-// 	ui.DCLE_Stroke->setText("90");
-// 	ui.DCLE_Ratio->setText("0.5");
-// 	ui.DCLE_MRV->setText("22");
-// 	ui.DCLE_MRVT->setText(QString("%1").arg(dc->MaxVelocityTime()));
+	if (!dcPlot)
+		dcPlot = new drivingConditionPlot(this, ui.Nozzle_Graph_Frame, ui.Arc_Graph_Frame);
+	drivingConstraint* nozzleDC = md->DrivingConstraints()["Nozzle_driving"];
+	drivingConstraint* arcDC = md->DrivingConstraints()["Arc_driving"];
+	QVector<QPointF> nozzleV;
+	QVector<QPointF> arcV;
+	for (int i = 0; i < nozzleDC->VelocityProfile().size(); i++)
+	{
+		if (!(i % 10))
+		{
+			nozzleV.append(nozzleDC->TimeVelocity(i));
+			arcV.append(arcDC->TimeVelocity(i));
+		}
+	}
+	dcPlot->setNozzlePlot(nozzleV);
+	dcPlot->setArcPlot(arcV);
 }
 
 unsigned int DMotion::setSystemParameters()
@@ -1302,60 +1137,21 @@ unsigned int DMotion::setSystemParameters()
 	if (md->ModelType() == ORIGINAL_CAM_TYPE)
 		totalCase = dv_nhcm->setSystemParameters(md);
 
-// 	rigidBody* rb = md->RigidBodies()["Nozzle"];
-// 	rb->setPosition(ui.LE_Head_X->text().toDouble() * mm2m, ui.LE_Head_Y->text().toDouble() * mm2m, 0.0);
-// 	rb->setAngle(ui.LE_Head_Angle->text().toDouble() * degree2radian);
-// 	rb->setMass(ui.LE_Head_Mass->text().toDouble());
-// 	rb->setInertia(ui.LE_Head_Inertia->text().toDouble() * kgmm2kgm);
-// 
-// 	rb = md->RigidBodies()["Link"];
-// 	rb->setPosition(ui.LE_Link_X->text().toDouble() * mm2m, ui.LE_Link_Y->text().toDouble() * mm2m, 0.0);
-// 	rb->setAngle(ui.LE_Link_Angle->text().toDouble() * degree2radian);
-// 	rb->setMass(ui.LE_Link_Mass->text().toDouble());
-// 	rb->setInertia(ui.LE_Link_Inertia->text().toDouble() * kgmm2kgm);
-// 
-// 	rb = md->RigidBodies()["Cam"];
-// 	rb->setPosition(ui.LE_Cam_X->text().toDouble() * mm2m, ui.LE_Cam_Y->text().toDouble() * mm2m, 0.0);
-// 	rb->setAngle(ui.LE_Cam_Angle->text().toDouble() * degree2radian);
-// 	rb->setMass(ui.LE_Cam_Mass->text().toDouble());
-// 	rb->setInertia(ui.LE_Cam_Inertia->text().toDouble() * kgmm2kgm);
-// 
-// 	rb = md->RigidBodies()["Arc"];
-// 	rb->setPosition(ui.LE_Passive_X->text().toDouble() * mm2m, ui.LE_Passive_Y->text().toDouble() * mm2m, 0.0);
-// 	rb->setAngle(ui.LE_Passive_Angle->text().toDouble() * degree2radian);
-// 	rb->setMass(ui.LE_Passive_Mass->text().toDouble());
-// 	rb->setInertia(ui.LE_Passive_Inertia->text().toDouble() * kgmm2kgm);
-// 
-// 	hardPoint* hp = md->HardPoints()["active_link"];
-// 	hp->loc = vecd3(ui.LE_HeadLink_X->text().toDouble() * mm2m, ui.LE_HeadLink_Y->text().toDouble() * mm2m, 0.0);
-// 
-// 	hp = md->HardPoints()["link_cam"];
-// 	hp->loc = vecd3(ui.LE_LinkCam_X->text().toDouble() * mm2m, ui.LE_LinkCam_Y->text().toDouble() * mm2m, 0.0);
-// 
-// 	hp = md->HardPoints()["cam_ground"];
-// 	hp->loc = vecd3(ui.LE_CamGround_X->text().toDouble() * mm2m, ui.LE_CamGround_Y->text().toDouble() * mm2m, 0.0);
-// 
-// 	hp = md->HardPoints()["cam_passive"];
-// 	hp->loc = vecd3(ui.LE_CamPassive_X->text().toDouble() * mm2m, ui.LE_CamPassive_Y->text().toDouble() * mm2m, 0.0);
-
 	if (ui.RB_OnlyOne->isChecked())
 		odd->setComparisonReactionType(ONLY_ONE);
 	else if (ui.RB_SmallerThanFirst->isChecked())
 		odd->setComparisonReactionType(SMALLER_FIRST);
 	md->PointFollower()->initialize(md->HardPoints()["cam_ground"]->loc, md->HardPoints()["cam_passive"]->loc);
+	md->setSpaceConstraint(ui.LE_Space_Width->text().toDouble() * mm2m, ui.LE_Space_Height->text().toDouble() * mm2m);
 	return totalCase;
 }
 
 bool DMotion::translate(const QString& file, const int format, const bool import)
 {
 	static Translate* anTrans = createTranslator();
-// 	DocumentCommon* doc = qobject_cast<MDIWindow*>(getWorkspace()->activeSubWindow()->widget())->getDocument();
-// 	Handle(AIS_InteractiveContext) context = doc->getContext();
 	bool status;
 	if (import)
 		status = anTrans->importModel(file, format, myContext);
-//	else
-//		status = anTrans->exportModel(file, format, myContext);
 
 	if (!status)
 	{
@@ -1424,7 +1220,7 @@ void DMotion::updateProgressBar(int count)
 
 void DMotion::analysis()
 {
-//	plot->bindOptimumDesignDoc(odd);
+	file_save(md->ModelPath() + md->ModelName() + ".mde");
 	odd->clear();
 	kin = new kinematics(md, odd);
 	kin->setPlotWindow(plot);

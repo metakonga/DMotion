@@ -24,6 +24,7 @@ public:
 	double ConstantVelocity();
 	void initializeDrivingPosition();
 	QVector<double>& VelocityProfile();
+	QPointF TimeVelocity(int idx);
 
 	virtual int constraintEquation(VECD &q, VECD &rhs, unsigned int i, double mul = 0);
 	virtual void constraintJacobian(VECD &q, VECD &qd, SMATD &lhs, unsigned int i, bool isjp = false);
@@ -45,6 +46,7 @@ private:
 	double maxTime;
 	coordinateType ctype;
 	rigidBody *targetBody;
+	QVector<double> time;
 	QVector<double> velProfile;
 	QVector<double> dvelProfile;
 	QVector<double> ddvelProfile;

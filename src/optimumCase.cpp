@@ -3,6 +3,7 @@
 optimumCase::optimumCase(QString _name)
 	: name(_name)
 	, count(0)
+	, maxArea(0)
 {
 
 }
@@ -215,6 +216,7 @@ void optimumCase::appendHardPointResult(model* md, double ct)
 void optimumCase::appendCamProfileResult(pointFollower* pf, double ct)
 {
 	camProfileResults = pf->ProfileData();
+	maxArea = pf->MaxDistance();
 }
 
 void optimumCase::setResultCount(unsigned int nc)
@@ -225,6 +227,11 @@ void optimumCase::setResultCount(unsigned int nc)
 unsigned int optimumCase::ResultCount()
 {
 	return count;
+}
+
+double optimumCase::MaxAreaRange()
+{
+	return maxArea;
 }
 
 void optimumCase::saveCase(QFile& stream, unsigned int idx)

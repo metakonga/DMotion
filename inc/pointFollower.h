@@ -21,8 +21,6 @@ public:
 	void setCurrentStep(unsigned int cid);
 	void setActionHardPoint(vecd3 hp);
 	void saveProfileData(QString _path);
-	//void defineDegreeLength(QString path);
-	//void timeDistance(VECD& rhs, VECD& q);
 	void appendProfileData(double th, double s);
 
 	void defineOnePointFollower();
@@ -33,6 +31,7 @@ public:
 	void updateBaseMarker();
 	vecd3 LocalFromBaseBody();
 	void appendRealCamProfileXY(vecd3 xy);
+	double MaxDistance();
 
 	virtual int constraintEquation(VECD &q, VECD &rhs, unsigned int i, double mul = 0);
 	virtual void constraintJacobian(VECD &q, VECD &qd, SMATD &lhs, unsigned int i, bool isjp = false);
@@ -48,12 +47,14 @@ private:
 	bool isSetVariableMarker;
 	unsigned int current_step;
 	double pre_theta;
-	double base_angle;
+	double base_angle; 
+	double maxDistance;
 	vecd3 for_s;
 	vecd3 s;
 	vecd3 rot_s;
 	vecd3 local_vector;
 	vecd3 action_hp;
+	int incAngle;
 	double sr;
 // 	double ds;
 // 	double dds;

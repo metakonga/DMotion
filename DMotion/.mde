@@ -1,0 +1,50 @@
+Model_type 0
+Body_information
+Body PosX PosY Angle Mass Inertia ShapePath
+Ground 0 0 0 0 0 None
+Nozzle -0.0414558 2.36244e-06 0 1.8 0.00225362 None
+Link 0.188697 -0.0349156 0 2.3 0.0283383 None
+Cam 0.262164 -0.0303112 0 2.7 0.0230814 None
+Arc 0.000509902 0.00773585 0 7 0.0584975 None
+end
+HardPoint_information
+HardPoint X Y
+active_link 0 0
+link_cam 0.38424 -0.04956
+cam_ground 0.29739 0
+cam_passive 0.17739 0
+end
+Driving_information
+Target File
+Nozzle ../data/NozzleVelocityProfile.txt
+Arc C:/DMotion/data/ArcVelocityProfile_avoid.txt
+Optimum_condition 1
+Target Check
+0 0
+1 0
+2 0
+3 0
+8 0
+9 0
+10 0
+11 0
+12 0
+13 0
+14 0
+15 0
+end
+Design_variable
+Check Target Lower Step Upper
+0 NozzleLink(X) -20 1 20
+0 NozzleLink(Y) -20 1 20
+1 LinkCam(X) -24 8 24
+1 LinkCam(Y) -24 8 24
+1 CamGround(X) -24 8 24
+1 CamGround(Y) -24 8 24
+1 CamArc(X) -24 8 24
+1 CamArc(Y) -24 8 24
+1 CamAngle 40.0 - 45.0
+1 CamAngle 0.0 - 45.0
+Space_constraint
+Check Width Height
+1 618 140

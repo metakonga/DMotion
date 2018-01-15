@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1318</width>
+    <width>1321</width>
     <height>615</height>
    </rect>
   </property>
@@ -19,7 +19,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1318</width>
+     <width>1321</width>
      <height>21</height>
     </rect>
    </property>
@@ -81,6 +81,9 @@
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <widget class="QDockWidget" name="DW_Modeling">
+   <property name="features">
+    <set>QDockWidget::AllDockWidgetFeatures</set>
+   </property>
    <property name="allowedAreas">
     <set>Qt::RightDockWidgetArea</set>
    </property>
@@ -116,8 +119,8 @@
         <widget class="QFrame" name="DesignTabFrame">
          <property name="geometry">
           <rect>
-           <x>-1</x>
-           <y>10</y>
+           <x>0</x>
+           <y>0</y>
            <width>489</width>
            <height>531</height>
           </rect>
@@ -183,6 +186,64 @@
                <string>Select smaller case than first</string>
               </property>
              </widget>
+            </item>
+           </layout>
+          </widget>
+         </widget>
+         <widget class="QGroupBox" name="groupBox">
+          <property name="geometry">
+           <rect>
+            <x>2</x>
+            <y>77</y>
+            <width>481</width>
+            <height>51</height>
+           </rect>
+          </property>
+          <property name="title">
+           <string>Space constraint</string>
+          </property>
+          <property name="checkable">
+           <bool>false</bool>
+          </property>
+          <widget class="QWidget" name="">
+           <property name="geometry">
+            <rect>
+             <x>10</x>
+             <y>20</y>
+             <width>461</width>
+             <height>22</height>
+            </rect>
+           </property>
+           <layout class="QHBoxLayout" name="horizontalLayout">
+            <item>
+             <widget class="QCheckBox" name="CB_SPACE">
+              <property name="text">
+               <string>Space</string>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="L_Space_Width">
+              <property name="text">
+               <string>Width</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLineEdit" name="LE_Space_Width"/>
+            </item>
+            <item>
+             <widget class="QLabel" name="L_Space_Height">
+              <property name="text">
+               <string>Height</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLineEdit" name="LE_Space_Height"/>
             </item>
            </layout>
           </widget>
@@ -327,10 +388,13 @@
            </rect>
           </property>
           <property name="frameShape">
-           <enum>QFrame::StyledPanel</enum>
+           <enum>QFrame::NoFrame</enum>
           </property>
           <property name="frameShadow">
-           <enum>QFrame::Raised</enum>
+           <enum>QFrame::Sunken</enum>
+          </property>
+          <property name="lineWidth">
+           <number>0</number>
           </property>
          </widget>
          <widget class="QFrame" name="Arc_Graph_Frame">
@@ -343,10 +407,13 @@
            </rect>
           </property>
           <property name="frameShape">
-           <enum>QFrame::StyledPanel</enum>
+           <enum>QFrame::NoFrame</enum>
           </property>
           <property name="frameShadow">
-           <enum>QFrame::Raised</enum>
+           <enum>QFrame::Sunken</enum>
+          </property>
+          <property name="lineWidth">
+           <number>0</number>
           </property>
          </widget>
         </widget>

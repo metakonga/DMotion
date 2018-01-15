@@ -10,7 +10,6 @@ selectReactionDialog::selectReactionDialog(optimumDesignDoc* _odd, QWidget* pare
 	, modelType(0)
 {
 	//setupUi(/*this*/);
-	connect(PB_Close, SIGNAL(clicked()), this, SLOT(pushClose()));
 }
 
 selectReactionDialog::~selectReactionDialog()
@@ -27,7 +26,7 @@ void selectReactionDialog::setupUi(int mtype)
 	int yGeoPos = 10;
 	GB_NozzleTrans = new QGroupBox(this);
 	GB_NozzleTrans->setObjectName(QStringLiteral("GB_NozzleTrans"));
-	GB_NozzleTrans->setTitle("Nozzle trans.");
+	GB_NozzleTrans->setTitle("Nozzle Trans.");
 	GB_NozzleTrans->setGeometry(QRect(10, yGeoPos, 111, 46));
 	yGeoPos += 50;
 	checkMap[NOZZLE_TRANS_FY] = new QCheckBox(GB_NozzleTrans);
@@ -43,8 +42,8 @@ void selectReactionDialog::setupUi(int mtype)
 	GB_NozzleLinkRev = new QGroupBox(this);
 	GB_NozzleLinkRev->setObjectName(QStringLiteral("GB_NozzleLinkRev"));
 	GB_NozzleLinkRev->setGeometry(QRect(10, yGeoPos, 111, 46));
-	GB_NozzleLinkRev->setTitle("Nozzle-Link rev.");
-	yGeoPos = 50;
+	GB_NozzleLinkRev->setTitle("Nozzle-Link Rev.");
+	yGeoPos += 50;
 	checkMap[NOZZLE_LINK_REV_FX] = new QCheckBox(GB_NozzleLinkRev);
 	checkMap[NOZZLE_LINK_REV_FX]->setObjectName(QStringLiteral("CH_ALR_FX"));
 	checkMap[NOZZLE_LINK_REV_FX]->setGeometry(QRect(10, 20, 51, 16));
@@ -60,19 +59,7 @@ void selectReactionDialog::setupUi(int mtype)
 	GB_LinkCamOrLinkHingeRev->setGeometry(QRect(10, yGeoPos, 111, 46));
 	if (mtype == 0)
 	{
-		GB_LinkCamOrLinkHingeRev->setTitle("Link-Hinge rev.");
-		checkMap[LINK_HINGE_REV_FX] = new QCheckBox(GB_LinkCamOrLinkHingeRev);
-		checkMap[LINK_HINGE_REV_FX]->setObjectName(QStringLiteral("CH_LCR_OR_LHR_FX"));
-		checkMap[LINK_HINGE_REV_FX]->setGeometry(QRect(10, 20, 51, 16));
-		checkMap[LINK_HINGE_REV_FX]->setText("FX");
-		checkMap[LINK_HINGE_REV_FY] = new QCheckBox(GB_LinkCamOrLinkHingeRev);
-		checkMap[LINK_HINGE_REV_FY]->setObjectName(QStringLiteral("CH_LCR_OR_LHR_FY"));
-		checkMap[LINK_HINGE_REV_FY]->setGeometry(QRect(60, 20, 51, 16));
-		checkMap[LINK_HINGE_REV_FY]->setText("FY");
-	}
-	else if (mtype == 1)
-	{
-		GB_LinkCamOrLinkHingeRev->setTitle("Link-Cam rev.");
+		GB_LinkCamOrLinkHingeRev->setTitle("Link-Cam Rev.");
 		checkMap[LINK_CAM_REV_FX] = new QCheckBox(GB_LinkCamOrLinkHingeRev);
 		checkMap[LINK_CAM_REV_FX]->setObjectName(QStringLiteral("CH_LCR_OR_LHR_FX"));
 		checkMap[LINK_CAM_REV_FX]->setGeometry(QRect(10, 20, 51, 16));
@@ -81,6 +68,18 @@ void selectReactionDialog::setupUi(int mtype)
 		checkMap[LINK_CAM_REV_FY]->setObjectName(QStringLiteral("CH_LCR_OR_LHR_FY"));
 		checkMap[LINK_CAM_REV_FY]->setGeometry(QRect(60, 20, 51, 16));
 		checkMap[LINK_CAM_REV_FY]->setText("FY");
+	}
+	else if (mtype == 1)
+	{
+		GB_LinkCamOrLinkHingeRev->setTitle("Link-Hinge Rev.");
+		checkMap[LINK_HINGE_REV_FX] = new QCheckBox(GB_LinkCamOrLinkHingeRev);
+		checkMap[LINK_HINGE_REV_FX]->setObjectName(QStringLiteral("CH_LCR_OR_LHR_FX"));
+		checkMap[LINK_HINGE_REV_FX]->setGeometry(QRect(10, 20, 51, 16));
+		checkMap[LINK_HINGE_REV_FX]->setText("FX");
+		checkMap[LINK_HINGE_REV_FY] = new QCheckBox(GB_LinkCamOrLinkHingeRev);
+		checkMap[LINK_HINGE_REV_FY]->setObjectName(QStringLiteral("CH_LCR_OR_LHR_FY"));
+		checkMap[LINK_HINGE_REV_FY]->setGeometry(QRect(60, 20, 51, 16));
+		checkMap[LINK_HINGE_REV_FY]->setText("FY");
 	}		
 	yGeoPos += 50;
 
@@ -89,6 +88,7 @@ void selectReactionDialog::setupUi(int mtype)
 		GB_MaybeHingeCamRev = new QGroupBox(this);
 		GB_MaybeHingeCamRev->setObjectName(QStringLiteral("GB_MaybeHingeCamRev"));
 		GB_MaybeHingeCamRev->setGeometry(QRect(10, yGeoPos, 111, 46));
+		GB_MaybeHingeCamRev->setTitle("Hinge-Cam Rev.");
 		yGeoPos += 50;
 		checkMap[HINGE_CAM_REV_FX] = new QCheckBox(GB_MaybeHingeCamRev);
 		checkMap[HINGE_CAM_REV_FX]->setObjectName(QStringLiteral("CH_HCR_FX"));
@@ -102,6 +102,7 @@ void selectReactionDialog::setupUi(int mtype)
 	GB_CamGroundRev = new QGroupBox(this);
 	GB_CamGroundRev->setObjectName(QStringLiteral("GB_CamGroundRev"));
 	GB_CamGroundRev->setGeometry(QRect(10, yGeoPos, 111, 46));
+	GB_CamGroundRev->setTitle("Cam-Ground Rev.");
 	yGeoPos += 50;
 	checkMap[CAM_GROUND_REV_FX] = new QCheckBox(GB_CamGroundRev);
 	checkMap[CAM_GROUND_REV_FX]->setObjectName(QStringLiteral("CH_CGR_FX"));
@@ -115,6 +116,7 @@ void selectReactionDialog::setupUi(int mtype)
 	GB_ArcTrans = new QGroupBox(this);
 	GB_ArcTrans->setObjectName(QStringLiteral("GB_ArcTrans"));
 	GB_ArcTrans->setGeometry(QRect(10, yGeoPos, 111, 46));
+	GB_ArcTrans->setTitle("Arc Trans.");
 	yGeoPos += 50;
 	checkMap[ARC_TRANS_FY] = new QCheckBox(GB_ArcTrans);
 	checkMap[ARC_TRANS_FY]->setObjectName(QStringLiteral("CH_PT_FY"));
@@ -128,6 +130,7 @@ void selectReactionDialog::setupUi(int mtype)
 	GB_Profile = new QGroupBox(this);
 	GB_Profile->setObjectName(QStringLiteral("GB_Profile"));
 	GB_Profile->setGeometry(QRect(10, yGeoPos, 111, 46));
+	GB_Profile->setTitle("Arc-Cam PF");
 	yGeoPos += 50;
 	checkMap[PROFILE_FX] = new QCheckBox(GB_Profile);
 	checkMap[PROFILE_FX]->setObjectName(QStringLiteral("CH_PF_FX"));
@@ -141,7 +144,9 @@ void selectReactionDialog::setupUi(int mtype)
 	PB_Close = new QPushButton(this);
 	PB_Close->setObjectName(QStringLiteral("PB_Close"));
 	PB_Close->setText("Close");
-	PB_Close->setGeometry(QRect(10, yGeoPos+50, 111, 31));
+	//yGeoPos += 50;
+	PB_Close->setGeometry(QRect(10, yGeoPos, 111, 31));
+	connect(PB_Close, SIGNAL(clicked()), this, SLOT(pushClose()));
 }
 
 void selectReactionDialog::setCheck(reactionForceType type, int d)

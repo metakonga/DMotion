@@ -1,13 +1,13 @@
 /********************************************************************************
-** Form generated from reading UI file 'newModelh37264.ui'
+** Form generated from reading UI file 'newModel.ui'
 **
-** Created by: Qt User Interface Compiler version 5.7.0
+** Created by: Qt User Interface Compiler version 5.7.1
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
 
-#ifndef NEWMODELH37264_H
-#define NEWMODELH37264_H
+#ifndef UI_NEWMODEL_H
+#define UI_NEWMODEL_H
 
 #include <QtCore/QVariant>
 #include <QtWidgets/QAction>
@@ -163,20 +163,20 @@ public:
 
     void retranslateUi(QDialog *newModelDialog)
     {
-        newModelDialog->setWindowTitle(QApplication::translate("newModelDialog", "New Model", 0));
-        GBNewModel->setTitle(QApplication::translate("newModelDialog", "New Model", 0));
-        PB_Create->setText(QApplication::translate("newModelDialog", "Create", 0));
-        PB_Browse->setText(QApplication::translate("newModelDialog", "Browse", 0));
-        PB_Open->setText(QApplication::translate("newModelDialog", "Open", 0));
-        L_ModelType->setText(QApplication::translate("newModelDialog", "Model", 0));
-        LName->setText(QApplication::translate("newModelDialog", "Name", 0));
-        LUnit->setText(QApplication::translate("newModelDialog", "Unit", 0));
-        L_Directory->setText(QApplication::translate("newModelDialog", "Directory", 0));
-        RB_NHCM->setText(QApplication::translate("newModelDialog", "No Hole Cam Model", 0));
-        RB_HCM->setText(QApplication::translate("newModelDialog", "Hole Cam Model", 0));
+        newModelDialog->setWindowTitle(QApplication::translate("newModelDialog", "New Model", Q_NULLPTR));
+        GBNewModel->setTitle(QApplication::translate("newModelDialog", "New Model", Q_NULLPTR));
+        PB_Create->setText(QApplication::translate("newModelDialog", "Create", Q_NULLPTR));
+        PB_Browse->setText(QApplication::translate("newModelDialog", "Browse", Q_NULLPTR));
+        PB_Open->setText(QApplication::translate("newModelDialog", "Open", Q_NULLPTR));
+        L_ModelType->setText(QApplication::translate("newModelDialog", "Model", Q_NULLPTR));
+        LName->setText(QApplication::translate("newModelDialog", "Name", Q_NULLPTR));
+        LUnit->setText(QApplication::translate("newModelDialog", "Unit", Q_NULLPTR));
+        L_Directory->setText(QApplication::translate("newModelDialog", "Directory", Q_NULLPTR));
+        RB_NHCM->setText(QApplication::translate("newModelDialog", "No Hole Cam Model", Q_NULLPTR));
+        RB_HCM->setText(QApplication::translate("newModelDialog", "Hole Cam Model", Q_NULLPTR));
         CB_Unit->clear();
         CB_Unit->insertItems(0, QStringList()
-         << QApplication::translate("newModelDialog", "MMKS(Millimeter/Kilogram/Newton/Second)", 0)
+         << QApplication::translate("newModelDialog", "MMKS(Millimeter/Kilogram/Newton/Second)", Q_NULLPTR)
         );
     } // retranslateUi
 
@@ -188,4 +188,4 @@ namespace Ui {
 
 QT_END_NAMESPACE
 
-#endif // NEWMODELH37264_H
+#endif // UI_NEWMODEL_H

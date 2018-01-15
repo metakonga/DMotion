@@ -12,7 +12,9 @@
 #include "resultTable.h"
 #include "optimumDesignDoc.h"
 #include "view.h"
+#include "drivingConditionPlot.h"
 #include "nhcmDesignVariable.h"
+#include "hcmDesignVariable.h"
 
 #include <AIS_InteractiveContext.hxx>
 #include <V3d_Viewer.hxx>
@@ -30,9 +32,9 @@ typedef commandWindow com;
 class DMotion : public QMainWindow
 {
 	Q_OBJECT
-	enum MENU_ACTION{ NEW=0, OPEN, SAVE, SOLVE, SAVE_CASE, CHANGE_MODEL };
+	enum MENU_ACTION{ NEW=0, OPEN, SAVE, SOLVE, SAVE_CASE };
 public:
-	enum { TOOL_WIRE_FRAME=6, TOOL_SHADING, TOOL_TRANSPARENCY, TOOL_MATERIAL, TOOL_PROFILE };
+	enum { TOOL_WIRE_FRAME=5, TOOL_SHADING, TOOL_TRANSPARENCY, TOOL_MATERIAL, TOOL_PROFILE };
 	enum { ANIMATION_PREVIOUS_2X=0, ANIMATION_PREVIOUS_1X, ANIMATION_PLAY, ANIMATION_INIT, ANIMATION_PAUSE, ANIMATION_FORWARD_2X, ANIMATION_FORWARD_1X };
 	enum { LE_X = 0, LE_Y, LE_ANGLE, LE_MASS, LE_INERTIA, LE_HARDPOINT_X, LE_HARDPOINT_Y };
 
@@ -84,7 +86,7 @@ protected:
 	void file_import();
 	void file_new();
 	void file_open(QString f = "");
-	void file_save();
+	void file_save(QString f = "");
 	void tool_plot();
 	void analysis();
 	void analysisProcess(char, QString);
@@ -98,10 +100,10 @@ protected:
 	void pushPassiveVelocityBotton();
 	void pushSelectParameters();
 	void pushCaseSave();
-	void changeModel();
 	void changeComboBody(int);
 	void changeComboHardPoint(int);
 	void editLineEdit();
+	void clickedTabBar(int);
 
 private:
 	int                             myNbDocuments;
@@ -149,6 +151,8 @@ private:
 	optimumDesignDoc *odd;
 	selectReactionDialog *srdlg;
 	nhcmDesignVariable *dv_nhcm;
+	hcmDesignVariable *dv_hcm;
+	drivingConditionPlot *dcPlot;
 	//QMap<modelType, model*> models;
 };
 

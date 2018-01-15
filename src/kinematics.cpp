@@ -3,10 +3,13 @@
 #include "commandWindow.h"
 #include "animation_controller.h"
 #include "plotWindow.h"
+#include "linearSolver.hpp"
 #include <QDebug>
 #include <QMutexLocker>
 #include <QTextStream>
 #include <QTime>
+// #include "lapack/f2c.h"
+// #include "lapack/clapack.h"
 
 kinematics::kinematics(model *_md, optimumDesignDoc* _odd)
 	: QThread()
@@ -134,10 +137,17 @@ void kinematics::jointReactionForce()
 	unsigned int m_size = s_d + (pf ? 1 : 0) * 2;
 	unsigned int nCoord = s_c + (md->hasGround() ? 3 : 0) + (pf ? 1 : 0);
 	unsigned int m_s = s_c + (pf ? 1 : 0);
-	MKL_INT lapack_info = 0;
-	MKL_INT lapack_one = 1;
-	MKL_INT ptDof = m_size;
-	MKL_INT *permutation = new MKL_INT[m_size];
+	linearSolver ls(LAPACK_COL_MAJOR, m_size, 1, m_size, m_size);
+//  	MKL_INT lapack_info = 0;
+//  	MKL_INT lapack_one = 1;
+// //	integer lapack_one = 1;
+// // 	doublereal lapack_zero = 0;
+// // 	doublereal lapack_mone = -1;
+// //	integer lapack_info = 0;
+// 	//integer ptDof = 10;
+// //	integer *permutation = new integer[m_size];
+// 	MKL_INT ptDof = m_size;
+// 	MKL_INT *permutation = new MKL_INT[m_size];
 	MATD lhs(m_size, m_size);
 	VECD rhs(m_size);
 	if(pf)
@@ -191,8 +201,9 @@ void kinematics::jointReactionForce()
 			lhs(m_s + spar.ridx[j], spar.cidx[j]) = lhs(spar.cidx[j], m_s + spar.ridx[j]) = spar.value[j];
 		}
 	}
-	dgesv_(&ptDof, &lapack_one, lhs.getDataPointer(), &ptDof, permutation, rhs.get_ptr(), &ptDof, &lapack_info);
-	delete[] permutation;
+	int info = ls.solve(lhs.getDataPointer(), rhs.get_ptr());
+	//dgesv_(&ptDof, &lapack_one, lhs.getDataPointer(), &ptDof, permutation, rhs.get_ptr(), &ptDof, &lapack_info);
+	//delete[] permutation;
 	unsigned int r = m_s;
 	foreach(QString str, md->ConstraintList())
 	{
@@ -314,16 +325,16 @@ void kinematics::run()
 		if (!interupt)
 		{
 			jointReactionForce();
-			if (caseCount && !odd->checkMinumumThisCase(oc))
+			double mdist = md->PointFollower()->MaxDistance();
+			bool b_lca = md->verifyLastCamAngleConstraint(oc->HardPointsResults());
+			if ((caseCount && !odd->checkMinumumThisCase(oc)) || mdist >= md->SpaceConstraintHeight() || !b_lca)
 			{
-// 				qs << oc->Name() << " does not satisfy the condition.";
-// 				sendProcess('@', msg);
-// 				sendProcess('L');
-// 				msg.clear();
+				//qDebug() << "Failed case(" << caseCount << ") : " << mdist;// md->PointFollower()->MaxDistance();
 				delete oc; oc = NULL;
 			}
 			else
 			{
+			//	qDebug() << "This case is valid - " << validCase;
 				QTime endingTime = tme.currentTime();
 				QDate endingDate = QDate::currentDate();
 				double dtime = tme.elapsed() * 0.001;
@@ -358,10 +369,17 @@ void kinematics::run()
 
 int kinematics::kinematicAnalysis()
 {
-	MKL_INT lapack_info = 0;
-	MKL_INT lapack_one = 1;
-	MKL_INT ptDof = s_k;
-	MKL_INT *permutation = new MKL_INT[s_k];
+	//integer lapack_one = 1;
+//  	doublereal lapack_zero = 0;
+//  	doublereal lapack_mone = -1;
+	///integer lapack_info = 0;
+	//integer ptDof = s_k;
+	//integer *permutation = new integer[s_k];
+	linearSolver ls(LAPACK_COL_MAJOR, s_k, 1, s_k, s_k);
+// 	MKL_INT lapack_info = 0;
+// 	MKL_INT lapack_one = 1;
+// 	MKL_INT ptDof = s_k;
+// 	MKL_INT *permutation = new MKL_INT[s_k];
 	double norm = 1.0;
 	unsigned int r = 0;
 	unsigned int niter = 0;
@@ -375,7 +393,7 @@ int kinematics::kinematicAnalysis()
 		niter++;
 		if (niter == 100)
 		{
-			delete[] permutation; permutation = NULL;
+			//delete[] permutation; permutation = NULL;
 			return 1;
 		}
 			
@@ -400,8 +418,8 @@ int kinematics::kinematicAnalysis()
 		for (unsigned int i = 0; i < s_k; i++)
 			rhs(i) = -rhs(i);
 
-
-		dgesv_(&ptDof, &lapack_one, lhs.getDataPointer(), &ptDof, permutation, rhs.get_ptr(), &ptDof, &lapack_info);
+		int info = ls.solve(lhs.getDataPointer(), rhs.get_ptr());
+		//dgesv_(&ptDof, &lapack_one, lhs.getDataPointer(), &ptDof, permutation, rhs.get_ptr(), &ptDof, &lapack_info);
 		norm = rhs.norm();
 		for (unsigned int i = 0; i < s_k; i++)
 			q(i + 3) += rhs(i);
@@ -433,7 +451,8 @@ int kinematics::kinematicAnalysis()
 	{
 		lhs(spar.ridx[i], spar.cidx[i]) = spar.value[i];
 	}
-	dgesv_(&ptDof, &lapack_one, lhs.getDataPointer(), &ptDof, permutation, rhs.get_ptr(), &ptDof, &lapack_info);
+	int info = ls.solve(lhs.getDataPointer(), rhs.get_ptr());
+	//dgesv_(&ptDof, &lapack_one, lhs.getDataPointer(), &ptDof, permutation, rhs.get_ptr(), &ptDof, &lapack_info);
 	for (unsigned int i = 0; i < s_k; i++)
 		qd(i + 3) = rhs(i);
 
@@ -453,9 +472,10 @@ int kinematics::kinematicAnalysis()
 	{
 		lhs(spar.ridx[i], spar.cidx[i]) = spar.value[i];
 	}
-	dgesv_(&ptDof, &lapack_one, lhs.getDataPointer(), &ptDof, permutation, rhs.get_ptr(), &ptDof, &lapack_info);
+	info = ls.solve(lhs.getDataPointer(), rhs.get_ptr());
+	//dgesv_(&ptDof, &lapack_one, lhs.getDataPointer(), &ptDof, permutation, rhs.get_ptr(), &ptDof, &lapack_info);
 	for (unsigned int i = 0; i < s_k; i++)
 		qdd(i + 3) = rhs(i);
-	delete[] permutation;
+	//delete[] permutation;
 	return 0;
 }

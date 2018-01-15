@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'selectReaction.ui'
 **
-** Created by: Qt User Interface Compiler version 5.7.0
+** Created by: Qt User Interface Compiler version 5.7.1
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
@@ -114,26 +114,26 @@ public:
 
     void retranslateUi(QDialog *DLG_SelectReaction)
     {
-        DLG_SelectReaction->setWindowTitle(QApplication::translate("DLG_SelectReaction", "Dialog", 0));
-        groupBox->setTitle(QApplication::translate("DLG_SelectReaction", "Active trans.", 0));
-        CH_AT_FY->setText(QApplication::translate("DLG_SelectReaction", "FY", 0));
-        CH_AT_TR->setText(QApplication::translate("DLG_SelectReaction", "TR", 0));
-        groupBox_2->setTitle(QApplication::translate("DLG_SelectReaction", "Active-Link rev.", 0));
-        CH_ALR_FX->setText(QApplication::translate("DLG_SelectReaction", "FX", 0));
-        CH_ALR_FY->setText(QApplication::translate("DLG_SelectReaction", "FY", 0));
-        groupBox_3->setTitle(QApplication::translate("DLG_SelectReaction", "Link-Cam rev.", 0));
-        CH_LCR_FX->setText(QApplication::translate("DLG_SelectReaction", "FX", 0));
-        CH_LCR_FY->setText(QApplication::translate("DLG_SelectReaction", "FY", 0));
-        groupBox_4->setTitle(QApplication::translate("DLG_SelectReaction", "Passive trans.", 0));
-        CH_PT_FY->setText(QApplication::translate("DLG_SelectReaction", "FY", 0));
-        CH_PT_TR->setText(QApplication::translate("DLG_SelectReaction", "TR", 0));
-        groupBox_5->setTitle(QApplication::translate("DLG_SelectReaction", "Cam-Ground rev.", 0));
-        CH_CGR_FY->setText(QApplication::translate("DLG_SelectReaction", "FY", 0));
-        CH_CGR_FX->setText(QApplication::translate("DLG_SelectReaction", "FX", 0));
-        groupBox_6->setTitle(QApplication::translate("DLG_SelectReaction", "Point follower", 0));
-        CH_PF_FY->setText(QApplication::translate("DLG_SelectReaction", "FY", 0));
-        CH_PF_FX->setText(QApplication::translate("DLG_SelectReaction", "FX", 0));
-        PB_Close->setText(QApplication::translate("DLG_SelectReaction", "Close", 0));
+        DLG_SelectReaction->setWindowTitle(QApplication::translate("DLG_SelectReaction", "Dialog", Q_NULLPTR));
+        groupBox->setTitle(QApplication::translate("DLG_SelectReaction", "Active trans.", Q_NULLPTR));
+        CH_AT_FY->setText(QApplication::translate("DLG_SelectReaction", "FY", Q_NULLPTR));
+        CH_AT_TR->setText(QApplication::translate("DLG_SelectReaction", "TR", Q_NULLPTR));
+        groupBox_2->setTitle(QApplication::translate("DLG_SelectReaction", "Active-Link rev.", Q_NULLPTR));
+        CH_ALR_FX->setText(QApplication::translate("DLG_SelectReaction", "FX", Q_NULLPTR));
+        CH_ALR_FY->setText(QApplication::translate("DLG_SelectReaction", "FY", Q_NULLPTR));
+        groupBox_3->setTitle(QApplication::translate("DLG_SelectReaction", "Link-Cam rev.", Q_NULLPTR));
+        CH_LCR_FX->setText(QApplication::translate("DLG_SelectReaction", "FX", Q_NULLPTR));
+        CH_LCR_FY->setText(QApplication::translate("DLG_SelectReaction", "FY", Q_NULLPTR));
+        groupBox_4->setTitle(QApplication::translate("DLG_SelectReaction", "Passive trans.", Q_NULLPTR));
+        CH_PT_FY->setText(QApplication::translate("DLG_SelectReaction", "FY", Q_NULLPTR));
+        CH_PT_TR->setText(QApplication::translate("DLG_SelectReaction", "TR", Q_NULLPTR));
+        groupBox_5->setTitle(QApplication::translate("DLG_SelectReaction", "Cam-Ground rev.", Q_NULLPTR));
+        CH_CGR_FY->setText(QApplication::translate("DLG_SelectReaction", "FY", Q_NULLPTR));
+        CH_CGR_FX->setText(QApplication::translate("DLG_SelectReaction", "FX", Q_NULLPTR));
+        groupBox_6->setTitle(QApplication::translate("DLG_SelectReaction", "Point follower", Q_NULLPTR));
+        CH_PF_FY->setText(QApplication::translate("DLG_SelectReaction", "FY", Q_NULLPTR));
+        CH_PF_FX->setText(QApplication::translate("DLG_SelectReaction", "FX", Q_NULLPTR));
+        PB_Close->setText(QApplication::translate("DLG_SelectReaction", "Close", Q_NULLPTR));
     } // retranslateUi
 
 };

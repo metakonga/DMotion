@@ -31,7 +31,9 @@ public:
 	void setCoordinateNumber(unsigned int nc);
 	void setCamAngleDesignVariable(double lo, double up);
 	void setCamAngleDesignVariableEnable(bool b);
-
+	void setLastCamAngleDesignVariable(double lo, double up);
+	void setLastCamAngleDesignVariableEnable(bool b);
+	void setSpaceConstraint(double sw, double sh);
 	void setGeneralizedCoordinate(unsigned int step, VECD& q, VECD& qd, VECD& qdd);
 	bool updateDesignVariable(QString &hps, bool isFirst = false);
 	bool IsEmptyEnableDesignVariable();
@@ -72,6 +74,9 @@ public:
 	//QMap<QString, pointFollower*>& PointFollowers();
 
 	modelType ModelType();
+	double SpaceConstraintWidth();
+	double SpaceConstraintHeight();
+	bool verifyLastCamAngleConstraint(QMap<QString, QVector<vecd3>>& hps);
 
 	virtual void init() = 0;
 //	virtual unsigned int kinematicAnalysis() = 0;
@@ -80,14 +85,20 @@ protected:
 	modelType mtype;
 	bool isEmptyEnableDesignVariable;
 	bool isSatisfyCamAngle;
+	//bool isSatisfyLastCamAngle;
 	unsigned int nCoordinates;
 	QString modelName;
 	QString modelPath;
 	int _isHasGroundModel;
 	bool cam_angle_enable;
+	bool last_cam_angle_enable;
 	double cam_angle_lower;
 	double cam_angle_upper;
+	double last_cam_angle_lower;
+	double last_cam_angle_upper;
 	double noSatisfiedCamAngle;
+	double spaceWidth;
+	double spaceHeight;
 
 	QList<QString> hpList;
 	QList<QString> bodyList;

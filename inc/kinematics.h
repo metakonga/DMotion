@@ -4,9 +4,11 @@
 #include <QThread>
 #include <QString>
 #include <QMutex>
-#include <mkl.h>
+//#include <mkl.h>
 
 #include "model.h"
+
+
 
 class plotWindow;
 class optimumDesignDoc;

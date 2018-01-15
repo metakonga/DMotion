@@ -90,8 +90,12 @@ private:
 	QLineEdit *LE_CAMPV_UPPER_Y;
 	QCheckBox *CB_CAMANGLE;
 	//QLabel *L_CAMANGLE;
-	QLineEdit *LE_CAM_ANGLE_Lower;
-	QLineEdit *LE_CAM_ANGLE_Upper;
+	QLineEdit *LE_INITIAL_ANGLE_Lower;
+	QLineEdit *LE_INITIAL_ANGLE_Upper;
+
+	QCheckBox *CB_LASTANGLE;
+	QLineEdit *LE_LAST_ANGLE_Lower;
+	QLineEdit *LE_LAST_ANGLE_Upper;
 };
 
 #endif

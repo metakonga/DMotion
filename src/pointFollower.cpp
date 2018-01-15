@@ -14,6 +14,8 @@ pointFollower::pointFollower(QString _name)
 	, isSetVariableMarker(false)
 	, result_s(0)
 	, result_theta(0)
+	, maxDistance(0)
+	, incAngle(0)
 {
 	constraint::nDimension += 0;// 2;
 	constraint::nrow = 2;
@@ -43,6 +45,8 @@ void pointFollower::initialize(vecd3& hp0, vecd3& hp1)
 	setCM2HardPoint();
 	updateBaseMarker();
 	setLocalFromBaseBody();
+	maxDistance = 0.0;
+	incAngle = 0.0;
 }
 
 void pointFollower::setBaseMarker(vecd3 q, vecd3 r)
@@ -67,7 +71,9 @@ vecd3 pointFollower::LocalFromBaseBody()
 }
 
 void pointFollower::appendProfileData(double th, double s)
-{
+{ 
+// 	if (s > maxDistance)
+// 		maxDistance = s;
 	ss.push_back(QPointF(th, s));
 	unsigned int sz = ss.size();
 	if (sz == 1)
@@ -462,7 +468,20 @@ void pointFollower::defineOnePointFollower()
 	vecd3 cam_passive_pos = passive_pos + math::local2global(TM(passive_angle), local_vector);
 	vecd3 dp = cam_passive_pos - action_hp;
 	//vecd3 dp = hp1 - hp0;
+// 	double ms = abs( + action_hp.Y());
+// 	if (ms > maxDistance)
+// 		maxDistance = ms;
 	vecd3 cp = math::global2local(TM(cam_angle), dp);
+	double ms = abs(action_hp.Y() + cp.Y());
+	if (ms > maxDistance)
+		maxDistance = ms;
+	if (abs(cam_angle) > M_PI * 0.5)
+	{
+		ms = ss.at(incAngle++).y() + action_hp.Y();
+		if (ms > maxDistance)
+			maxDistance = ms;
+	}
+	
 	this->appendRealCamProfileXY(cp);
 	this->appendProfileData(base_angle - cam_angle, math::length(dp));
 }
@@ -470,4 +489,9 @@ void pointFollower::defineOnePointFollower()
 void pointFollower::appendRealCamProfileXY(vecd3 xy)
 {
 	cpXY.push_back(QPointF(xy.X(), xy.Y()));
+}
+
+double pointFollower::MaxDistance()
+{
+	return maxDistance;
 }

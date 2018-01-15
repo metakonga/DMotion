@@ -84,6 +84,11 @@ QVector<double>& drivingConstraint::VelocityProfile()
 	return velProfile;
 }
 
+QPointF drivingConstraint::TimeVelocity(int idx)
+{
+	return QPointF(time.at(idx), velProfile.at(idx));
+}
+
 double drivingConstraint::ConstantVelocity()
 {
 	return c_vel;
@@ -165,6 +170,7 @@ bool drivingConstraint::setVelocityProfile(QString _path)
 			maxTime = t;
 			maxAbsVel = abs(v);
 		}			
+		time.append(t);
 		velProfile.append(v);
 		//t += 0.00001;
 	}

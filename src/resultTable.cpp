@@ -26,7 +26,7 @@ resultTable::resultTable(optimumDesignDoc* _odd, QWidget *parent)
 	rtable->verticalHeader()->hide();
 	rtable->setShowGrid(true);
 	//rtable->setSortingEnabled(true);
-
+	//rtable->setCop
 	QGridLayout *mainLayout = new QGridLayout;
 	mainLayout->setSizeConstraint(QLayout::SetNoConstraint);
 	mainLayout->addWidget(rtable, 0, 0);

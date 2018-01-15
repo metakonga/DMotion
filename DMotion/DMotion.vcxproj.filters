@@ -208,9 +208,6 @@
     <ClCompile Include="..\src\partHeader.cpp">
       <Filter>Source Files\rigidBody</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\DualMotion.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="GeneratedFiles\Debug\moc_kinematics.cpp">
       <Filter>Generated Files\Debug</Filter>
     </ClCompile>
@@ -272,6 +269,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\src\hcmDesignVariable.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\drivingConditionPlot.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -428,9 +428,6 @@
     <ClInclude Include="..\inc\partCam.h">
       <Filter>Header Files\rigidBody</Filter>
     </ClInclude>
-    <ClInclude Include="..\inc\DualMotion.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\inc\optimumDesignDoc.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -465,6 +462,9 @@
       <Filter>Header Files\model</Filter>
     </ClInclude>
     <ClInclude Include="..\inc\hcmDesignVariable.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\drivingConditionPlot.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

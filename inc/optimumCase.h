@@ -20,6 +20,7 @@ public:
 	void appendCamProfileResult(pointFollower* pf, double ct);
 	void setResultCount(unsigned int nc);
 	unsigned int ResultCount();
+	double MaxAreaRange();
 	void saveCase(QFile& stream, unsigned int idx);
 
 	stMaxReaction& maxReactionStructure(reactionForceType _type);
@@ -33,6 +34,7 @@ public:
 
 private:
 	unsigned int count;
+	double maxArea;
 	QString name;
 	QMap<QString, QVector<resultDataType>> bodyResults;
 	QMap<QString, QVector<jointResultDataType>> reactionResults;

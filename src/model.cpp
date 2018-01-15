@@ -13,6 +13,8 @@ model::model(modelType mt)
 	, cam_angle_lower(0)
 	, cam_angle_upper(0)
 	, mtype(mt)
+	, spaceWidth(140)
+	, spaceHeight(618)
 {
 	
 }
@@ -40,6 +42,23 @@ void model::setCamAngleDesignVariable(double lo, double up)
 void model::setCamAngleDesignVariableEnable(bool b)
 {
 	cam_angle_enable = b;
+}
+
+void model::setLastCamAngleDesignVariable(double lo, double up)
+{
+	last_cam_angle_lower = lo;
+	last_cam_angle_upper = up;
+}
+
+void model::setLastCamAngleDesignVariableEnable(bool b)
+{
+	last_cam_angle_enable = b;
+}
+
+void model::setSpaceConstraint(double sw, double sh)
+{
+	spaceHeight = sh;
+	spaceWidth = sw;
 }
 
 void model::setModelName(QString _modelName)
@@ -228,6 +247,16 @@ modelType model::ModelType()
 	return mtype;
 }
 
+double model::SpaceConstraintWidth()
+{
+	return spaceWidth;
+}
+
+double model::SpaceConstraintHeight()
+{
+	return spaceHeight;
+}
+
 pointFollower* model::PointFollower()
 {
 	return pfollower;
@@ -354,16 +383,6 @@ bool model::updateDesignVariable(QString &hps, bool isFirst)
 		vecd3 hp0 = hardPoints["cam_ground"]->loc;
 		vecd3 hp1 = hardPoints["cam_passive"]->loc;
 		pfollower->initialize(hp0, hp1);
-// 		pfollower->setActionHardPoint(hp0);
-// 		vecd3 dp = hp1 - hp0;
-// 		double len = math::length(dp);
-// 		double ang = acos(dp.X() / len);
-// 		if (dp.Y() < 0)
-// 			ang = M_PI + (M_PI - ang);
-// 		pfollower->setInitialAngle(ang);
-// 		pfollower->initializeCurveData();
-// 		pfollower->setCM2HardPoint();
-// 		pfollower->updateBaseMarker();
 	}
 	if (isEmptyEnableDesignVariable)
 		isOver = false;
@@ -388,6 +407,35 @@ bool model::updateDesignVariable(QString &hps, bool isFirst)
 	}
 	
 	return isOver;
+}
+
+bool model::verifyLastCamAngleConstraint(QMap<QString, QVector<vecd3>>& hps)
+{
+	bool isSatisfyLastCamAngle = true;
+	
+	if (last_cam_angle_enable)
+	{
+		QString c_hp0 = !mtype ? "link_cam" : "hinge_cam";
+		QString c_hp1 = "cam_ground";
+		QVector<vecd3> lc = hps[c_hp0];
+		QVector<vecd3> cg = hps[c_hp1];
+		int sz = lc.size() - 1;
+		vecd3 hp0 = lc[sz];// hps["link_cam"]->loc;
+		vecd3 hp1 = cg[sz];// hardPoints["cam_ground"]->loc;
+		vecd3 dp = hp0 - hp1;
+		double len = math::length(dp);
+		double ang = abs((180 / M_PI) * (acos(-dp.Y() / len)));
+		if (ang > last_cam_angle_lower && ang < last_cam_angle_upper)
+		{
+			isSatisfyLastCamAngle = true;
+		}
+		else
+		{
+			isSatisfyLastCamAngle = false;
+		}
+		return isSatisfyLastCamAngle;
+	}
+	return isSatisfyLastCamAngle;
 }
 
 bool model::IsEmptyEnableDesignVariable()

@@ -68,7 +68,7 @@
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
+    <OutDir>..\bin\</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -89,8 +89,8 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <PreprocessorDefinitions>_WINDOWS;HAVE_D3D;HAVE_VTK;HAVE_FREEIMAGE;HAVE_GL2PS;HAVE_TBB;UNICODE;WIN32;WIN64;QT_DLL;QT_CORE_LIB;QT_GUI_LIB;QT_OPENGL_LIB;QT_WIDGETS_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.\GeneratedFiles;.;$(QTDIR57)\include;.\GeneratedFiles\$(ConfigurationName);$(QTDIR57)\include\QtCore;$(QTDIR57)\include\QtGui;$(QTDIR57)\include\QtWidgets;$(QTDIR57)\include\QtCharts;C:\DMotion\inc;C:\Qt57\5.7\msvc2013_64\include\ActiveQt;C:\OpenCASCADE7.1.0-vc10-64\opencascade-7.1.0\inc;C:\OpenCASCADE7.1.0-vc10-64\opencascade-7.1.0\samples\qt\Common\src;$(ICPP_COMPILER17)\mkl\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>ADD_;HAVE_LAPACK_CONFIG_H;LAPACK_COMPLEX_STRUCTURE;_WINDOWS;HAVE_D3D;HAVE_VTK;HAVE_FREEIMAGE;HAVE_GL2PS;HAVE_TBB;UNICODE;WIN32;WIN64;QT_DLL;QT_CORE_LIB;QT_GUI_LIB;QT_OPENGL_LIB;QT_WIDGETS_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>.\GeneratedFiles;.;$(QTDIR57)\include;.\GeneratedFiles\$(ConfigurationName);$(QTDIR57)\include\QtCore;$(QTDIR57)\include\QtGui;$(QTDIR57)\include\QtWidgets;$(QTDIR57)\include\QtCharts;C:\DMotion\inc;C:\Qt57\5.7\msvc2013_64\include\ActiveQt;C:\OpenCASCADE7.1.0-vc10-64\opencascade-7.1.0\inc;C:\OpenCASCADE7.1.0-vc10-64\opencascade-7.1.0\samples\qt\Common\src;$(ICPP_COMPILER17)\mkl\include;$(LAPACK_64)\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Disabled</Optimization>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -99,9 +99,9 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <OutputFile>$(OutDir)\$(ProjectName).exe</OutputFile>
-      <AdditionalLibraryDirectories>$(ICPP_COMPILER17)\mkl\lib\intel64_win;$(QTDIR57)\lib;C:\OpenCASCADE7.1.0-vc10-64\opencascade-7.1.0\win64\vc10\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(ICPP_COMPILER17)\mkl\lib\intel64_win;$(QTDIR57)\lib;C:\OpenCASCADE7.1.0-vc10-64\opencascade-7.1.0\win64\vc10\lib;$(LAPACK_64)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>mkl_rt.lib;TKernel.lib;TKMath.lib;TKService.lib;TKV3d.lib;TKOpenGl.lib;TKBRep.lib;TKIGES.lib;TKSTL.lib;TKVRML.lib;TKSTEP.lib;TKSTEPAttr.lib;TKSTEP209.lib;TKSTEPBase.lib;TKGeomBase.lib;TKGeomAlgo.lib;TKG3d.lib;TKG2d.lib;TKXSBase.lib;TKShHealing.lib;TKHLR.lib;TKTopAlgo.lib;TKMesh.lib;TKPrim.lib;TKCDF.lib;TKBool.lib;TKBO.lib;TKFillet.lib;TKOffset.lib;Qt5Chartsd.lib;qtmaind.lib;Qt5Cored.lib;Qt5Guid.lib;Qt5Widgetsd.lib;opengl32.lib;glu32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libtmglib.lib;libblas.lib;liblapack.lib;liblapacke.lib;TKernel.lib;TKMath.lib;TKService.lib;TKV3d.lib;TKOpenGl.lib;TKBRep.lib;TKIGES.lib;TKSTL.lib;TKVRML.lib;TKSTEP.lib;TKSTEPAttr.lib;TKSTEP209.lib;TKSTEPBase.lib;TKGeomBase.lib;TKGeomAlgo.lib;TKG3d.lib;TKG2d.lib;TKXSBase.lib;TKShHealing.lib;TKHLR.lib;TKTopAlgo.lib;TKMesh.lib;TKPrim.lib;TKCDF.lib;TKBool.lib;TKBO.lib;TKFillet.lib;TKOffset.lib;Qt5Chartsd.lib;qtmaind.lib;Qt5Cored.lib;Qt5Guid.lib;Qt5Widgetsd.lib;opengl32.lib;glu32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -122,8 +122,8 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <PreprocessorDefinitions>UNICODE;WIN32;WIN64;QT_DLL;QT_NO_DEBUG;NDEBUG;QT_CORE_LIB;QT_GUI_LIB;QT_OPENGL_LIB;QT_WIDGETS_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.\GeneratedFiles;.;$(QTDIR57_32)\include;.\GeneratedFiles\$(ConfigurationName);$(QTDIR57_32)\include\QtCore;$(QTDIR57_32)\include\QtGui;$(QTDIR57_32)\include\QtOpenGL;$(QTDIR57_32)\include\QtWidgets;$(QTDIR57_32)\include\QtCharts;C:\DMotion\inc;C:\Qt57\5.7\msvc2013_64\include\ActiveQt;C:\OpenCASCADE7.1.0-vc10-64\opencascade-7.1.0\inc;C:\OpenCASCADE7.1.0-vc10-64\opencascade-7.1.0\samples\qt\Common\src;$(ICPP_COMPILER17)\mkl\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>ADD_;HAVE_LAPACK_CONFIG_H;LAPACK_COMPLEX_STRUCTURE;UNICODE;WIN32;WIN64;QT_DLL;QT_NO_DEBUG;NDEBUG;QT_CORE_LIB;QT_GUI_LIB;QT_OPENGL_LIB;QT_WIDGETS_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>.\GeneratedFiles;.;$(QTDIR57)\include;.\GeneratedFiles\$(ConfigurationName);$(QTDIR57)\include\QtCore;$(QTDIR57)\include\QtGui;$(QTDIR57)\include\QtOpenGL;$(QTDIR57)\include\QtWidgets;$(QTDIR57)\include\QtCharts;C:\DMotion\inc;C:\Qt57\5.7\msvc2013_64\include\ActiveQt;C:\OpenCASCADE7.1.0-vc10-64\opencascade-7.1.0\inc;C:\OpenCASCADE7.1.0-vc10-64\opencascade-7.1.0\samples\qt\Common\src;$(ICPP_COMPILER17)\mkl\include;$(LAPACK_64)\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>
       </DebugInformationFormat>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
@@ -132,9 +132,9 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <OutputFile>$(OutDir)\$(ProjectName).exe</OutputFile>
-      <AdditionalLibraryDirectories>$(ICPP_COMPILER17)\mkl\lib\intel64_win;$(QTDIR57)\lib;C:\OpenCASCADE7.1.0-vc10-64\opencascade-7.1.0\win64\vc10\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(ICPP_COMPILER17)\mkl\lib\intel64_win;$(QTDIR57)\lib;C:\OpenCASCADE7.1.0-vc10-64\opencascade-7.1.0\win64\vc10\lib;$(LAPACK_64)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>false</GenerateDebugInformation>
-      <AdditionalDependencies>mkl_rt.lib;TKernel.lib;TKMath.lib;TKService.lib;TKV3d.lib;TKOpenGl.lib;TKBRep.lib;TKIGES.lib;TKSTL.lib;TKVRML.lib;TKSTEP.lib;TKSTEPAttr.lib;TKSTEP209.lib;TKSTEPBase.lib;TKGeomBase.lib;TKGeomAlgo.lib;TKG3d.lib;TKG2d.lib;TKXSBase.lib;TKShHealing.lib;TKHLR.lib;TKTopAlgo.lib;TKMesh.lib;TKPrim.lib;TKCDF.lib;TKBool.lib;TKBO.lib;TKFillet.lib;TKOffset.lib;Qt5Charts.lib;qtmain.lib;Qt5Core.lib;Qt5Gui.lib;Qt5OpenGL.lib;opengl32.lib;glu32.lib;Qt5Widgets.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libtmglib.lib;libblas.lib;liblapack.lib;liblapacke.lib;TKernel.lib;TKMath.lib;TKService.lib;TKV3d.lib;TKOpenGl.lib;TKBRep.lib;TKIGES.lib;TKSTL.lib;TKVRML.lib;TKSTEP.lib;TKSTEPAttr.lib;TKSTEP209.lib;TKSTEPBase.lib;TKGeomBase.lib;TKGeomAlgo.lib;TKG3d.lib;TKG2d.lib;TKXSBase.lib;TKShHealing.lib;TKHLR.lib;TKTopAlgo.lib;TKMesh.lib;TKPrim.lib;TKCDF.lib;TKBool.lib;TKBO.lib;TKFillet.lib;TKOffset.lib;Qt5Charts.lib;qtmain.lib;Qt5Core.lib;Qt5Gui.lib;Qt5OpenGL.lib;opengl32.lib;glu32.lib;Qt5Widgets.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -150,8 +150,8 @@
     <ClCompile Include="..\src\chart.cpp" />
     <ClCompile Include="..\src\chartView.cpp" />
     <ClCompile Include="..\src\commandWindow.cpp" />
+    <ClCompile Include="..\src\drivingConditionPlot.cpp" />
     <ClCompile Include="..\src\drivingConstraint.cpp" />
-    <ClCompile Include="..\src\DualMotion.cpp" />
     <ClCompile Include="..\src\errors.cpp" />
     <ClCompile Include="..\src\hcmDesignVariable.cpp" />
     <ClCompile Include="..\src\kinematics.cpp" />
@@ -341,6 +341,7 @@
   <ItemGroup>
     <ClInclude Include="..\inc\algebraMath.h" />
     <ClInclude Include="..\inc\axis.h" />
+    <ClInclude Include="..\inc\drivingConditionPlot.h" />
     <ClInclude Include="..\inc\dual_motion_hole.hpp" />
     <ClInclude Include="..\inc\errors.h" />
     <ClInclude Include="..\inc\hcmDesignVariable.h" />
@@ -500,7 +501,6 @@
     <ClInclude Include="..\inc\designVariable.h" />
     <ClInclude Include="..\inc\dmotion_types.h" />
     <ClInclude Include="..\inc\drivingConstraint.h" />
-    <ClInclude Include="..\inc\DualMotion.h" />
     <ClInclude Include="..\inc\dual_motion.hpp" />
     <ClInclude Include="..\inc\geometry.h" />
     <ClInclude Include="..\inc\geometry_wedge.h" />
