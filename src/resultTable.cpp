@@ -23,6 +23,7 @@ resultTable::resultTable(optimumDesignDoc* _odd, QWidget *parent)
 	}
 	//<< "Nozzel Trans.(FY)" << "Nozzel Trans.(TZ)" << "Nozzel-Link Rev.(FX)" << "Nozzel-Link Rev.(FY)" << "Link-Cam Rev.(FX)" << "Link-Cam Rev.(FY)" << "Cam-Ground Rev.(FX)" << "Cam-Ground Rev.(FY)" << "Arc Trans.(FY)" << "Arc Trans.(TZ)" << "Arc-Cam PF(FX)" << "Arc-Cam PF(FY)";
 	rtable->setHorizontalHeaderLabels(labels);
+	//rtable->setSizeAdjustPolicy(QAbstractScrollArea::SizeAdjustPolicy::AdjustToContents);
 	rtable->verticalHeader()->hide();
 	rtable->setShowGrid(true);
 	//rtable->setSortingEnabled(true);
@@ -67,6 +68,8 @@ void resultTable::actionClick(QModelIndex index)
 	int row = index.row();
 	int col = index.column();
 	QString caseName = rtable->item(row, 1)->text();
+	if (odd->SelectedCase() && odd->SelectedCase()->Name() == caseName)
+		return;
 	odd->setSelectedCase(caseName);
 	optimumCase* oc = odd->SelectedCase();
 	QMap<QString, Handle(AIS_Shape)> hps = DMotion::getDocument()->getHardPoints();

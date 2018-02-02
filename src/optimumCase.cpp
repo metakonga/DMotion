@@ -47,6 +47,11 @@ QVector<QPointF>& optimumCase::CamProfileResults()
 	return camProfileResults;
 }
 
+QVector<QPointF>& optimumCase::LastCamProfileResults()
+{
+	return lastCamProfileResults;
+}
+
 QString optimumCase::Name()
 {
 	return name;
@@ -93,9 +98,10 @@ void optimumCase::appendReactionResults(model* md, double ct)
 		switch (cs->JointType())
 		{
 		case REVOLUTE:
-			jrdt.fx = -cs->ReactionForce()[0] * unit;
-			jrdt.fy = -cs->ReactionForce()[1] * unit;
-			jrdt.fm = sqrt(jrdt.fx * jrdt.fx + jrdt.fy * jrdt.fy);
+			jrdt.fx = cs->ReactionForce()[0] * unit;
+			jrdt.fy = cs->ReactionForce()[1] * unit;
+			jrdt.tr = 0.0;
+			//jrdt.fm = sqrt(jrdt.fx * jrdt.fx + jrdt.fy * jrdt.fy);
 			rft = cs->ReactionForceType1();
 			mr0 = maximumReaction[rft];
 			abx = abs(jrdt.fx);
@@ -120,13 +126,14 @@ void optimumCase::appendReactionResults(model* md, double ct)
 			
 			break;
 		case TRANSLATION:
-			jrdt.fx = -cs->ReactionForce()[0] * unit;
-			jrdt.fy = -cs->ReactionForce()[1] * unit / 1000.0;
-			jrdt.fm = sqrt(jrdt.fx * jrdt.fx + jrdt.fy * jrdt.fy);
+			jrdt.fx = 0.0;
+			jrdt.fy = -cs->ReactionForce()[1] * unit;
+			jrdt.tr = -cs->ReactionForce()[0] * unit / 1000.0;
+			/*jrdt.fm = sqrt(jrdt.fx * jrdt.fx + jrdt.fy * jrdt.fy);*/
 			rft = cs->ReactionForceType1();
 			mr0 = maximumReaction[rft];
-			abx = abs(jrdt.fx);
-			aby = abs(jrdt.fy);
+			abx = abs(jrdt.fy);
+			aby = abs(jrdt.tr);
 			if (mr0.maximum < abx)
 			{
 				mr0.maximum = abx;
@@ -144,6 +151,63 @@ void optimumCase::appendReactionResults(model* md, double ct)
 				maximumReaction[rft] = mr1;
 			}
 			break;
+		case SIMPLIFIED:
+		{
+			simplifiedConstraint *sc = dynamic_cast<simplifiedConstraint*>(cs);
+			rft = cs->ReactionForceType1();
+			mr0 = maximumReaction[rft];
+			if (sc->Direction() == simplifiedConstraint::HORIZONTAL)
+			{
+				jrdt.fx = -cs->ReactionForce()[0] * unit;
+				aby = abs(jrdt.fx);
+				if (mr0.maximum < aby)
+				{
+					mr0.maximum = aby;
+					mr0.dir = "FX";
+					mr0.time = ct;
+					maximumReaction[rft] = mr0;
+				}
+			}
+			else if (sc->Direction() == simplifiedConstraint::VERTICAL)
+			{
+				jrdt.fy = -cs->ReactionForce()[0] * unit;
+				aby = abs(jrdt.fy);
+				if (mr0.maximum < aby)
+				{
+					mr0.maximum = aby;
+					mr0.dir = "FY";
+					mr0.time = ct;
+					maximumReaction[rft] = mr0;
+				}
+			}				
+			else if (sc->Direction() == simplifiedConstraint::ROTATION)
+			{
+				jrdt.tr = -cs->ReactionForce()[0] * unit;
+				aby = abs(jrdt.tr);
+				if (mr0.maximum < aby)
+				{
+					mr0.maximum = aby;
+					mr0.dir = "TR";
+					mr0.time = ct;
+					maximumReaction[rft] = mr0;
+				}
+			}
+		}
+// 			jrdt.fx = 0.0;// -cs->ReactionForce()[0] * unit;
+// 			jrdt.fy = -cs->ReactionForce()[0] * unit;
+// 			jrdt.tr = 0.0;
+			//jrdt.fm = 0.0;// sqrt(jrdt.fx * jrdt.fx + jrdt.fy * jrdt.fy);
+			rft = cs->ReactionForceType1();
+			mr0 = maximumReaction[rft];
+			////abx = abs(jrdt.fx);
+			aby = abs(jrdt.fy);
+			if (mr0.maximum < aby)
+			{
+				mr0.maximum = aby;
+				mr0.dir = "FY";
+				mr0.time = ct;
+				maximumReaction[rft] = mr0;
+			}
 		case DRIVING:
 // 			jrdt.fx = -cs->ReactionForce()[0];
 // 			mr0 = maximumReaction[cs->Name() + "_FX"];
@@ -169,32 +233,36 @@ void optimumCase::appendReactionResults(model* md, double ct)
 	jointResultDataType jrdt = { 0, };
 	jrdt.time = ct;
 	pointFollower *pf = md->PointFollower();// ()["cam_profile"];
-	jrdt.fx = pf->ReactionForce()[0] * unit;
-	jrdt.fy = pf->ReactionForce()[1] * unit;
-	jrdt.fm = 0.0;
-	//jrdt.loc = vecd3(0.0, 0.0, 0.0);
-	rft = pf->ReactionForceType1();
-	mr0 = maximumReaction[rft];
-	abx = abs(jrdt.fx);
-	aby = abs(jrdt.fy);
-	if (mr0.maximum < abx)
+	if (pf)
 	{
-		mr0.maximum = abx;
-		mr0.dir = "FX";
-		mr0.time = ct;
-		maximumReaction[rft] = mr0;
-	}
-	rft = pf->ReactionForceType2();
-	mr1 = maximumReaction[rft];
-	if (mr1.maximum < aby)
-	{
-		mr1.maximum = aby;
-		mr1.dir = "FY";
-		mr1.time = ct;
-		maximumReaction[rft] = mr1;
+		jrdt.fx = pf->ReactionForce()[0] * unit;
+		jrdt.fy = pf->ReactionForce()[1] * unit;
+		jrdt.tr = 0.0;
+		//jrdt.loc = vecd3(0.0, 0.0, 0.0);
+		rft = pf->ReactionForceType1();
+		mr0 = maximumReaction[rft];
+		abx = abs(jrdt.fx);
+		aby = abs(jrdt.fy);
+		if (mr0.maximum < abx)
+		{
+			mr0.maximum = abx;
+			mr0.dir = "FX";
+			mr0.time = ct;
+			maximumReaction[rft] = mr0;
+		}
+		rft = pf->ReactionForceType2();
+		mr1 = maximumReaction[rft];
+		if (mr1.maximum < aby)
+		{
+			mr1.maximum = aby;
+			mr1.dir = "FY";
+			mr1.time = ct;
+			maximumReaction[rft] = mr1;
+		}
+
+		reactionResults[pf->Name()].push_back(jrdt);
 	}
 	
-	reactionResults[pf->Name()].push_back(jrdt);
 }
 
 void optimumCase::appendHardPointResult(model* md, double ct)
@@ -205,17 +273,24 @@ void optimumCase::appendHardPointResult(model* md, double ct)
 			continue;
 		if (cs->JointType() == TRANSLATION)
 			continue;
+		if (cs->JointType() == SIMPLIFIED)
+			continue;
 		vecd3 loc = cs->calcJointLocation();
 		hardPointResults[cs->BindedHardPoint()->name].push_back(loc);
 	}
 	pointFollower* pf = md->PointFollower();
-	vecd3 loc = pf->calcJointLocation();
-	hardPointResults[pf->BindedHardPoint()->name].push_back(loc);
+	if (pf)
+	{
+		vecd3 loc = pf->calcJointLocation();
+		hardPointResults[pf->BindedHardPoint()->name].push_back(loc);
+	}
+	
 }
 
 void optimumCase::appendCamProfileResult(pointFollower* pf, double ct)
 {
 	camProfileResults = pf->ProfileData();
+	lastCamProfileResults = pf->LastProfileData();
 	maxArea = pf->MaxDistance();
 }
 
@@ -232,6 +307,11 @@ unsigned int optimumCase::ResultCount()
 double optimumCase::MaxAreaRange()
 {
 	return maxArea;
+}
+
+void optimumCase::setProfileMaxDistance(double mdist)
+{
+	maxDistance = mdist;
 }
 
 void optimumCase::saveCase(QFile& stream, unsigned int idx)
@@ -280,5 +360,10 @@ void optimumCase::saveCase(QFile& stream, unsigned int idx)
 	stream.write((char*)&sz, sizeof(int));
 	stream.write((char*)ch.data(), sizeof(QChar) * ch.size());
 	stream.write((char*)camProfileResults.data(), sizeof(QPointF) * camProfileResults.size());
+}
+
+double optimumCase::profileMaxDistance()
+{
+	return maxDistance;
 }
 

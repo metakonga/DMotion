@@ -36,6 +36,7 @@ void revoluteJoint::constraintJacobian(VECD &q, VECD &qd, SMATD &lhs, unsigned i
 	transformationMatrix dAi = derivateTM(q(ci + 2));
 	transformationMatrix dAj = derivateTM(q(cj + 2));
 	
+
 	
 	// Constraint jacobian of base body
 	if (ci)
@@ -46,6 +47,8 @@ void revoluteJoint::constraintJacobian(VECD &q, VECD &qd, SMATD &lhs, unsigned i
 		vecd3 up = math::local2global(dAi, baseMarker.s);
 		lhs(r, ci + 2) = up.X();
 		lhs(r + 1, ci + 2) = up.Y();
+// 		if (isFixedWhenKinematicAnalysis && !ignoreAllOptions)
+// 			lhs(r + 2, ci + 2) = 1;
 	}
 	if (cj)
 	{
@@ -56,8 +59,11 @@ void revoluteJoint::constraintJacobian(VECD &q, VECD &qd, SMATD &lhs, unsigned i
 		vecd3 up = math::local2global(dAj, actionMarker.s);
 		lhs(r, cj + 2) = -up.X();
 		lhs(r + 1, cj + 2) = -up.Y();
+// 		if (isFixedWhenKinematicAnalysis && !ignoreAllOptions)
+// 			lhs(r + 2, cj + 2) = -1;
 	}
 	
+
 	
 }
 
@@ -75,6 +81,9 @@ int revoluteJoint::constraintEquation(VECD &q, VECD &rhs, unsigned int i, double
 	vecd3 ce = pi + math::local2global(Ai, baseMarker.s) - pj - math::local2global(Aj, actionMarker.s);
 	rhs(i) = mul * ce.X();
 	rhs(i + 1) = mul * ce.Y();
+// 	if (isFixedWhenKinematicAnalysis && !ignoreAllOptions)
+// 		rhs(i + 2) = mul * (q(ci + 2) - q(cj + 2));
+
 	return 0;
 }
 

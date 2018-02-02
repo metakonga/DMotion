@@ -28,10 +28,13 @@ public:
 	void initializeCurveData();
 	void setCM2HardPoint();
 	QVector<QPointF>& ProfileData();
+	QVector<QPointF>& LastProfileData();
 	void updateBaseMarker();
 	vecd3 LocalFromBaseBody();
 	void appendRealCamProfileXY(vecd3 xy);
 	double MaxDistance();
+	//double currentDthDt();
+	void defineLast();
 
 	virtual int constraintEquation(VECD &q, VECD &rhs, unsigned int i, double mul = 0);
 	virtual void constraintJacobian(VECD &q, VECD &qd, SMATD &lhs, unsigned int i, bool isjp = false);
@@ -68,7 +71,7 @@ private:
 	QVector<QPointF> cpXY;
 	QVector<QPointF> ss;
 	QVector<double> ds;
-	//QVector<double> dds;
+	QVector<QPointF> endXY;
 };
 
 #endif

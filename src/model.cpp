@@ -272,9 +272,9 @@ unsigned int model::nBody()
 	return bodies.size();
 }
 
-verticalConstraint* model::createVerticalConstraint(QString _name)
+simplifiedConstraint* model::createSimplifiedConstraint(QString _name)
 {
-	verticalConstraint* con = new verticalConstraint(_name);
+	simplifiedConstraint* con = new simplifiedConstraint(_name);
 	cons[_name] = con;
 	return con;
 }
@@ -317,6 +317,7 @@ bool model::updateDesignVariable(QString &hps, bool isFirst)
 
 	foreach(designVariable* dv, designs)
 	{
+		if (!dv) continue;
 		if (!dv->Enable())
 			continue;
 		isEmptyEnableDesignVariable = false;
@@ -339,6 +340,7 @@ bool model::updateDesignVariable(QString &hps, bool isFirst)
 	qts << "| ";
 	foreach(designVariable* dv, designs)
 	{
+		if (!dv) continue;
 		if (!dv->Enable())
 			continue;
 		qts << dv->Name() << " : " << dv->Current() << " | ";
@@ -350,27 +352,18 @@ bool model::updateDesignVariable(QString &hps, bool isFirst)
 		rb->initializeBody();
 	}
 
-	rigidBody* rb = bodies["Nozzle"];
-	hardPoint* hp = hardPoints["active_link"];
-	vecd3 dif = hp->loc - hp->loc0;
-	rb->setPosition(rb->Position().X() + dif.X(), rb->Position().Y() + dif.Y(), 0.0);
-
-	rigidBody* rb1 = bodies["Link"];
-	hardPoint* hp1 = hardPoints["link_cam"];
-	vecd3 r0 = rb1->Position0();
-	vecd3 len = hp->loc0 - r0;
-	vecd3 tlen = hp->loc0 - hp1->loc0;
-	vecd3 rate = vecd3(len.X() / tlen.X(), len.Y() / tlen.Y(), 0.0);
-	vecd3 cur_dif = hp1->loc - hp->loc;
-	//double cur_len = math::length(cur_dif);
-	//vecd3 u = vecd3(cur_dif.X() / cur_len, cur_dif.Y() / cur_len, 0.0);
-	vecd3 new_pos = vecd3(cur_dif.X() * rate.X(), cur_dif.Y() * rate.Y(), 0.0);
-	rb1->setPosition(hp->loc.X() + new_pos.X(), hp->loc.Y() + new_pos.Y(), 0.0);
+	updateCenterOfMass();
 
 	foreach(constraint *cs, cons)
 	{
 		if (cs->JointType() == DRIVING)
 			continue;
+		if (cs->JointType() == SIMPLIFIED)
+		{
+			simplifiedConstraint *sc = dynamic_cast<simplifiedConstraint*>(cs);
+			sc->setPositionFromHardPoint();
+			sc->setConstantValueFromBaseBody();
+		}
 
 		cs->initializeConstraint();
 	}
@@ -381,32 +374,111 @@ bool model::updateDesignVariable(QString &hps, bool isFirst)
 	if (pfollower)
 	{
 		vecd3 hp0 = hardPoints["cam_ground"]->loc;
-		vecd3 hp1 = hardPoints["cam_passive"]->loc;
+		vecd3 hp1;// = hardPoints["cam_passive"]->loc;
+		if (mtype == ORIGINAL_CAM_TYPE)
+			hp1 = hardPoints["cam_passive"]->loc;
+		else if (mtype == HOLE_CAM_TYPE)
+			hp1 = hardPoints["cam_arc"]->loc;
 		pfollower->initialize(hp0, hp1);
 	}
 	if (isEmptyEnableDesignVariable)
 		isOver = false;
 	if (cam_angle_enable)
 	{
-		vecd3 hp0 = hardPoints["link_cam"]->loc;
-		vecd3 hp1 = hardPoints["cam_ground"]->loc;
-		vecd3 dp = hp0 - hp1;
-		double len = math::length(dp);
-		double ang = (180 / M_PI) * (acos(-dp.Y() / len));
-		//qDebug() << "cam angle : " << ang;
-		if (ang > cam_angle_lower && ang < cam_angle_upper)
-		{
-			isSatisfyCamAngle = true;
-			noSatisfiedCamAngle = 0.0;
-		}
-		else
-		{
-			isSatisfyCamAngle = false;
-			noSatisfiedCamAngle = ang;
-		}
+		camConstraint();
+// 		vecd3 hp0 = hardPoints["link_cam"]->loc;
+// 		vecd3 hp1 = hardPoints["cam_ground"]->loc;
+// 		vecd3 dp = hp0 - hp1;
+// 		double len = math::length(dp);
+// 		double ang = (180 / M_PI) * (acos(-dp.Y() / len));
+// 		//qDebug() << "cam angle : " << ang;
+// 		if (ang > cam_angle_lower && ang < cam_angle_upper)
+// 		{
+// 			isSatisfyCamAngle = true;
+// 			noSatisfiedCamAngle = 0.0;
+// 		}
+// 		else
+// 		{
+// 			isSatisfyCamAngle = false;
+// 			noSatisfiedCamAngle = ang;
+// 		}
 	}
 	
 	return isOver;
+}
+
+void model::camConstraint()
+{
+	vecd3 hp0;
+	vecd3 hp1;
+	if (mtype == ORIGINAL_CAM_TYPE)
+	{
+		hp0 = hardPoints["link_cam"]->loc;
+		hp1 = hardPoints["cam_ground"]->loc;
+	}
+	else if (mtype)
+	{
+		hp0 = hardPoints["hinge_cam"]->loc;
+		hp1 = hardPoints["cam_ground"]->loc;
+	}
+	vecd3 dp = hp0 - hp1;
+	double len = math::length(dp);
+	double ang = (180 / M_PI) * (acos(-dp.Y() / len));
+	//qDebug() << "cam angle : " << ang;
+	if (ang > cam_angle_lower && ang < cam_angle_upper)
+	{
+		isSatisfyCamAngle = true;
+		noSatisfiedCamAngle = 0.0;
+	}
+	else
+	{
+		isSatisfyCamAngle = false;
+		noSatisfiedCamAngle = ang;
+	}
+}
+
+void model::updateCenterOfMass()
+{
+	if (mtype == ORIGINAL_CAM_TYPE)
+	{
+		rigidBody* rb = bodies["Nozzle"];
+		hardPoint* hp = hardPoints["active_link"];
+		vecd3 dif = hp->loc - hp->loc0;
+		rb->setPosition(rb->Position().X() + dif.X(), rb->Position().Y() + dif.Y(), 0.0);
+
+		rigidBody* rb1 = bodies["Link"];
+		hardPoint* hp1 = hardPoints["link_cam"];
+		vecd3 r0 = rb1->Position0();
+		vecd3 len = hp->loc0 - r0;
+		vecd3 tlen = hp->loc0 - hp1->loc0;
+		vecd3 rate = vecd3(len.X() / tlen.X(), len.Y() / tlen.Y(), 0.0);
+		vecd3 cur_dif = hp1->loc - hp->loc;
+		//double cur_len = math::length(cur_dif);
+		//vecd3 u = vecd3(cur_dif.X() / cur_len, cur_dif.Y() / cur_len, 0.0);
+		vecd3 new_pos = vecd3(cur_dif.X() * rate.X(), cur_dif.Y() * rate.Y(), 0.0);
+		rb1->setPosition(hp->loc.X() + new_pos.X(), hp->loc.Y() + new_pos.Y(), 0.0);
+	}
+	else if (mtype == HOLE_CAM_TYPE)
+	{
+		rigidBody* nozzle = bodies["Nozzle"];
+		hardPoint* nozzle_link = hardPoints["nozzle_link"];
+		vecd3 dif = nozzle_link->loc - nozzle_link->loc0;
+		nozzle->setPosition(nozzle->Position().X() + dif.X(), nozzle->Position().Y() + dif.Y(), 0.0);
+
+		rigidBody* link = bodies["Link"];
+		hardPoint* link_hinge = hardPoints["link_hinge"];
+		dif = link_hinge->loc - nozzle_link->loc;
+		link->setPosition(0.5 * dif.X(), 0.5 * dif.Y(), 0.0);
+
+		rigidBody* hinge = bodies["Hinge"];
+		hardPoint* hinge_cam = hardPoints["hinge_cam"];
+		dif = hinge_cam->loc - link_hinge->loc;
+		hinge->setPosition(0.5 * dif.X(), 0.5 * dif.Y(), 0.0);
+
+// 		rigidBody* roller = bodies["roller"];
+// 		hardPoint* cam_arc = hardPoints["cam_arc"];
+// 		roller->setPosition(cam_arc->loc.X(), cam_arc->loc.Y(), 0.0);
+	}
 }
 
 bool model::verifyLastCamAngleConstraint(QMap<QString, QVector<vecd3>>& hps)
@@ -467,6 +539,7 @@ void model::initializeDesignVariable()
 // 	vecd3 new_pos = vecd3(cur_dif.X() * rate.X(), cur_dif.Y() * rate.Y(), 0.0);
 	foreach(designVariable* dv, designs)
 	{
+		if (!dv) continue;
 		if (!dv->Enable())
 			continue;
 		dv->initializeCurrent();

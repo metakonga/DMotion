@@ -1,6 +1,7 @@
 #include "chartView.h"
 #include "callout.h"
 #include "integrator.h"
+#include "algebraMath.h"
 #include <QString>
 #include <QDebug>
 #include <QPixmap>
@@ -269,10 +270,11 @@ void chartView::updateSeries(double newXmax, double newYmax)
 	p_series->replace(new_p_series);
 }
 
-void chartView::setAxisRange(double x_min, double x_max, double y_min, double y_max)
+void chartView::setAxisRange(double x_min, double x_max, double y_min, double y_max, bool _mof)
 {
 	//if (m_chart->series().size() == 1)
 	//{
+
 	ax->setRange(x_min, x_max);
 	ay->setRange(y_min, y_max);
 	ax->setMax(x_max);

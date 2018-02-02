@@ -42,11 +42,11 @@ public:
 		link->setAngle(0);
 		//pos = getHalfBetween2HP(hp1, hp2);
 		link->setCoordinateNumber(3);
-		link->setPosition(0.18564, 0.00228, 0);
+		link->setPosition(0.18564, 0.0, 0);
 		//	link->setShapePath("C:/DMotion/data/ver2/Active_link.step");
 
 
-		rigidBody *hinge = createRigidBody("hinge");
+		rigidBody *hinge = createRigidBody("Hinge");
 		hinge->setMass(0.76);
 		hinge->setInertia(0.002398);
 		hinge->setPosition(0.41740, -0.06222, 0);
@@ -54,12 +54,19 @@ public:
 		hinge->setCoordinateNumber(3);
 		//		cam->setShapePath("C:/DMotion/data/ver2/CAM.step");
 
-		rigidBody *cam = createRigidBody("cam");
+		rigidBody *cam = createRigidBody("Cam");
 		cam->setMass(3.46);
 		cam->setInertia(0.020547);
 		cam->setPosition(0.37586, -0.01532, 0);
 		cam->setAngle(0);
 		cam->setCoordinateNumber(3);
+
+// 		rigidBody *roller = createRigidBody("roller");
+// 		roller->setMass(3.47);
+// 		roller->setInertia(0.032325);
+// 		roller->setPosition(0.29512, 0.035, 0.0);
+// 		roller->setAngle(0);
+// 		roller->setCoordinateNumber(3);
 
 		rigidBody *arc = createRigidBody("Arc");
 		arc->setMass(3.47);
@@ -101,6 +108,25 @@ public:
 		link_hinge_rev->bindHardPoint(link_hinge);
 		link_hinge_rev->setReactionForceTypes(LINK_HINGE_REV_FX, LINK_HINGE_REV_FY);
 
+// 		translateJoint *link_trans = createTraslateJoint("Link Trans.");
+// 		pos = link->Position();
+// 		link_trans->setPosition(pos.X(), pos.Y(), pos.Z());
+// 		link_trans->setBaseBody(ground);
+// 		link_trans->setActionBody(link);
+// 		link_trans->setBaseMarker(vecd3(1.0, 0, 0), vecd3(0, 0, -1.0));
+// 		link_trans->setActionMarker(vecd3(0, 0, -1.0), vecd3(0, -1.0, 0));
+// 		link_trans->defineAngleConstraint();
+// 		link_trans->setReactionForceTypes(LINK_TRANS_FY, LINK_TRANS_TR);
+		simplifiedConstraint *link_simple = createSimplifiedConstraint("Link Simple");
+		pos = link->Position();
+		link_simple->setPosition(pos.X(), pos.Y(), pos.Z());
+		link_simple->setBaseBody(link);
+		//link_simple->setBaseMarker(vecd3)
+		link_simple->setConstantValue(pos.Y());
+		link_simple->bindHardPoint(link_hinge);
+		link_simple->setDirection(simplifiedConstraint::VERTICAL);
+		link_simple->setReactionForceTypes(LINK_SIMPLE_FY, NO_REACTION_TYPE);
+
 		revoluteJoint *hinge_cam_rev = createRevoluteJoint("Hinge-Cam Rev.");
 		pos = hinge_cam->loc;
 		hinge_cam_rev->setPosition(pos.X(), pos.Y(), pos.Z());
@@ -120,25 +146,60 @@ public:
 		cam_ground_rev->setActionMarker(vecd3(-1.0, 0, 0), vecd3(0, 1.0, 0));
 		cam_ground_rev->bindHardPoint(cam_ground);
 		cam_ground_rev->setReactionForceTypes(CAM_GROUND_REV_FX, CAM_GROUND_REV_FY);
+		
+// 		revoluteJoint *arc_roller_rev = createRevoluteJoint("Arc-Roller_Rev.");
+// 		pos = cam_arc->loc;
+// 		arc_roller_rev->setPosition(pos.X(), pos.Y()-0.1, pos.Z());
+// 		arc_roller_rev->setBaseBody(roller);
+// 		arc_roller_rev->setActionBody(arc);
+// 		arc_roller_rev->setBaseMarker(vecd3(1.0, 0, 0), vecd3(0, 1.0, 0));
+// 		arc_roller_rev->setActionMarker(vecd3(-1.0, 0, 0), vecd3(0, 1.0, 0));
+// 		arc_roller_rev->bindHardPoint(cam_arc);
+// 		arc_roller_rev->setReactionForceTypes(ARC_ROLLER_REV_FX, ARC_ROLLER_REV_FY);
+// 		arc_roller_rev->setFixedWhelKinematicAnalysis(true);
 
-		translateJoint *arc_trans = createTraslateJoint("Arc Trans.");
+		simplifiedConstraint *arc_vertical = createSimplifiedConstraint("Arc Vertical");
+		pos = cam_arc->loc;
+		arc_vertical->setPosition(pos.X(), pos.Y(), pos.Z());
+		arc_vertical->setBaseBody(arc);
+		arc_vertical->setConstantValue(cam_arc->loc.Y());
+		arc_vertical->bindHardPoint(cam_arc);
+		arc_vertical->setDirection(simplifiedConstraint::VERTICAL);
+		arc_vertical->setReactionForceTypes(ARC_SIMPLE_FY, NO_REACTION_TYPE);
+
+		simplifiedConstraint *arc_rotation = createSimplifiedConstraint("Arc Rotation");
 		pos = arc->Position();
-		arc_trans->setPosition(pos.X(), pos.Y(), pos.Z());
-		arc_trans->setBaseBody(ground);
-		arc_trans->setActionBody(arc);
-		arc_trans->setBaseMarker(vecd3(1.0, 0, 0), vecd3(0, 0, -1.0));
-		arc_trans->setActionMarker(vecd3(0, 0, -1.0), vecd3(0, -1.0, 0));
-		arc_trans->defineAngleConstraint();
-		arc_trans->setReactionForceTypes(ARC_TRANS_FY, ARC_TRANS_TR);
+		arc_rotation->setPosition(pos.X(), pos.Y(), pos.Z());
+		arc_rotation->setBaseBody(arc);
+		arc_rotation->setConstantValue(arc->Angle());
+		arc_rotation->setDirection(simplifiedConstraint::ROTATION);
+		arc_rotation->setReactionForceTypes(ARC_SIMPLE_TR, NO_REACTION_TYPE);
+
+		//arc_trans->setActionBody(arc);
+// 		arc_trans->setBaseMarker(vecd3(1.0, 0, 0), vecd3(0, 0, -1.0));
+// 		arc_trans->setActionMarker(vecd3(0, 0, -1.0), vecd3(0, -1.0, 0));
+// 		arc_trans->defineAngleConstraint();
+// 		arc_trans->setReactionForceTypes(ARC_TRANS_FY, ARC_TRANS_TR);
+// 		translateJoint *arc_trans = createTraslateJoint("Arc Trans.");
+// 		pos = arc->Position();
+// 		arc_trans->setPosition(pos.X(), pos.Y(), pos.Z());
+// 		arc_trans->setBaseBody(ground);
+// 		arc_trans->setActionBody(arc);
+// 		arc_trans->setBaseMarker(vecd3(1.0, 0, 0), vecd3(0, 0, -1.0));
+// 		arc_trans->setActionMarker(vecd3(0, 0, -1.0), vecd3(0, -1.0, 0));
+// 		arc_trans->defineAngleConstraint();
+// 		arc_trans->setReactionForceTypes(ARC_TRANS_FY, ARC_TRANS_TR);
 
 		drivingConstraint *nozzle_driving = createDrivingConstraint("Nozzle_driving");
 		nozzle_driving->setTargetBody(nozzle, AXIS_X);
 		// 		//active_driving->setConstantVelocity(-0.1);
 		nozzle_driving->setVelocityProfile("C:/DMotion/data/NozzleVelocityProfile.txt");
+		//nozzle_driving->setVelocityProfile("C:/DMotion/data/untitled2.txt");
 
 		drivingConstraint *arc_driving = createDrivingConstraint("Arc_driving");
 		arc_driving->setTargetBody(arc, AXIS_X);
-		arc_driving->setVelocityProfile("C:/DMotion/data/ArcVelocityProfile.txt");
+		arc_driving->setVelocityProfile("C:/DMotion/data/ArcVelocityProfile_avoid.txt");
+		//arc_driving->setVelocityProfile("C:/DMotion/data/untitled.txt");
 
 		pointFollower* pf = createPointFollower("Arc-Cam PF");
 		pos = cam_arc->loc;
@@ -146,11 +207,12 @@ public:
 		pf->setBaseBody(arc);
 		pf->setActionBody(cam);
 		pf->setBaseMarker(vecd3(1.0, 0, 0), vecd3(0, 1.0, 0));
-		pf->setLocalFromBaseBody();
-		pf->setActionHardPoint(cam_ground->loc);
-		pf->setInitialAngle(M_PI);
-		pf->setCM2HardPoint();
-		pf->updateBaseMarker();
+		pf->initialize(cam_ground->loc, cam_arc->loc);
+		//pf->setLocalFromBaseBody();
+// 		pf->setActionHardPoint(cam_ground->loc);
+// 		pf->setInitialAngle(M_PI);
+// 		pf->setCM2HardPoint();
+// 		pf->updateBaseMarker();
 		pf->bindHardPoint(cam_arc);
 		pf->setReactionForceTypes(PROFILE_FX, PROFILE_FY);
 
@@ -165,14 +227,19 @@ public:
 		bodyList.push_back(link->Name());
 		bodyList.push_back(hinge->Name());
 		bodyList.push_back(cam->Name());
+		//bodyList.push_back(roller->Name());
 		bodyList.push_back(arc->Name());
 
 		constList.push_back(nozzle_trans->Name());
 		constList.push_back(nozzle_link_rev->Name());
+		constList.push_back(link_simple->Name());
 		constList.push_back(link_hinge_rev->Name());
 		constList.push_back(hinge_cam_rev->Name());
 		constList.push_back(cam_ground_rev->Name());
-		constList.push_back(arc_trans->Name());
+		//constList.push_back(arc_roller_rev->Name());
+	//	constList.push_back(arc_trans->Name());
+		constList.push_back(arc_vertical->Name());
+		constList.push_back(arc_rotation->Name());
 		constList.push_back(nozzle_driving->Name());
 		constList.push_back(arc_driving->Name());
 
@@ -218,18 +285,24 @@ public:
 
 		reactionMap[0] = NOZZLE_TRANS_FY;// "Nozzle Trans.(FY)";
 		reactionMap[1] = NOZZLE_TRANS_TR;// "Nozzle Trans.(TR)";
+		
 		reactionMap[2] = NOZZLE_LINK_REV_FX;// "Nozzle-Link Rev.(FX)";
 		reactionMap[3] = NOZZLE_LINK_REV_FY;//"Nozzle-Link Rev.(FY)";
-		reactionMap[4] = LINK_HINGE_REV_FX;// "Link-Hinge Rev.(FX)";
-		reactionMap[5] = LINK_HINGE_REV_FY;// "Link-Hinge Rev.(FY)";
-		reactionMap[6] = HINGE_CAM_REV_FX;// "Hinge-Cam Rev.(FX)";
-		reactionMap[7] = HINGE_CAM_REV_FY;// "Hinge-Cam Rev.(FY)";
-		reactionMap[8] = CAM_GROUND_REV_FX;// "Cam-Ground Rev.(FX)";
-		reactionMap[9] = CAM_GROUND_REV_FY;// "Cam-Ground Rev.(FY)";
-		reactionMap[10] = ARC_TRANS_FY;// "Arc Trans.(FY)";
-		reactionMap[11] = ARC_TRANS_TR;// "Arc Trans.(TR)";
-		reactionMap[12] = PROFILE_FX;// "Arc-Cam PF(FX)";
-		reactionMap[13] = PROFILE_FY;// "Arc-Cam PF(FY)";
+		reactionMap[4] = LINK_SIMPLE_FY;
+		//reactionMap[4] = LINK_TRANS_FY;
+	///	reactionMap[5] = LINK_TRANS_TR;
+		reactionMap[5] = LINK_HINGE_REV_FX;// "Link-Hinge Rev.(FX)";
+		reactionMap[6] = LINK_HINGE_REV_FY;// "Link-Hinge Rev.(FY)";
+		reactionMap[7] = HINGE_CAM_REV_FX;// "Hinge-Cam Rev.(FX)";
+		reactionMap[8] = HINGE_CAM_REV_FY;// "Hinge-Cam Rev.(FY)";
+		reactionMap[9] = CAM_GROUND_REV_FX;// "Cam-Ground Rev.(FX)";
+		reactionMap[10] = CAM_GROUND_REV_FY;// "Cam-Ground Rev.(FY)";
+		//reactionMap[11] = ARC_ROLLER_REV_FX;
+		//reactionMap[12] = ARC_ROLLER_REV_FY;
+		reactionMap[11] = ARC_SIMPLE_FY;// "Arc Trans.(FY)";
+		reactionMap[12] = ARC_SIMPLE_TR;// "Arc Trans.(TR)";
+		reactionMap[13] = PROFILE_FX;// "Arc-Cam PF(FX)";
+		reactionMap[14] = PROFILE_FY;// "Arc-Cam PF(FY)";
 	}
 };
 #endif

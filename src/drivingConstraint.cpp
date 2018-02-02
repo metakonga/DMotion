@@ -89,6 +89,16 @@ QPointF drivingConstraint::TimeVelocity(int idx)
 	return QPointF(time.at(idx), velProfile.at(idx));
 }
 
+void drivingConstraint::derivativeInterp(VECD &rhs, unsigned int i, unsigned int rstep)
+{
+	rhs(i) = dvelProfile.at(rstep);
+}
+
+void drivingConstraint::testConstraintJacobian(VECD &q, VECD& qd, unsigned int i, double mul /*= 0*/)
+{
+
+}
+
 double drivingConstraint::ConstantVelocity()
 {
 	return c_vel;
@@ -178,7 +188,9 @@ bool drivingConstraint::setVelocityProfile(QString _path)
 		dvelProfile.clear();
 	if (ddvelProfile.size())
 		ddvelProfile.clear();
-	dvelProfile.push_back(0);
+	double dv = velProfile.at(1) - velProfile.at(0);
+	dvelProfile.push_back(dv / 0.00001);
+	//dvelProfile.push_back(0);
 	ddvelProfile.push_back(0);
 	for (unsigned int i = 1; i < velProfile.size() - 1; i++)
 	{
@@ -187,7 +199,10 @@ bool drivingConstraint::setVelocityProfile(QString _path)
 		double cv = 0.5 * (nv - pv) / 0.00001;
 		dvelProfile.push_back(cv);
 	}
-	dvelProfile.push_back(0);
+	unsigned int sz = velProfile.size();
+	dv = velProfile.at(sz - 1) - velProfile.at(sz - 2);
+	dvelProfile.push_back(dv / 0.00001);
+	//dvelProfile.push_back(0);
 	for (unsigned int i = 1; i < velProfile.size() - 1; i++)
 	{
 		double pv = dvelProfile.at(i - 1);

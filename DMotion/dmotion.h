@@ -35,7 +35,7 @@ class DMotion : public QMainWindow
 	enum MENU_ACTION{ NEW=0, OPEN, SAVE, SOLVE, SAVE_CASE };
 public:
 	enum { TOOL_WIRE_FRAME=5, TOOL_SHADING, TOOL_TRANSPARENCY, TOOL_MATERIAL, TOOL_PROFILE };
-	enum { ANIMATION_PREVIOUS_2X=0, ANIMATION_PREVIOUS_1X, ANIMATION_PLAY, ANIMATION_INIT, ANIMATION_PAUSE, ANIMATION_FORWARD_2X, ANIMATION_FORWARD_1X };
+	enum { ANIMATION_GO_BEGIN=0, ANIMATION_PREVIOUS_2X, ANIMATION_PREVIOUS_1X, ANIMATION_PLAY_BACK, ANIMATION_INIT, ANIMATION_PLAY, ANIMATION_PAUSE, ANIMATION_FORWARD_2X, ANIMATION_FORWARD_1X, ANIMATION_GO_END };
 	enum { LE_X = 0, LE_Y, LE_ANGLE, LE_MASS, LE_INERTIA, LE_HARDPOINT_X, LE_HARDPOINT_Y };
 
 	DMotion(QWidget *parent = 0);
@@ -70,12 +70,16 @@ protected:
 	void onMaterial();
 	void onTransparency();
 	void onVelocityProfile();
+	void onGoToBegin();
 	void onPrevious2X();
 	void onPrevious1X();
+	void onSetPlayAnimation();
 	void onAnimationPlay();
+	void onAnimationPlayBack();
 	void onAnimationPause();
 	void onForward1X();
 	void onForward2X();
+	void onGoToEnd();
 	void onGoFirstStep();
 	void                           onTransparency(int);
 //	void finishDMotion();
@@ -139,6 +143,7 @@ private:
 	QToolBar* myCasCadeBar;
 	QToolBar* myAnimationBar;
 	//QToolBar* myFileBar;
+	int current_animation;
 	double tx;
 	view* myView;
 	model* md;

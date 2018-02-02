@@ -25,6 +25,8 @@ public:
 	void initializeDrivingPosition();
 	QVector<double>& VelocityProfile();
 	QPointF TimeVelocity(int idx);
+	void derivativeInterp(VECD &rhs, unsigned int i, unsigned int rstep);
+	void testConstraintJacobian(VECD &q, VECD& qd, unsigned int i, double mul = 0);
 
 	virtual int constraintEquation(VECD &q, VECD &rhs, unsigned int i, double mul = 0);
 	virtual void constraintJacobian(VECD &q, VECD &qd, SMATD &lhs, unsigned int i, bool isjp = false);

@@ -26,6 +26,7 @@ public:
 	void setBaseMarker(vecd3 q, vecd3 r);
 	void setActionMarker(vecd3 q, vecd3 r);
 	void setReactionForceTypes(reactionForceType r1, reactionForceType r2);
+	void setFixedWhelKinematicAnalysis(bool b);
 	void bindHardPoint(hardPoint *_hp);
 
 	void calcJointReactionForce(VECD& lm, unsigned int &sr);
@@ -47,7 +48,9 @@ public:
 	void updatePosition(coordinateType ct, double dv);
 	static unsigned int NDimension();
 	static unsigned int NTotalNonZero();
+	static void setIgnoreAllOptions(bool b);
 	static void setSolverStep(unsigned int ss);
+	bool IsFixedWhenKinematicAnalysis();
 
 	virtual int constraintEquation(VECD &q, VECD &rhs, unsigned int i, double mul = 0) = 0;
 	virtual void constraintJacobian(VECD &q, VECD &qd, SMATD &lhs, unsigned int i, bool isjp = false) = 0;
@@ -56,6 +59,8 @@ public:
 
 protected:
 	//static unsigned int nAdditional
+	bool isFixedWhenKinematicAnalysis;
+	static bool ignoreAllOptions;
 	static unsigned int s_step;
 	static unsigned int nDimension;
 	static unsigned int nTotalNNZ;

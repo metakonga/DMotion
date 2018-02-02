@@ -112,9 +112,6 @@
     <ClCompile Include="GeneratedFiles\Release\moc_view.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\OpenCASCADE7.1.0-vc10-64\opencascade-7.1.0\samples\qt\Common\src\OcctWindow.cxx">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\translate.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -166,12 +163,6 @@
     <ClCompile Include="..\src\callout.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GeneratedFiles\Debug\moc_chartView.cpp">
-      <Filter>Generated Files\Debug</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Release\moc_chartView.cpp">
-      <Filter>Generated Files\Release</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\animation_controller.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -197,9 +188,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\src\pointFollower.cpp">
-      <Filter>Source Files\constraint</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\verticalConstraint.cpp">
       <Filter>Source Files\constraint</Filter>
     </ClCompile>
     <ClCompile Include="..\src\constantConstraint.cpp">
@@ -273,6 +261,18 @@
     </ClCompile>
     <ClCompile Include="..\src\drivingConditionPlot.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_chartView.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_chartView.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\OcctWindow.cxx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\simplifiedConstraint.cpp">
+      <Filter>Source Files\constraint</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -413,9 +413,6 @@
     <ClInclude Include="..\inc\pointFollower.h">
       <Filter>Header Files\constraint</Filter>
     </ClInclude>
-    <ClInclude Include="..\inc\verticalConstraint.h">
-      <Filter>Header Files\constraint</Filter>
-    </ClInclude>
     <ClInclude Include="..\inc\constantConstraint.h">
       <Filter>Header Files\constraint</Filter>
     </ClInclude>
@@ -466,6 +463,9 @@
     </ClInclude>
     <ClInclude Include="..\inc\drivingConditionPlot.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\simplifiedConstraint.h">
+      <Filter>Header Files\constraint</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

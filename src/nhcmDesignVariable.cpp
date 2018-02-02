@@ -384,8 +384,8 @@ void nhcmDesignVariable::saveToFile(QTextStream& qts)
 		<< CB_CAMRC_Y->isChecked() << " " << "CamGround(Y) " << LE_CAMRC_LOWER_Y->text() << " " << LE_CAMRC_STEP_Y->text() << " " << LE_CAMRC_UPPER_Y->text() << endl
 		<< CB_CAMPV_X->isChecked() << " " << "CamArc(X) " << LE_CAMPV_LOWER_X->text() << " " << LE_CAMPV_STEP_X->text() << " " << LE_CAMPV_UPPER_X->text() << endl
 		<< CB_CAMPV_Y->isChecked() << " " << "CamArc(Y) " << LE_CAMPV_LOWER_Y->text() << " " << LE_CAMPV_STEP_Y->text() << " " << LE_CAMPV_UPPER_Y->text() << endl
-		<< CB_CAMANGLE->isChecked() << " " << "CamAngle " << LE_INITIAL_ANGLE_Lower->text() << " - " << LE_INITIAL_ANGLE_Upper->text() << endl
-		<< CB_LASTANGLE->isChecked() << " " << "CamAngle " << LE_LAST_ANGLE_Lower->text() << " - " << LE_LAST_ANGLE_Upper->text() << endl;
+		<< CB_CAMANGLE->isChecked() << " " << "InitAngle " << LE_INITIAL_ANGLE_Lower->text() << " - " << LE_INITIAL_ANGLE_Upper->text() << endl
+		<< CB_LASTANGLE->isChecked() << " " << "LastAngle " << LE_LAST_ANGLE_Lower->text() << " - " << LE_LAST_ANGLE_Upper->text() << endl;
 }
 
 int nhcmDesignVariable::setSystemParameters(model* md)

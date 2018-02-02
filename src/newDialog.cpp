@@ -10,7 +10,7 @@ newDialog::newDialog(QWidget* parent)
 	connect(PB_Create, SIGNAL(clicked()), this, SLOT(Click_ok()));
 	connect(PB_Open, SIGNAL(clicked()), this, SLOT(Click_open()));
 	connect(PB_Browse, SIGNAL(clicked()), this, SLOT(Click_browse()));
-	_path = getenv("USERPROFILE");
+	_path = kor(getenv("USERPROFILE"));
 	_path += "/Documents";
 	_path.replace(QString("\\"), QString("/"));
 	_name = "Model_1";
@@ -64,9 +64,9 @@ void newDialog::Click_open()
 		_name = _path.mid(loc+1);
 		_path = _path.left(loc);
 		openFilePath = fileName;
-	}
-	this->close();
-	isDialogOk = 0;
+		isDialogOk = 0;
+		this->close();
+	}	
 }
 
 void newDialog::Click_browse()

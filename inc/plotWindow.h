@@ -4,6 +4,7 @@
 #include <QDockWidget>
 #include <QComboBox>
 #include <QMap>
+#include "dmotion_types.h"
 #include "chartView.h"
 
 class model;
@@ -23,10 +24,12 @@ public:
 	void hideSeries(QString str = "");
 	void setXRange(QString str, double ma, double mi);
 	void setYRange(QString str, double ma, double mi);
+	void setAxisTitle(QString str, QString xt, QString yt);
 	void setPlotComboBox();
 	void bindOptimumDesignDoc(optimumDesignDoc* _odd);
 	void updatePlotData();
 	void updateByModelChange();
+	void adjustAxisRange(QString str);
 
 	private slots:
 	void changeCoordinateComboBox(int);
@@ -45,8 +48,8 @@ private:
 	double m_max_y;
 	chartView *vcht;
 	QMap<QString, QLineSeries*> seriesMap;
-	QMap<QString, QPointF> x_range;
-	QMap<QString, QPointF> y_range;
+	QMap<QString, plotInfo> pInfo;
+	//QMap<QString, QPointF> y_range;
 
 	model *md;
 	optimumDesignDoc *odd;

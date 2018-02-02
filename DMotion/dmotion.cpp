@@ -89,6 +89,7 @@ DMotion::DMotion(QWidget *parent)
 	//, myFileBar(NULL)
 	, myCasCadeBar(NULL)
 	, myAnimationBar(NULL)
+	, current_animation(-1)
 	, tx(0)
 	, _isNewAnalysis(false)
 {
@@ -127,7 +128,6 @@ DMotion::DMotion(QWidget *parent)
    	vb->setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
    	setCentralWidget(vb);
    	
-	
 	ui.DW_Modeling->setMinimumWidth(500);
  	ui.DW_Modeling->setMaximumWidth(500);
 
@@ -233,7 +233,7 @@ void DMotion::file_new()
 	{
 		this->file_open(nd->OpenFilePath());
 	}
-	
+	current_animation = -1;
 	delete nd;
 }
 
@@ -258,6 +258,14 @@ void DMotion::file_open(QString f)
 	QString str;
 	qts >> str >> mtype >> str;
 	initialize(modelType(mtype));
+	if (!f.isEmpty())
+	{
+		int begin = f.lastIndexOf("/");
+		md->setModelPath(f.left(begin));
+		int begin2 = f.lastIndexOf(".");
+		md->setModelName(f.mid(begin+1, begin2 - begin - 1));
+	}
+	
 	if (str == "Body_information")
 	{
 		QString x, y, angle, mass, inertia, shapePath;
@@ -364,6 +372,8 @@ void DMotion::file_open(QString f)
 		qts >> str >> str >> str >> str >> str;
 		if (md->ModelType() == ORIGINAL_CAM_TYPE)
 			dv_nhcm->setFromFile(qts);
+		else if (md->ModelType() == HOLE_CAM_TYPE)
+			dv_hcm->setFromFile(qts);
 	}
 	qts >> str;
 	if (str == "Space_constraint")
@@ -420,8 +430,12 @@ void DMotion::file_save(QString f)
 
 	qts << "Driving_information" << endl;
 	qts << "Target File" << endl;
-	qts << "Nozzle " << md->DrivingConstraints()["Nozzle_driving"]->FilePath() << endl
-		<< "Arc " << md->DrivingConstraints()["Arc_driving"]->FilePath() << endl;
+	if (md->DrivingConstraints()["Nozzle_driving"])
+		qts << "Nozzle " << md->DrivingConstraints()["Nozzle_driving"]->FilePath() << endl;
+	if (md->DrivingConstraints()["Arc_driving"])
+		qts << "Arc " << md->DrivingConstraints()["Arc_driving"]->FilePath() << endl;
+// 	qts << "Nozzle " << md->DrivingConstraints()["Nozzle_driving"]->FilePath() << endl
+// 		<< "Arc " << md->DrivingConstraints()["Arc_driving"]->FilePath() << endl;
 
 	qts << "Optimum_condition ";
 	if (ui.RB_OnlyOne->isChecked())
@@ -442,6 +456,8 @@ void DMotion::file_save(QString f)
 	qts << "Check Target Lower Step Upper" << endl;
 	if (md->ModelType() == ORIGINAL_CAM_TYPE)
 		dv_nhcm->saveToFile(qts);
+	else if (md->ModelType() == HOLE_CAM_TYPE)
+		dv_hcm->saveToFile(qts);
 	qts << "Space_constraint" << endl;
 	qts << "Check Width Height" << endl;
 	qts << ui.CB_SPACE->isChecked() << " " << ui.LE_Space_Width->text() << " " << ui.LE_Space_Height->text() << endl;
@@ -553,7 +569,7 @@ void DMotion::pushCaseSave()
 		{
 			double x = /*p.y() * cos(p.x())*/p.x() * 1000.0;
 			double y = /*p.y() * sin(p.x())*/p.y() * 1000.0;
-			qts << /*p.y() * 1000.0 << " " << p.x() * (180.0 / M_PI) << " " <<*/ x << " " << y << endl;
+			qts << qSetRealNumberPrecision(10) << x << " " << y << endl;
 		}
 		qf.close();
 		QMapIterator<QString, QVector<resultDataType>> rbody(oc->BodyResults());
@@ -615,6 +631,8 @@ void DMotion::changeComboBody(int idx)
 	ui.LE_Angle->setText(QString("%1").arg(rb->Angle() * radian2degree, 6, 'f', 6));
 	ui.LE_Mass->setText(QString("%1").arg(rb->Mass(), 6, 'f', 6));
 	ui.LE_Inertia->setText(QString("%1").arg(rb->Inertia() * kgm2kgmm, 6, 'f', 6));
+	QString buttonName = rb->Name() + " Shape";
+	ui.PB_Shape->setText(buttonName);
 }
 
 void DMotion::changeComboHardPoint(int idx)
@@ -763,6 +781,7 @@ void DMotion::setCaseResult()
 	}
 	com::write(info);
 	com::printLine();
+	qDebug() << "maxConstraintCamDistance : " << oc->profileMaxDistance();
 // 	com::write("| Name : " + )
 // 	ui.LE_CaseName->setText(oc->Name());
 // 	vecd3 hp_pos0 = oc->HardPointsResults()["active_link"].at(0);
@@ -854,6 +873,12 @@ void DMotion::createAnimationOperations()
 {
 	myAnimationBar = addToolBar(tr("Animation Operations"));
 	QAction *a;
+
+	a = new QAction(QIcon(":/Resources/ani_tobegin.png"), tr("&toBegin"), this);
+	a->setStatusTip(tr("Go to begin"));
+	connect(a, SIGNAL(triggered()), this, SLOT(onGoToBegin()));
+	myAnimationActions.insert(ANIMATION_GO_BEGIN, a);
+
 	a = new QAction(QIcon(":/Resources/ani_moreprevious.png"), tr("&previous2X"), this);
 	a->setStatusTip(tr("previous 2X"));
 	connect(a, SIGNAL(triggered()), this, SLOT(onPrevious2X()));
@@ -864,15 +889,20 @@ void DMotion::createAnimationOperations()
 	connect(a, SIGNAL(triggered()), this, SLOT(onPrevious1X()));
 	myAnimationActions.insert(ANIMATION_PREVIOUS_1X, a);
 
-	a = new QAction(QIcon(":/Resources/ani_play.png"), tr("&animation play"), this);
-	a->setStatusTip(tr("animation play"));
-	connect(a, SIGNAL(triggered()), this, SLOT(onAnimationPlay()));
-	myAnimationActions.insert(ANIMATION_PLAY, a);
+	a = new QAction(QIcon(":/Resources/ani_playback.png"), tr("&animation back play"), this);
+	a->setStatusTip(tr("animation back play"));
+	connect(a, SIGNAL(triggered()), this, SLOT(onAnimationPlayBack()));
+	myAnimationActions.insert(ANIMATION_PLAY_BACK, a);
 
 	a = new QAction(QIcon(":/Resources/ani_init.png"), tr("&animation initialize"), this);
 	a->setStatusTip(tr("animation initialize"));
 	connect(a, SIGNAL(triggered()), this, SLOT(onGoFirstStep()));
 	myAnimationActions.insert(ANIMATION_INIT, a);
+
+	a = new QAction(QIcon(":/Resources/ani_play.png"), tr("&animation play"), this);
+	a->setStatusTip(tr("animation play"));
+	connect(a, SIGNAL(triggered()), this, SLOT(onAnimationPlay()));
+	myAnimationActions.insert(ANIMATION_PLAY, a);
 
 	a = new QAction(QIcon(":/Resources/ani_fast.png"), tr("&forward1X"), this);
 	a->setStatusTip(tr("forward 1X"));
@@ -883,6 +913,11 @@ void DMotion::createAnimationOperations()
 	a->setStatusTip(tr("forward 2X"));
 	connect(a, SIGNAL(triggered()), this, SLOT(onForward2X()));
 	myAnimationActions.insert(ANIMATION_FORWARD_2X, a);
+
+	a = new QAction(QIcon(":/Resources/ani_toEnd.png"), tr("&toEnd"), this);
+	a->setStatusTip(tr("Go to end"));
+	connect(a, SIGNAL(triggered()), this, SLOT(onGoToEnd()));
+	myAnimationActions.insert(ANIMATION_GO_END, a);
 
 	for (int i = 0; i < myAnimationActions.size(); i++)
 	{
@@ -1115,16 +1150,23 @@ void DMotion::initializeDrivingCondition()
 	drivingConstraint* arcDC = md->DrivingConstraints()["Arc_driving"];
 	QVector<QPointF> nozzleV;
 	QVector<QPointF> arcV;
-	for (int i = 0; i < nozzleDC->VelocityProfile().size(); i++)
+	int sz = nozzleDC ? nozzleDC->VelocityProfile().size() : (arcDC ? arcDC->VelocityProfile().size() : 0);
+	if (sz == 0)
+		return;
+	for (int i = 0; i < sz; i++)
 	{
 		if (!(i % 10))
 		{
-			nozzleV.append(nozzleDC->TimeVelocity(i));
-			arcV.append(arcDC->TimeVelocity(i));
+			if(nozzleDC)
+				nozzleV.append(nozzleDC->TimeVelocity(i));
+			if(arcDC)
+				arcV.append(arcDC->TimeVelocity(i));
 		}
 	}
-	dcPlot->setNozzlePlot(nozzleV);
-	dcPlot->setArcPlot(arcV);
+	if(nozzleV.size())
+		dcPlot->setNozzlePlot(nozzleV);
+	if(arcV.size())
+		dcPlot->setArcPlot(arcV);
 }
 
 unsigned int DMotion::setSystemParameters()
@@ -1136,12 +1178,14 @@ unsigned int DMotion::setSystemParameters()
 	int totalCase = 0;
 	if (md->ModelType() == ORIGINAL_CAM_TYPE)
 		totalCase = dv_nhcm->setSystemParameters(md);
+	if (md->ModelType() == HOLE_CAM_TYPE)
+		totalCase = dv_hcm->setSystemParameters(md);
 
 	if (ui.RB_OnlyOne->isChecked())
 		odd->setComparisonReactionType(ONLY_ONE);
 	else if (ui.RB_SmallerThanFirst->isChecked())
 		odd->setComparisonReactionType(SMALLER_FIRST);
-	md->PointFollower()->initialize(md->HardPoints()["cam_ground"]->loc, md->HardPoints()["cam_passive"]->loc);
+	//md->PointFollower()->initialize(md->HardPoints()["cam_ground"]->loc, md->HardPoints()["cam_passive"]->loc);
 	md->setSpaceConstraint(ui.LE_Space_Width->text().toDouble() * mm2m, ui.LE_Space_Height->text().toDouble() * mm2m);
 	return totalCase;
 }
@@ -1272,17 +1316,40 @@ void DMotion::onSelectionChanged()
 	 }
 }
 
+void DMotion::onGoToBegin()
+{
+	animation_controller::initFrame();
+	onAnimationPause();
+	current_animation = ANIMATION_GO_BEGIN;
+	animation_controller::setPlayEnable(false);
+	updateAnimationFrame();
+}
+
+void DMotion::onGoToEnd()
+{
+	animation_controller::lastFrame();
+	onAnimationPause();
+	current_animation = ANIMATION_GO_END;
+	animation_controller::setPlayEnable(false);
+	updateAnimationFrame();
+}
+
 void DMotion::onPrevious2X()
 {
 	onAnimationPause();
-	animation_controller::previous2x();
-	updateAnimationFrame();
+	current_animation = ANIMATION_PREVIOUS_2X;
+	onSetPlayAnimation();
+	//onAnimationPause();
+	//animation_controller::previous2x();
+	//updateAnimationFrame();
 }
 
 void DMotion::onPrevious1X()
 {
 	onAnimationPause();
+	current_animation = ANIMATION_PREVIOUS_1X;
 	animation_controller::previous();
+	animation_controller::setPlayEnable(false);
 	updateAnimationFrame();
 }
 
@@ -1352,13 +1419,22 @@ void DMotion::updateAnimationFrame()
 // 		ais->SetLocalTransformation(t);		
 // 	}
 	myContext->UpdateCurrentViewer();
-	if(animation_controller::IsPlay())
-		animation_controller::next();
+	if (animation_controller::IsPlay())
+	{
+		switch (current_animation)
+		{
+		case ANIMATION_PLAY: animation_controller::next(); break;
+		case ANIMATION_PLAY_BACK: animation_controller::previous(); break;
+		case ANIMATION_FORWARD_2X: animation_controller::next2x(); break;
+		case ANIMATION_PREVIOUS_2X: animation_controller::previous2x(); break;
+		}
+	}
+		/*animation_controller::next();*/
 }
 
-void DMotion::onAnimationPlay()
+void DMotion::onSetPlayAnimation()
 {
-	optimumCase*  oc = odd->SelectedCase();
+	optimumCase* oc = odd->SelectedCase();
 	if (oc)
 		animation_controller::setTotalFrame(oc->ResultCount());
 	else
@@ -1368,7 +1444,22 @@ void DMotion::onAnimationPlay()
 	}
 		
 	animation_controller::setPlayEnable(true);
-	QAction *a = myAnimationActions[ANIMATION_PLAY];
+	QAction *a = NULL; //myAnimationActions[ANIMATION_PLAY];
+	switch (current_animation)
+	{
+	case ANIMATION_PREVIOUS_2X: 
+		a = myAnimationActions[ANIMATION_PREVIOUS_2X];
+		break;
+	case ANIMATION_FORWARD_2X:
+		a = myAnimationActions[ANIMATION_FORWARD_2X];
+		break;
+	case ANIMATION_PLAY:
+		a = myAnimationActions[ANIMATION_PLAY];
+		break;
+	case ANIMATION_PLAY_BACK:
+		a = myAnimationActions[ANIMATION_PLAY_BACK];
+		break;
+	}
 	disconnect(a);
 	a->setIcon(QIcon(":/Resources/ani_pause.png"));
 	a->setStatusTip(tr("Restart the animation."));
@@ -1378,31 +1469,91 @@ void DMotion::onAnimationPlay()
 
 void DMotion::onGoFirstStep()
 {
+	
 	animation_controller::initFrame();
+	onAnimationPause();
+	current_animation = ANIMATION_INIT;
+	animation_controller::setPlayEnable(false);
+	updateAnimationFrame();
 }
 
 void DMotion::onAnimationPause()
 {
-	animation_controller::setPlayEnable(false);
-	QAction *a = myAnimationActions[ANIMATION_PLAY];
+	
+	QAction *a = NULL;
+	QString icon_path;
+	switch (current_animation)
+	{
+	case ANIMATION_PLAY: 
+		a = myAnimationActions[ANIMATION_PLAY]; 
+		icon_path = ":/Resources/ani_play.png";
+		break;
+	case ANIMATION_PLAY_BACK: 
+		a = myAnimationActions[ANIMATION_PLAY_BACK];
+		icon_path = ":/Resources/ani_playback.png";
+		break;
+	case ANIMATION_PREVIOUS_2X:
+		a = myAnimationActions[ANIMATION_PREVIOUS_2X];
+		icon_path = ":/Resources/ani_moreprevious.png";
+		break;
+	case ANIMATION_FORWARD_2X:
+		a = myAnimationActions[ANIMATION_FORWARD_2X];
+		icon_path = ":/Resources/ani_morefast.png";
+		break;
+	default:
+		return;
+	}
+//	animation_controller::setPlayEnable(false);
+	//QAction *a = myAnimationActions[ANIMATION_PLAY];
 	disconnect(a);
-	a->setIcon(QIcon(":/Resources/ani_play.png"));
+	a->setIcon(QIcon(icon_path));
 	a->setStatusTip(tr("Pause the animation."));
-	connect(a, SIGNAL(triggered()), this, SLOT(onAnimationPlay()));
+	switch (current_animation)
+	{
+	case ANIMATION_PLAY:
+		connect(a, SIGNAL(triggered()), this, SLOT(onAnimationPlay()));
+		break;
+	case ANIMATION_PLAY_BACK:
+		connect(a, SIGNAL(triggered()), this, SLOT(onAnimationPlayBack()));
+		break;
+	case ANIMATION_PREVIOUS_2X:
+		connect(a, SIGNAL(triggered()), this, SLOT(onPrevious2X()));
+		break;
+	case ANIMATION_FORWARD_2X:
+		connect(a, SIGNAL(triggered()), this, SLOT(onForward2X()));
+		break;
+	}
+	
 	timer->stop();
 }
 
 void DMotion::onForward1X()
 {
 	onAnimationPause();
+	current_animation = ANIMATION_FORWARD_1X;
 	animation_controller::next();
+	animation_controller::setPlayEnable(false);
 	updateAnimationFrame();
 }
 
 void DMotion::onForward2X()
 {
 	onAnimationPause();
-	animation_controller::next2x();
-	updateAnimationFrame();
+	current_animation = ANIMATION_FORWARD_2X;
+	onSetPlayAnimation();
+}
+
+void DMotion::onAnimationPlayBack()
+{
+	onAnimationPause();
+	current_animation = ANIMATION_PLAY_BACK;
+	onSetPlayAnimation();
+}
+
+void DMotion::onAnimationPlay()
+{
+	onAnimationPause();
+	current_animation = ANIMATION_PLAY;
+	onSetPlayAnimation();
 }
 

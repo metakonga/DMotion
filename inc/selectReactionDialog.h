@@ -35,6 +35,7 @@ private:
 // 	QCheckBox *CH_AT_FY;
 // 	QCheckBox *CH_AT_TR;
 	QGroupBox *GB_NozzleLinkRev;
+	QGroupBox *GB_LinkTrans;
 // 	QCheckBox *CH_ALR_FX;
 // 	QCheckBox *CH_ALR_FY;
 	QGroupBox *GB_LinkCamOrLinkHingeRev;
@@ -44,6 +45,7 @@ private:
 // 	QCheckBox *CH_HCR_FX;
 // 	QCheckBox *CH_HCR_FY;
 	QGroupBox *GB_CamGroundRev;
+	QGroupBox *GB_ArcRollerRev;
 //	QCheckBox *CH_CGR_FX;
 //	QCheckBox *CH_CGR_FY;
 	QGroupBox *GB_ArcTrans;

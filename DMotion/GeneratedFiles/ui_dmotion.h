@@ -1,13 +1,13 @@
 /********************************************************************************
-** Form generated from reading UI file 'dmotionqn6392.ui'
+** Form generated from reading UI file 'dmotion.ui'
 **
 ** Created by: Qt User Interface Compiler version 5.7.1
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
 
-#ifndef DMOTIONQN6392_H
-#define DMOTIONQN6392_H
+#ifndef UI_DMOTION_H
+#define UI_DMOTION_H
 
 #include <QtCore/QVariant>
 #include <QtWidgets/QAction>
@@ -512,4 +512,4 @@ namespace Ui {
 
 QT_END_NAMESPACE
 
-#endif // DMOTIONQN6392_H
+#endif // UI_DMOTION_H

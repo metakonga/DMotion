@@ -13,6 +13,7 @@ public:
 	static int TotalFrame() { return totalFrame; }
 	static bool IsPlay() { return _isPlay; }
 	static void initFrame() { currentFrame = 0; }
+	static void lastFrame() { currentFrame = totalFrame; }
 	static void next() 
 	{ 
 		currentFrame = currentFrame == totalFrame ? currentFrame : currentFrame + 1;  
@@ -23,11 +24,15 @@ public:
 	}
 	static void next2x() 
 	{
-		currentFrame = currentFrame >= totalFrame ? totalFrame : currentFrame + 2;
+		currentFrame = currentFrame + 2;
+		if (currentFrame >= totalFrame)
+			currentFrame = totalFrame;
 	}
 	static void previous2x() 
 	{ 
-		currentFrame = currentFrame <= 1 ? currentFrame : currentFrame - 2; 
+		currentFrame = currentFrame - 2;
+		if(currentFrame <= 1)
+			currentFrame = 0;
 	}
 
 private:

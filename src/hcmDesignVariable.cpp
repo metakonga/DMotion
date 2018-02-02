@@ -322,8 +322,8 @@ hcmDesignVariable::hcmDesignVariable(QFrame *frame)
 	gridLayout_2->addWidget(LE_CAMPV_UPPER_Y, 9, 3, 1, 1);
 
 	CB_CAMANGLE = new QCheckBox(layoutWidget_2);
-	CB_CAMANGLE->setText("Cam angle");
-	CB_CAMANGLE->setObjectName(QStringLiteral("CB_CAMANGLE"));
+	CB_CAMANGLE->setText("Initial angle");
+	CB_CAMANGLE->setObjectName(QStringLiteral("CB_INITANGLE"));
 	CB_CAMANGLE->setChecked(true);
 
 	gridLayout_2->addWidget(CB_CAMANGLE, 10, 0, 1, 1);
@@ -344,21 +344,21 @@ hcmDesignVariable::hcmDesignVariable(QFrame *frame)
 	gridLayout_2->addWidget(LE_INITIAL_ANGLE_Upper, 10, 3, 1, 1);
 
 	CB_LASTANGLE = new QCheckBox(layoutWidget_2);
-	CB_LASTANGLE->setText("Cam angle");
-	CB_LASTANGLE->setObjectName(QStringLiteral("CB_CAMANGLE"));
+	CB_LASTANGLE->setText("Last angle");
+	CB_LASTANGLE->setObjectName(QStringLiteral("CB_LASTANGLE"));
 	CB_LASTANGLE->setChecked(true);
 
-	gridLayout_2->addWidget(CB_CAMANGLE, 11, 0, 1, 1);
+	gridLayout_2->addWidget(CB_LASTANGLE, 11, 0, 1, 1);
 
 	LE_LAST_ANGLE_Lower = new QLineEdit(layoutWidget_2);
 	LE_LAST_ANGLE_Lower->setObjectName(QStringLiteral("LE_LAST_ANGLE_Lower"));
 
-	gridLayout_2->addWidget(LE_INITIAL_ANGLE_Lower, 11, 1, 1, 1);
+	gridLayout_2->addWidget(LE_LAST_ANGLE_Lower, 11, 1, 1, 1);
 
 	LE_LAST_ANGLE_Upper = new QLineEdit(layoutWidget_2);
 	LE_LAST_ANGLE_Upper->setObjectName(QStringLiteral("LE_LAST_ANGLE_Upper"));
 
-	gridLayout_2->addWidget(LE_LAST_ANGLE_Upper, 119, 3, 1, 1);
+	gridLayout_2->addWidget(LE_LAST_ANGLE_Upper, 11, 3, 1, 1);
 }
 
 hcmDesignVariable::~hcmDesignVariable()
@@ -644,32 +644,39 @@ int hcmDesignVariable::setSystemParameters(model* md)
 	step = LE_CAMPV_STEP_X->text().toDouble() * mm2m;
 	upper = LE_CAMPV_UPPER_X->text().toDouble() * mm2m;
 
-	if (CB_CAMPV_X->isChecked())
+	designVariable* m_dv = md->DesignVariables()["arcCam_x"];
+	if (m_dv)
 	{
-		md->DesignVariables()["arcCam_x"]->setCondition(lower, step, upper);
-		md->DesignVariables()["arcCam_x"]->setEnable(true);
-		int nc = static_cast<int>((upper - lower) / step) + 1;
-		if (!totalCase) totalCase += nc;
-		else totalCase *= nc;
+		if (CB_CAMPV_X->isChecked())
+		{
+			md->DesignVariables()["arcCam_x"]->setCondition(lower, step, upper);
+			md->DesignVariables()["arcCam_x"]->setEnable(true);
+			int nc = static_cast<int>((upper - lower) / step) + 1;
+			if (!totalCase) totalCase += nc;
+			else totalCase *= nc;
+		}
+		else
+			md->DesignVariables()["arcCam_x"]->setEnable(false);
 	}
-	else
-		md->DesignVariables()["arcCam_x"]->setEnable(false);
 
 	lower = LE_CAMPV_LOWER_Y->text().toDouble() * mm2m;
 	step = LE_CAMPV_STEP_Y->text().toDouble() * mm2m;
 	upper = LE_CAMPV_UPPER_Y->text().toDouble() * mm2m;
-
-	if (CB_CAMPV_Y->isChecked())
+	m_dv = md->DesignVariables()["arcCam_y"];
+	if (m_dv)
 	{
-		md->DesignVariables()["arcCam_y"]->setCondition(lower, step, upper);
-		md->DesignVariables()["arcCam_y"]->setEnable(true);
-		int nc = static_cast<int>((upper - lower) / step) + 1;
-		if (!totalCase) totalCase += nc;
-		else totalCase *= nc;
+		if (CB_CAMPV_Y->isChecked())
+		{
+			md->DesignVariables()["arcCam_y"]->setCondition(lower, step, upper);
+			md->DesignVariables()["arcCam_y"]->setEnable(true);
+			int nc = static_cast<int>((upper - lower) / step) + 1;
+			if (!totalCase) totalCase += nc;
+			else totalCase *= nc;
+		}
+		else
+			md->DesignVariables()["arcCam_y"]->setEnable(false);
 	}
-	else
-		md->DesignVariables()["arcCam_y"]->setEnable(false);
-
+	
 	if (CB_CAMANGLE->isChecked())
 	{
 		md->setCamAngleDesignVariable(LE_INITIAL_ANGLE_Lower->text().toDouble(), LE_INITIAL_ANGLE_Upper->text().toDouble());

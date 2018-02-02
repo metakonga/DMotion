@@ -3,6 +3,7 @@
 unsigned int constraint::nDimension = 0;
 unsigned int constraint::nTotalNNZ = 0;
 unsigned int constraint::s_step = 0;
+bool constraint::ignoreAllOptions = false;
 
 constraint::constraint(QString _name, jointType _jtype)
 	: name(_name)
@@ -14,6 +15,7 @@ constraint::constraint(QString _name, jointType _jtype)
 	, hp(NULL)
 	, ib(NULL)
 	, jb(NULL)
+	, isFixedWhenKinematicAnalysis(false)
 {
 
 }
@@ -26,6 +28,11 @@ constraint::~constraint()
 void constraint::setSolverStep(unsigned int ss)
 {
 	s_step = ss;
+}
+
+bool constraint::IsFixedWhenKinematicAnalysis()
+{
+	return isFixedWhenKinematicAnalysis;
 }
 
 void constraint::setActionBody(rigidBody *b)
@@ -56,6 +63,12 @@ void constraint::setReactionForceTypes(reactionForceType r1, reactionForceType r
 	rft2 = r2;
 }
 
+void constraint::setFixedWhelKinematicAnalysis(bool b)
+{
+	isFixedWhenKinematicAnalysis = b;
+	constraint::nDimension += 1;
+}
+
 void constraint::setPosition(double x, double y, double z)
 {
 	pos = vecd3(x, y, z);
@@ -76,6 +89,11 @@ unsigned int constraint::NTotalNonZero()
 	return nTotalNNZ;
 }
 
+void constraint::setIgnoreAllOptions(bool b)
+{
+	ignoreAllOptions = b;
+}
+
 void constraint::calcJointReactionForce(VECD& _lm, unsigned int &sr)
 {
 	if (jtype == REVOLUTE)
@@ -89,12 +107,14 @@ void constraint::calcJointReactionForce(VECD& _lm, unsigned int &sr)
 	else if (jtype == POINTFOLLOWER)
 		for (unsigned int i = 0; i < nrow; i++)
 			jrforce[i] = _lm(sr++);
+	else if (jtype == SIMPLIFIED)
+		jrforce[0] = _lm(sr++);
 }
 
 void constraint::initializeConstraint()
 {
-	baseMarker.s = math::global2local(ib->TM(), pos - ib->Position());
-	actionMarker.s = math::global2local(jb->TM(), pos - jb->Position());
+	if(ib) baseMarker.s = math::global2local(ib->TM(), pos - ib->Position());
+	if(jb) actionMarker.s = math::global2local(jb->TM(), pos - jb->Position());
 	memset(jrforce, 0, sizeof(double) * constraint::nrow);
 }
 

@@ -52,7 +52,7 @@ int kinematics::init()
 	emit sendProcess('@', "    Gravity : [" + QString("%1, %2, %3").arg(g.x).arg(g.y).arg(g.z) + "]");
 	s_d = md->nBody() * 3 - (md->hasGround() ? 3 : 0) + constraint::NDimension();
 	s_c = md->nBody() * 3 - (md->hasGround() ? 3 : 0);
-	s_k = s_c;
+	s_k = s_c;// -(md->ModelType() == ORIGINAL_CAM_TYPE ? 0 : 2);
 	if (s_c != constraint::NDimension())
 	{
 		emit sendProcess('@', "This is not kinematics system");
@@ -86,14 +86,19 @@ int kinematics::init()
 	while (dr.hasNext())
 	{
 		drivingConstraint* _dr = dr.next().value();
+		if (!_dr) continue;
 		_dr->bindGeneralizedCoordinate(q);
 		_dr->setPreviousPosition();
 		_dr->bindTime(dt, &ct, &cStep);
 		_dr->initializeDrivingPosition();
 	}	
-	saveBodyResults();
-	md->PointFollower()->initializeCurveData();
-	md->PointFollower()->defineOnePointFollower();
+	//saveBodyResults();
+	if (md->PointFollower())
+	{
+		md->PointFollower()->initializeCurveData();
+		//md->PointFollower()->defineOnePointFollower();
+	}
+	
 	return 0;
 }
 
@@ -128,13 +133,13 @@ void kinematics::setSimulationCondition(double _dt, double _et)
 	et = _et;
 }
 
-void kinematics::jointReactionForce()
+void kinematics::jointReactionForce(unsigned int r_step)
 {
 	pointFollower *pf = md->PointFollower();
-	if (cStep < 2)
-		return;
-
-	unsigned int m_size = s_d + (pf ? 1 : 0) * 2;
+ 	if (cStep < 2)
+ 		return;
+	//constraint::setIgnoreAllOptions(true);
+	unsigned int m_size = s_d +(pf ? 1 : 0) * 2;
 	unsigned int nCoord = s_c + (md->hasGround() ? 3 : 0) + (pf ? 1 : 0);
 	unsigned int m_s = s_c + (pf ? 1 : 0);
 	linearSolver ls(LAPACK_COL_MAJOR, m_size, 1, m_size, m_size);
@@ -151,13 +156,13 @@ void kinematics::jointReactionForce()
 	MATD lhs(m_size, m_size);
 	VECD rhs(m_size);
 	if(pf)
-		pf->setCurrentStep(reaction_step);
+		pf->setCurrentStep(r_step);
 	VECD m_q(nCoord);
 	VECD m_qd(nCoord);
 	VECD m_qdd(nCoord);
 	SMATD spar;
 	spar.alloc(constraint::NTotalNonZero(), constraint::NDimension(), q.sizes());
-	md->setGeneralizedCoordinate(reaction_step ,m_q, m_qd, m_qdd);
+	md->setGeneralizedCoordinate(r_step , m_q, m_qd, m_qdd);
 	unsigned int i = 0;
 	i = 0;
 	QMapIterator<QString, rigidBody*> b(md->RigidBodies());
@@ -179,28 +184,53 @@ void kinematics::jointReactionForce()
 		constraint* cs = md->Constraints()[str];
 		if (cs->Name() == "Arc_driving")
 			continue;
+			
 		cs->constraintJacobian(m_q, m_qd, spar, i);
+		if (cs->Name() == "Nozzle_driving")
+		{
+			md->DrivingConstraints()["Nozzle_driving"]->derivativeInterp(rhs, m_s + i, r_step);
+			i += cs->NRow();
+			continue;
+		}
 		cs->derivative(m_q, m_qd, rhs, m_s + i);
 		i += cs->NRow();
 	}
-	pf->constraintJacobian(m_q, m_qd, spar, i);
+	if (pf)
+	{
+		pf->constraintJacobian(m_q, m_qd, spar, i);
+		//pf->derivative(m_q, m_qd, rhs, m_s + i);
+		//pf->derivative(m_q, m_qd, rhs, m_s + i);
+	}
+		
 	unsigned int j = 0;
 	for (j = 0; j < spar.nnz(); j++)
 	{
-		if (spar.ridx[j] == 11 || spar.ridx[j] == 12)
-			rhs(m_s + spar.ridx[j]) += spar.value[j] * m_qdd(spar.cidx[j] + 3);
+		if (pf)
+		{
+			if (spar.ridx[j] == m_s - 2 || spar.ridx[j] == m_s - 1)
+			{
+				double _acc = m_qdd(spar.cidx[j] + 3);
+				rhs(m_s + spar.ridx[j]) += spar.value[j] * _acc;
+			}
+				
+		}
 		lhs(m_s + spar.ridx[j], spar.cidx[j]) = lhs(spar.cidx[j], m_s + spar.ridx[j]) = spar.value[j];
 	}
+	//lhs.display();
 	if (pf)
 	{
 		pf->followerJacobian(m_q, spar, i, s_k);
 		unsigned int id = (pf->ActionBody()->ID() + int(md->hasGround())) * 3 - (md->hasGround() ? 3 : 0);
 		for (j; j < spar.nnz(); j++)
 		{
-			rhs(m_s + spar.ridx[j]) += spar.value[j] * (-m_qdd(id + 2));
+			double tm_qdd = m_qdd(id + 2);
+		//	double _m_qdd = pf->currentDthDt();
+			rhs(m_s + spar.ridx[j]) += spar.value[j] * (-tm_qdd);
 			lhs(m_s + spar.ridx[j], spar.cidx[j]) = lhs(spar.cidx[j], m_s + spar.ridx[j]) = spar.value[j];
 		}
 	}
+// 	if (r_step >= 3230)
+ //	lhs.display();
 	int info = ls.solve(lhs.getDataPointer(), rhs.get_ptr());
 	//dgesv_(&ptDof, &lapack_one, lhs.getDataPointer(), &ptDof, permutation, rhs.get_ptr(), &ptDof, &lapack_info);
 	//delete[] permutation;
@@ -212,8 +242,10 @@ void kinematics::jointReactionForce()
 			continue;
 		cs->calcJointReactionForce(rhs, r);
 	}
-	pf->calcJointReactionForce(rhs, r);
-	reaction_step++;
+	if(pf)
+		pf->calcJointReactionForce(rhs, r);
+	//reaction_step++;
+	//constraint::setIgnoreAllOptions(false);
 }
 
 void kinematics::initGeneralizedCoordinates()
@@ -252,6 +284,8 @@ void kinematics::run()
 	QTime startingTime = tme.currentTime();
 	QDate startingDate = QDate::currentDate();
 	unsigned int caseCount = 0;
+	reaction_step = 0;
+	unsigned int save_gap = 10;
 	unsigned int validCase = 0;
 	bool isOver = false;
 	bool interupt = false;
@@ -279,10 +313,12 @@ void kinematics::run()
 			caseCount++;
 			continue;
 		}
+		qDebug() << caseCount;
 		initGeneralizedCoordinates();
 		optimumCase* oc = odd->createOptimumCase(QString("Case%1").arg(caseCount, 8, 10, QChar('0')));
+		kinematicAnalysis();
 		oc->appendBodyResults(md, ct, q, qd, qdd);
-		oc->appendReactionResults(md, ct);
+		//oc->appendReactionResults(md, ct);
 		oc->appendHardPointResult(md, ct);
 		part++;
 		saveBodyResults();
@@ -311,23 +347,31 @@ void kinematics::run()
 			saveBodyResults();
 			if (md->PointFollower())
 				md->PointFollower()->defineOnePointFollower();
-			jointReactionForce();
+			
 
-			if (!(cStep % 10))
+			if (!(cStep % save_gap))
 			{
+				jointReactionForce(reaction_step);
+				
 				double avg_norm = tNormValue / cStep;
 				oc->appendBodyResults(md, ct, q, qd, qdd);
-				oc->appendReactionResults(md, ct);
+				if(reaction_step <= 3000)
+					oc->appendReactionResults(md, reaction_step * dt);
 				oc->appendHardPointResult(md, ct);
 				part++;
+				reaction_step += save_gap;
 			}
 		}
+		if (md->PointFollower())
+			md->PointFollower()->defineLast();
+
 		if (!interupt)
 		{
-			jointReactionForce();
+		//	jointReactionForce(reaction_step);
+			//oc->appendReactionResults(md, ct);
 			double mdist = md->PointFollower()->MaxDistance();
 			bool b_lca = md->verifyLastCamAngleConstraint(oc->HardPointsResults());
-			if ((caseCount && !odd->checkMinumumThisCase(oc)) || mdist >= md->SpaceConstraintHeight() || !b_lca)
+			if (caseCount && (!odd->checkMinumumThisCase(oc) || mdist >= md->SpaceConstraintHeight() || !b_lca))
 			{
 				//qDebug() << "Failed case(" << caseCount << ") : " << mdist;// md->PointFollower()->MaxDistance();
 				delete oc; oc = NULL;
@@ -346,7 +390,9 @@ void kinematics::run()
 				sendProcess('@', msg);
 				sendProcess('L');
 				msg.clear();
-				oc->appendCamProfileResult(md->PointFollower(), ct);
+				if(md->PointFollower())
+					oc->appendCamProfileResult(md->PointFollower(), ct);
+				oc->setProfileMaxDistance(mdist);
 				odd->appendOptimumCase(oc);
 				oc->setResultCount(part - 1);
 				oc->saveCase(qfCase, caseCount);
@@ -408,6 +454,8 @@ int kinematics::kinematicAnalysis()
 			int ret = cs->constraintEquation(q, rhs, r, 1.0);
 			if (ret)
 				return ret;
+// 			if (cs->IsFixedWhenKinematicAnalysis())
+// 				r += 1;
 			r += cs->NRow();
 		}
 		for (unsigned int i = 0; i < spar.nnz(); i++)
@@ -417,7 +465,8 @@ int kinematics::kinematicAnalysis()
 
 		for (unsigned int i = 0; i < s_k; i++)
 			rhs(i) = -rhs(i);
-
+// 		if (cStep == 109)
+// 			lhs.display();
 		int info = ls.solve(lhs.getDataPointer(), rhs.get_ptr());
 		//dgesv_(&ptDof, &lapack_one, lhs.getDataPointer(), &ptDof, permutation, rhs.get_ptr(), &ptDof, &lapack_info);
 		norm = rhs.norm();
@@ -445,6 +494,8 @@ int kinematics::kinematicAnalysis()
 			rhs(r) = dc->ConstantVelocity();
 			dc->setPreviousPosition();
 		}
+// 		if (cs->IsFixedWhenKinematicAnalysis())
+// 			r += 1;
 		r += cs->NRow();
 	}
 	for (unsigned int i = 0; i < spar.nnz(); i++)
@@ -466,6 +517,8 @@ int kinematics::kinematicAnalysis()
 		constraint* cs = md->Constraints()[str];
 		cs->constraintJacobian(q, qd, spar, r);
 		cs->derivative(q, qd, rhs, r);
+// 		if (cs->IsFixedWhenKinematicAnalysis())
+// 			r += 1;
 		r += cs->NRow();
 	}
 	for (unsigned int i = 0; i < spar.nnz(); i++)

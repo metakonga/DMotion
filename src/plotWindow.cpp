@@ -81,8 +81,8 @@ void plotWindow::updatePlotData()
 {
 	qDeleteAll(seriesMap);
 	seriesMap.clear();
-	x_range.clear();
-	y_range.clear();
+	pInfo.clear();
+	//y_range.clear();
 	currentSeries = "";
 	changeCoordinateComboBox(currentDataType);
 }
@@ -93,19 +93,36 @@ void plotWindow::updateByModelChange()
 	cb_plot_coord->clear();
 	qDeleteAll(seriesMap);
 	seriesMap.clear();
-	x_range.clear();
-	y_range.clear();
+	pInfo.clear();
+	//y_range.clear();
 	currentSeries = "";
 	setPlotComboBox();
 
 }
 
+void plotWindow::adjustAxisRange(QString str)
+{
+	//seriesMap[str]->show();
+	//QPointF xRange = x_range[str];
+	plotInfo *pi = &(pInfo[str]);
+	double new_y_min = math::roundv(pi->y_range.x(), false);
+	double new_y_max = math::roundv(pi->y_range.y(), true);
+	if (new_y_min == 0) new_y_min = -1;
+	if (new_y_max == 0) new_y_max = 1;
+	pi->y_range = QPointF(new_y_min, new_y_max);
+}
+
 void plotWindow::showSeries(QString str)
 {
 	seriesMap[str]->show();
-	QPointF xRange = x_range[str];
-	QPointF yRange = y_range[str];
-	vcht->setAxisRange(xRange.x(), xRange.y(), yRange.x(), yRange.y());
+	plotInfo pi = pInfo[str];
+	QPointF xRange = pi.x_range;
+	QPointF yRange = pi.y_range;
+	//if (xRange)
+	vcht->setAxisRange(xRange.x(), xRange.y(), yRange.x(), yRange.y(), true);
+	vcht->Chart()->axisX()->setTitleText(pi.x_title);
+	vcht->Chart()->axisY()->setTitleText(pi.y_title);
+	vcht->setTickCountY(7);
 	currentSeries = str;
 }
 
@@ -119,12 +136,18 @@ void plotWindow::hideSeries(QString str /* = "" */)
 
 void plotWindow::setXRange(QString str, double mi, double ma)
 {
-	x_range[str] = QPointF(mi, ma);
+	pInfo[str].x_range = QPointF(mi, ma);
 }
 
 void plotWindow::setYRange(QString str, double mi, double ma)
 {
-	y_range[str] = QPointF(mi, ma);
+	pInfo[str].y_range = QPointF(mi, ma);
+}
+
+void plotWindow::setAxisTitle(QString str, QString xt, QString yt)
+{
+	pInfo[str].x_title = xt;
+	pInfo[str].y_title = yt;
 }
 
 QLineSeries* plotWindow::createSeries(QString n)
@@ -132,8 +155,8 @@ QLineSeries* plotWindow::createSeries(QString n)
 	QLineSeries* lineSeries = new QLineSeries;
 	lineSeries->setName(n);
 	vcht->addSeries(lineSeries);
-	seriesMap[n] = lineSeries;
-	return lineSeries;
+seriesMap[n] = lineSeries;
+return lineSeries;
 }
 
 void plotWindow::appendData(QString n, double x, double y, bool urange)
@@ -147,12 +170,27 @@ void plotWindow::appendData(QString n, double x, double y, bool urange)
 	if (abs(m_max_y) < 0.0001)
 		m_max_y = 0.0001;
 	seriesMap[n]->append(x, y);
+	// 	int r = round(m_min_y);
+	// 	QString s_min_y = QString("%1").arg(r);
+	// 	if (s_min_y.size() >= 3)
+	// 	{
+	// 		QString as;
+	// 		for (int i = 1; i < s_min_y.size(); i++)
+	// 			as.append('0');
+	// 		s_min_y.replace(1, s_min_y.size() - 1, as);
+	// 		s_min
+	// 	}
+	//s_min_y.replace(1, s_min_y.size() - 1, '0');
+	//QString s_max_y = QString("%1").arg(round(m_max_y));
+	// 	if (s_max_y.size() >= 3)
+	// 		s_max_y.replace(2, s_max_y.size() - 1, '0');
+	//r = round(r, -sc.size() + 1);
 	setXRange(n, m_min_x, m_max_x);
 	setYRange(n, m_min_y, m_max_y);
-	
-// 	
-// 	if(urange)
-// 		vcht->setAxisRange(m_min_x, m_max_x, m_min_y, m_max_y);
+
+	// 	
+	// 	if(urange)
+	// 		vcht->setAxisRange(m_min_x, m_max_x, m_min_y, m_max_y);
 }
 
 void plotWindow::changeCoordinateComboBox(int)
@@ -166,6 +204,8 @@ void plotWindow::changeCoordinateComboBox(int)
 	m_max_y = -DBL_MAX;
 	m_min_x = DBL_MAX;
 	m_max_x = -DBL_MAX;
+	QString x_title;
+	QString y_title;
 	QString objectName = cb_plot_object->currentText();
 	QString coordName = cb_plot_coord->currentText();
 	vcht->setTickCountX(8);
@@ -178,54 +218,78 @@ void plotWindow::changeCoordinateComboBox(int)
 	QString plotName = objectName + "_" + coordName;
 	if (seriesMap[plotName])
 	{
-		
+
 		this->showSeries(plotName);
 		return;
 	}
-	if (!rb && md->PointFollower()->Name() == objectName)
+	//pointFollower 
+	if (!rb && md->PointFollower())
 	{
+
 		if (!odd->SelectedCase())
 			return;
 		pointFollower *pf = md->PointFollower();
-		QVector<jointResultDataType> jrdts = odd->SelectedCase()->ReactionResults()[pf->Name()];
-		if (jrdts.size() == 0)
-			return;
-		QLineSeries* series = this->createSeries(plotName);
-		if (idx == 4)
+		if (pf->Name() == objectName)
 		{
-			unsigned int cnt = 0;
-			foreach(QPointF p, odd->SelectedCase()->CamProfileResults())
+			QVector<jointResultDataType> jrdts = odd->SelectedCase()->ReactionResults()[pf->Name()];
+			if (jrdts.size() == 0)
+				return;
+			QLineSeries* series = this->createSeries(plotName);
+			if (idx == 4)
 			{
-				if (!(cnt % 10))
+				x_title = "Horizontal(mm)";
+				y_title = "Vertical(mm)";
+				unsigned int cnt = 0;
+				foreach(QPointF p, odd->SelectedCase()->CamProfileResults())
 				{
-// 					double ang = p.x();
-// 					double s = p.y();
-					double x = p.x() * 1000;//s * cos(ang);
-					double y = p.y() * 1000;//s * sin(ang);
-					this->appendData(plotName, x, y, true);
+					if (!(cnt % 10))
+					{
+						double x = p.x() * 1000;//s * cos(ang);
+						double y = p.y() * 1000;//s * sin(ang);
+						this->appendData(plotName, x, y, true);
+					}
+					cnt++;
 				}
-				cnt++;
 			}
-		}
-		else
-		{
-			foreach(jointResultDataType jrdt, jrdts/**(cs->ResultData())*/)
+			else if (idx == 5)
 			{
-				time = jrdt.time;
-				switch (idx)
+				x_title = "Horizontal(mm)";
+				y_title = "Vertical(mm)";
+				unsigned int cnt = 0;
+				foreach(QPointF p, odd->SelectedCase()->LastCamProfileResults())
 				{
-				case 1: data = jrdt.fx; break;
-				case 2: data = jrdt.fy; break;
-				case 3: data = 0; break;
+					if (!(cnt % 10))
+					{
+						double x = p.x() * 1000;
+						double y = p.y() * 1000;
+						this->appendData(plotName, x, y, true);
+					}
+					cnt++;
 				}
+			}
+			else
+			{
+				x_title = "Time(sec)";
+				y_title = "Force(kgf)";
+				foreach(jointResultDataType jrdt, jrdts/**(cs->ResultData())*/)
+				{
+					time = jrdt.time;
+					switch (idx)
+					{
+					case 1: data = jrdt.fx; break;
+					case 2: data = jrdt.fy; break;
+					case 3: data = 0; break;
+					}
+					this->appendData(plotName, time, data, true);
+				}
+			}
 
-				this->appendData(plotName, time, data, true);
-			}
+			this->hideSeries();
+			this->setAxisTitle(plotName, x_title, y_title);
+			this->adjustAxisRange(plotName);
+			this->showSeries(plotName);
+			return;
 		}
-		
-		this->hideSeries();
-		this->showSeries(plotName);
-		return;
 	}
 
 	if (rb)
@@ -242,22 +306,25 @@ void plotWindow::changeCoordinateComboBox(int)
 // 			if (i % 10)
 // 				continue;
 			time = rdt.time;
+			x_title = "Time(sec)";
 			switch (idx)
 			{
-			case 1: data = rdt.pos.X(); break;
-			case 2: data = rdt.pos.Y(); break;
-			case 3: data = rdt.ang; break;
-			case 4: data = rdt.vel.X(); break;
-			case 5: data = rdt.vel.Y(); break;
-			case 6: data = rdt.angv; break;
-			case 7: data = rdt.acc.X(); break;
-			case 8: data = rdt.acc.Y(); break;
-			case 9: data = rdt.anga; break;
+			case 1: data = rdt.pos.X() * 1000; y_title = "Pos X(mm)"; break;
+			case 2: data = rdt.pos.Y() * 1000; y_title = "Pos Y(mm)"; break;
+			case 3: data = rdt.ang; y_title = "Angle(rad)"; break;
+			case 4: data = rdt.vel.X() * 1000; y_title = "Vel X(mm/s)"; break;
+			case 5: data = rdt.vel.Y() * 1000; y_title = "Vel Y(mm/s)"; break;
+			case 6: data = rdt.angv; y_title = "Rot. Vel.(rad/s)"; break;
+			case 7: data = rdt.acc.X() * 1000; y_title = "Acc X(mm/s^2)"; break;
+			case 8: data = rdt.acc.Y() * 1000; y_title = "Acc Y(mm/s^2)"; break;
+			case 9: data = rdt.anga; y_title = "Rot. Acc.(rad/s^2) "; break;
 			}
 			this->appendData(plotName, time, data, true);
 			i++;
 		}
 		this->hideSeries();
+		this->setAxisTitle(plotName, x_title, y_title);
+		this->adjustAxisRange(plotName);
 		this->showSeries(plotName);
 	}
 	else
@@ -270,12 +337,14 @@ void plotWindow::changeCoordinateComboBox(int)
 			if (idx == 1)
 			{
 				unsigned int i = 0;
+				x_title = "Time(sec)";
+				y_title = "Vel X(mm/s)";
 				foreach(double m, ds->VelocityProfile())
 				{
 					if (!(i % 10))
 					{
 						time = 0.00001 * i;
-						data = ds->VelocityProfile().at(i);
+						data = ds->VelocityProfile().at(i) * 1000;
 						this->appendData(plotName, time, data, true);
 					}
 					i++;
@@ -291,15 +360,39 @@ void plotWindow::changeCoordinateComboBox(int)
 				QVector<jointResultDataType> jrdts = odd->SelectedCase()->ReactionResults()[ds->Name()];
 				if (jrdts.size() == 0)
 					return;
+				x_title = "Time(sec)";
+				y_title = "Force(kgf)";
 				foreach(jointResultDataType jrdt, *(ds->ResultData()))
 				{
 // 					if (i % 10)
 // 						continue;
 					time = jrdt.time;
-					data = jrdt.fm;
+					data = jrdt.fx;
 					this->appendData(plotName, time, data, true);
 					i++;
 				}
+			}
+		}
+		else if (cs->JointType() == SIMPLIFIED)
+		{
+			if (!odd->SelectedCase())
+				return;
+			simplifiedConstraint* sc = dynamic_cast<simplifiedConstraint*>(cs);
+			QVector<jointResultDataType> jrdts = odd->SelectedCase()->ReactionResults()[cs->Name()];
+			if (jrdts.size() == 0)
+				return;
+			x_title = "Time(sec)";
+			y_title = "Force(kgf)";
+			foreach(jointResultDataType jrdt, jrdts/**(cs->ResultData())*/)
+			{
+				time = jrdt.time;
+				switch (idx)
+				{
+				case 1: data = sc->Direction() == simplifiedConstraint::HORIZONTAL ? jrdt.fx : (sc->Direction() == simplifiedConstraint::VERTICAL ? jrdt.fy : jrdt.tr); break;
+				//case 3: data = jrdt.fy; break;
+					//				case 3: data = jrdt.rz; break;
+				}
+				this->appendData(plotName, time, data, true);
 			}
 		}
 		else
@@ -309,6 +402,8 @@ void plotWindow::changeCoordinateComboBox(int)
 			QVector<jointResultDataType> jrdts = odd->SelectedCase()->ReactionResults()[cs->Name()];
 			if (jrdts.size() == 0)
 				return;
+			x_title = "Time(sec)";
+			y_title = "Force(kgf)";
 			foreach(jointResultDataType jrdt, jrdts/**(cs->ResultData())*/)
 			{
 				time = jrdt.time;
@@ -316,12 +411,14 @@ void plotWindow::changeCoordinateComboBox(int)
 				{
 				case 1: data = jrdt.fx; break;
 				case 2: data = jrdt.fy; break;
-//				case 3: data = jrdt.rz; break;
+				case 3: data = jrdt.tr; break;
 				}
 				this->appendData(plotName, time, data, true);
 			}
 		}
 		this->hideSeries();
+		this->setAxisTitle(plotName, x_title, y_title);
+		this->adjustAxisRange(plotName);
 		this->showSeries(plotName);
 	}
 }
@@ -381,6 +478,7 @@ void plotWindow::changeObjectComboBox(int)
 			cb_plot_coord->insertItem(2, "FY");
 			cb_plot_coord->insertItem(3, "TR");
 			cb_plot_coord->insertItem(4, "CP");
+			cb_plot_coord->insertItem(5, "LP");
 
 			currentDataType = 3;
 			inObjectComboBox = false;
@@ -406,9 +504,29 @@ void plotWindow::changeObjectComboBox(int)
 			cb_plot_coord->insertItem(2, "FD");
 			currentDataType = 1;
 		}
+		else if (cs->JointType() == SIMPLIFIED)
+		{
+			simplifiedConstraint* sc = dynamic_cast<simplifiedConstraint*>(cs);
+			//if (currentDataType != 2)
+			//{
+				if (cb_plot_coord->count())
+					cb_plot_coord->clear();
+// 			}
+// 			else
+// 			{
+// 				inObjectComboBox = false;
+// 				changeCoordinateComboBox(cb_plot_coord->currentIndex());
+// 				return;
+// 			}
+			cb_plot_coord->insertItem(0, "None");
+			cb_plot_coord->insertItem(1, sc->Direction() == simplifiedConstraint::HORIZONTAL ? "FX" : (sc->Direction() == simplifiedConstraint::VERTICAL ? "FY" : "TR"));
+// 			cb_plot_coord->insertItem(2, "FY");
+// 			cb_plot_coord->insertItem(3, "TR");
+			currentDataType = 2;
+		}
 		else
 		{
-			if (currentDataType != 2)
+			if (currentDataType != 4)
 			{
 				if (cb_plot_coord->count())
 					cb_plot_coord->clear();
@@ -423,8 +541,9 @@ void plotWindow::changeObjectComboBox(int)
 			cb_plot_coord->insertItem(1, "FX");
 			cb_plot_coord->insertItem(2, "FY");
 			cb_plot_coord->insertItem(3, "TR");
-			currentDataType = 2;
+			currentDataType = 4;
 		}
 	}
+
 	inObjectComboBox = false;
 }

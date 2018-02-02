@@ -75,19 +75,30 @@ void pointFollower::appendProfileData(double th, double s)
 // 	if (s > maxDistance)
 // 		maxDistance = s;
 	ss.push_back(QPointF(th, s));
+	double _ds;
+	double _dth;
 	unsigned int sz = ss.size();
-	if (sz == 1)
+	if (sz == 2)
 	{
-		ds.push_back(0.0);
+		_ds = ss.at(sz - 1).y() - ss.at(sz - 2).y();
+		_dth = ss.at(sz - 1).x() - ss.at(sz - 2).x();
+		ds.push_back(_ds / _dth);
+		//dthdt.push_back(_dth / 0.00001);
+		//ds.push_back(0.0);
 	}
 	else if (sz > 2)
 	{
-		double _ds = ss.at(sz - 1).y() - ss.at(sz - 3).y();
-		double _dth = ss.at(sz - 1).x() - ss.at(sz - 3).x();
+		_ds = ss.at(sz - 1).y() - ss.at(sz - 3).y();
+	//	uble _dds = ss.at(sz - 1).y() - 2.0 * ss.at(sz - 2).y() + ss.at(sz - 3).y();
+		_dth = ss.at(sz - 1).x() - ss.at(sz - 3).x();
+		//double _ddth = (ss.at(sz - 1).x() - ss.at(sz - 2).x()) * (ss.at(sz - 2).x() - ss.at(sz - 3).x());
 		if (_dth == 0)
 			ds.push_back(0);
 		else
+		{
 			ds.push_back(_ds / _dth);
+			//dthdt.push_back(0.5 * _dth / 0.00001);
+		}
 	}
 }
 
@@ -308,8 +319,8 @@ void pointFollower::followerJacobian(VECD& q, SMATD& lhs, unsigned int r, unsign
 	vecd3 pj = vecd3(q(cj), q(cj + 1), 0.0);
 	double s0 = ss.at(current_step).y();
 	double dsdtheta = ds.at(current_step);
-	lhs(r, c) = (-cos(angj) * (dsdtheta * cos(theta) - s0 * sin(theta)) + sin(angj) * (dsdtheta * sin(theta) + s0 * cos(theta)));
-	lhs(r + 1, c) = (-sin(angj) * (dsdtheta * cos(theta) - s0 * sin(theta)) - cos(angj) * (dsdtheta * sin(theta) + s0 * cos(theta)));
+	lhs(r, c) = ((-cos(angj) * (dsdtheta * cos(theta) - s0 * sin(theta)) + sin(angj) * (dsdtheta * sin(theta) + s0 * cos(theta))));
+	lhs(r + 1, c) = ((-sin(angj) * (dsdtheta * cos(theta) - s0 * sin(theta)) - cos(angj) * (dsdtheta * sin(theta) + s0 * cos(theta))));
 }
 
 void pointFollower::initializeCurveData()
@@ -317,6 +328,7 @@ void pointFollower::initializeCurveData()
 	cpXY.clear();
 	ss.clear();
 	ds.clear();
+	endXY.clear();
 }
 
 void pointFollower::setCM2HardPoint()
@@ -327,6 +339,11 @@ void pointFollower::setCM2HardPoint()
 QVector<QPointF>& pointFollower::ProfileData()
 {
 	return cpXY;
+}
+
+QVector<QPointF>& pointFollower::LastProfileData()
+{
+	return endXY;
 }
 
 void pointFollower::updateBaseMarker()
@@ -346,12 +363,22 @@ void pointFollower::constraintJacobian(VECD &q, VECD &qd, SMATD &lhs, unsigned i
 	vecd3 pj = vecd3(q(cj), q(cj + 1), 0.0);
 	//double srr = math::length(s - pj);
 	double dtheta = theta - pre_theta;
-	double for_sr = math::length(for_s - pj);
+	//double for_sr = math::length(for_s - pj);
 	double s0 = ss.at(current_step).y();// mch->getInterpValue(theta);
 	double dsdtheta = ds.at(current_step);// mch->calculate_derivative(theta);
 	result_s = s0;
 	result_dsdt = dsdtheta;
 	result_theta = theta;
+	//double sx = s0 * cos(theta);
+	//double sy = s0 * sin(theta);
+	double s_x = rot_s.X() + s0 * cos(theta);
+	double s_y = rot_s.Y() + s0 * sin(theta);
+	//actionMarker.s.SetX(s_x);
+	//actionMarker.s.SetY(s_y);
+	//double s_x = cpXY.at(current_step).x();
+	//double s_y = cpXY.at(current_step).y();
+	//double rs_x = s_x + rot_s.X();
+	//double rs_y = s_y + rot_s.Y();
 	//if (dtheta)
 		//dsdtheta = (for_sr - sr) / 0.00001;
 // 	else
@@ -361,9 +388,9 @@ void pointFollower::constraintJacobian(VECD &q, VECD &qd, SMATD &lhs, unsigned i
 // 	actionMarker.s.SetX(sr * cos(theta));
 // 	actionMarker.s.SetY(sr * sin(theta));
 // 	// Constraint jacobian of base body
-	double s0c = s0 * cos(theta);
-	double s0s = s0 * sin(theta);
-	double s_r = math::length(s - pj);
+	///double s0c = s0 * cos(theta);
+	//double s0s = s0 * sin(theta);
+	////double s_r = math::length(s - pj);
 	if (ci)
 	{
 		ci -= 3;
@@ -379,8 +406,8 @@ void pointFollower::constraintJacobian(VECD &q, VECD &qd, SMATD &lhs, unsigned i
 		lhs(r, cj) = 1;
 		lhs(r + 1, cj + 1) = 1;
 		//vecd3 up = math::local2global(dAj, actionMarker.s);
-		lhs(r, cj + 2) = -(sin(angj) * (rot_s.X() + s0 * cos(theta)) + cos(angj) * (rot_s.Y() + s0 * sin(theta)));
-		lhs(r + 1, cj + 2) = -(-cos(angj) * (rot_s.X() + s0 * cos(theta)) + sin(angj) * (rot_s.Y() + s0 * sin(theta)));
+		lhs(r, cj + 2) = -(sin(angj) * (s_x) + cos(angj) * (s_y));
+		lhs(r + 1, cj + 2) = -(-cos(angj) * (s_x) + sin(angj) * (s_y));
 // 		lhs(r, cj + 3) = cos(angj) * (sr * sin(theta)/* - dsdtheta * cos(theta)*/) + sin(angj) * (sr * cos(theta)/* - dsdtheta * sin(theta)*/);
 // 		lhs(r + 1, cj + 3) = sin(angj) * (sr * sin(theta)/* - dsdtheta * cos(theta)*/) - cos(angj) * (sr * cos(theta)/* - dsdtheta * sin(theta)*/);
 //  		lhs(r, cj + 3) = -(-cos(angj) * (dsdtheta * cos(theta) - s0 * sin(theta)) + sin(angj) * (dsdtheta * sin(theta) + s0 * cos(theta)));
@@ -390,38 +417,29 @@ void pointFollower::constraintJacobian(VECD &q, VECD &qd, SMATD &lhs, unsigned i
 
 void pointFollower::derivative(VECD &q, VECD &qd, VECD &rhs, unsigned int i)
 {
-// 	unsigned int ci = ib->ID() * 3 + 1;
-// 	unsigned int cj = jb->ID() * 3;
-// 	//setSinCos(qd(ci + 2), qd(cj + 2));
-// // 	transformationMatrix dAi = derivateTM(q(ci + 2));
-// // 	transformationMatrix dAj = derivateTM(q(cj + 2));
-// 	double angi = q(ci + 2);
-// 	double angj = q(cj + 2);
-// 	double wi = qd(ci + 2);
-// 	double wj = qd(cj + 2);
-// 	double theta = q(cj + 3);
-// 	double dtheta = qd(cj + 3);
-// 	//vecd3 pj = vecd3(q(cj), q(cj + 1), 0.0);
-// 	double s0 = ss.at(s_step).y();//mch->getInterpValue(theta);
-// 	double dsdtheta = ds.at(s_step);// mch->calculate_derivative(theta);
-// 	double ds2theta2 = dds.at(s_step);// mch->calculate_dderivative(theta);
-// 	result_dsdt2 = ds2theta2;
-// 	double ddxi = -s0 * cos(theta) - 2.0 * dsdtheta * sin(theta) + ds2theta2 * cos(theta);
-// 	double ddeta = -s0 * sin(theta) + 2.0 * dsdtheta * cos(theta) + ds2theta2 * sin(theta);
-// 	double s0x = rot_s.X() + s0 * cos(theta);
-// 	double s0y = rot_s.Y() + s0 * sin(theta);
-// 
-// 	double d1
-// 		= wi * wi * (-cos(angi) * baseMarker.s.X() + sin(angi) * baseMarker.s.Y())
-// 		+ wj * wj * (cos(angj) * s0x - sin(angj) * s0y)
-// 		+ dtheta * dtheta * (-cos(angj) * ddxi + sin(angj) * ddeta);
-// 	double d2
-// 		= wi * wi * (-sin(angi) * baseMarker.s.X() - cos(angi) * baseMarker.s.Y())
-// 		+ wj * wj * (sin(angj) * s0x + cos(angj) * s0y)
-// 		+ dtheta * dtheta * (-sin(angj) * ddxi - cos(angj) * ddeta);
-// 	rhs(i) = -d1;
-// 	rhs(i + 1) = -d2;
-
+	unsigned int ci = ib->ID() * 3;
+	unsigned int cj = jb->ID() * 3;
+	//setSinCos(q(ci + 2), q(cj + 2));
+	//setSinCos(ib->Angle(), jb->Angle());
+	transformationMatrix Ai = TM(q(ci + 2));
+	transformationMatrix Aj = TM(q(cj + 2));
+	double thi = q(ci + 2);
+	double thj = q(cj + 2);
+	double wi = qd(ci + 2);
+	double wj = qd(cj + 2);
+	vecd3 Qd = wi * wi * math::local2global(Ai, baseMarker.s) - wj * wj * math::local2global(Aj, actionMarker.s);
+	double Qd1
+		= wi * wi * (cos(thi) * baseMarker.s.X() - sin(thi) * baseMarker.s.Y())
+		- wj * wj * (cos(thj) * actionMarker.s.X() - sin(thj) * actionMarker.s.Y());
+	double Qd2
+		= wi * wi * (sin(thi) * baseMarker.s.X() + cos(thi) * baseMarker.s.Y())
+		- wj * wj * (sin(thj) * actionMarker.s.X() + cos(thj) * actionMarker.s.Y());
+	// 	double Qd1 = wi * wi * (Ai[0] * baseMarker.s.X() + Ai[1] * baseMarker.s.Y()) -
+	// 		         wj * wj * (Aj[0] * actionMarker.s.X() + Aj[1] * actionMarker.s.Y());
+	// 	double Qd2 = wi * wi * (Ai[2] * baseMarker.s.X() + Ai[3] * baseMarker.s.Y()) -
+	// 				 wj * wj * (Aj[2] * actionMarker.s.X() + Aj[3] * actionMarker.s.Y());
+	rhs(i) = Qd.X();
+	rhs(i + 1) = Qd.Y();
 }
 
 void pointFollower::lagrangianJacobian(VECD &q, MATD &lhs, unsigned int i, double lm0, double lm1, double mul)
@@ -472,18 +490,22 @@ void pointFollower::defineOnePointFollower()
 // 	if (ms > maxDistance)
 // 		maxDistance = ms;
 	vecd3 cp = math::global2local(TM(cam_angle), dp);
-	double ms = abs(action_hp.Y() + cp.Y());
-	if (ms > maxDistance)
-		maxDistance = ms;
-	if (abs(cam_angle) > M_PI * 0.5)
-	{
-		ms = ss.at(incAngle++).y() + action_hp.Y();
-		if (ms > maxDistance)
-			maxDistance = ms;
-	}
+	double len = math::length(cp);
+	double ang = acos(cp.X() / len);
+	if (cp.Y() < 0)
+		ang = M_PI + (M_PI - ang);
+// 	double ms = abs(action_hp.Y() + cp.Y());
+// 	if (ms > maxDistance)
+// 		maxDistance = ms;
+// 	if (abs(cam_angle) > M_PI * 0.5)
+// 	{
+// 		ms = ss.at(incAngle++).y() + action_hp.Y();
+// 		if (ms > maxDistance)
+// 			maxDistance = ms;
+// 	}
 	
 	this->appendRealCamProfileXY(cp);
-	this->appendProfileData(base_angle - cam_angle, math::length(dp));
+	this->appendProfileData(/*base_angle - cam_angle*/ang, len);
 }
 
 void pointFollower::appendRealCamProfileXY(vecd3 xy)
@@ -493,5 +515,54 @@ void pointFollower::appendRealCamProfileXY(vecd3 xy)
 
 double pointFollower::MaxDistance()
 {
+
 	return maxDistance;
+}
+
+// double pointFollower::currentDthDt()
+// {
+// // 	double ddth = 0.0;
+// // 	if (current_step == 0)
+// // 	{
+// // 		ddth = dthdt.at(1) - dthdt.at(0);
+// // 	}
+// // 	else if (current_step == 3500)
+// // 	{
+// // 		ddth = dthdt.at(current_step) - dthdt.at(current_step - 1);
+// // 	}
+// // 	else
+// // 	{
+// // 		ddth = dthdt.at(current_step + 1) - dthdt.at(current_step - 1);
+// // 	}
+// // 	return 0.5 * ddth / 0.00001;
+// }
+
+void pointFollower::defineLast()
+{
+	double cam_angle = jb->Angle();
+	double th = 0;
+	double s = 0;
+	double rx = 0;
+	double ry = 0;
+	double x = 0;
+	double y = 0;
+	int sz = ss.size();
+	for (int i = 0; i < sz; i++)
+	{
+		th = ss.at(i).x();
+		s = ss.at(i).y();
+		rx = s * cos(th);
+		ry = s * sin(th);
+		x = action_hp.X() + (cos(cam_angle) * rx - sin(cam_angle) * ry);
+		y = action_hp.Y() + (sin(cam_angle) * rx + cos(cam_angle) * ry);
+		if (y > maxDistance)
+			maxDistance = y;
+		endXY.push_back(QPointF(x, y));
+	}
+	maxDistance = maxDistance + action_hp.Y();
+// 	unsigned int sz = ss.size();
+// 	double _ds = ss.at(sz - 1).y() - ss.at(sz - 2).y();
+// 	double _dth = ss.at(sz - 1).x() - ss.at(sz - 2).x();
+// 	ds.push_back(_ds / _dth);
+	//dthdt.push_back(_dth / 0.00001);
 }

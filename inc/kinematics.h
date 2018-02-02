@@ -36,7 +36,7 @@ private:
 	//unsigned int correctionStep();
 	//bool saveResultData(double ct);
 	int kinematicAnalysis(/*QVector<double> &pacc*/);
-	void jointReactionForce();
+	void jointReactionForce(unsigned int r_step);
 	//void jointReactionForceFromEOM();
 	//void saveReactionForceData();
 	void initGeneralizedCoordinates();

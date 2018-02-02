@@ -8,7 +8,7 @@
 #include "pointFollower.h"
 #include "revoluteJoint.h"
 #include "translateJoint.h"
-#include "verticalConstraint.h"
+#include "simplifiedConstraint.h"
 #include "drivingConstraint.h"
 #include "constantConstraint.h"
 #include "designVariable.h"
@@ -56,7 +56,7 @@ public:
 	translateJoint* createTraslateJoint(QString _name);
 	drivingConstraint* createDrivingConstraint(QString _name);
 	pointFollower* createPointFollower(QString _name);
-	verticalConstraint* createVerticalConstraint(QString _name);
+	simplifiedConstraint* createSimplifiedConstraint(QString _name);
 	constantConstraint* createConstantConstraint(QString _name);
 	designVariable* createDesignVariable(QString _name);
 
@@ -77,6 +77,8 @@ public:
 	double SpaceConstraintWidth();
 	double SpaceConstraintHeight();
 	bool verifyLastCamAngleConstraint(QMap<QString, QVector<vecd3>>& hps);
+	void updateCenterOfMass();
+	void camConstraint();
 
 	virtual void init() = 0;
 //	virtual unsigned int kinematicAnalysis() = 0;

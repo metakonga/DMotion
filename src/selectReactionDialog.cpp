@@ -21,7 +21,7 @@ void selectReactionDialog::setupUi(int mtype)
 {
 	modelType = mtype;
 	setObjectName(QStringLiteral("DLG_SelectReaction"));
-	resize(130, 346);
+	//resize(130, 346);
 	setWindowTitle("Comparison Reaction Selection Dialog");
 	int yGeoPos = 10;
 	GB_NozzleTrans = new QGroupBox(this);
@@ -53,6 +53,19 @@ void selectReactionDialog::setupUi(int mtype)
 	checkMap[NOZZLE_LINK_REV_FY]->setObjectName(QStringLiteral("CH_ALR_FY"));
 	checkMap[NOZZLE_LINK_REV_FY]->setGeometry(QRect(60, 20, 51, 16));
 	checkMap[NOZZLE_LINK_REV_FY]->setText("FY");
+
+	if (mtype == 1)
+	{
+		GB_LinkTrans = new QGroupBox(this);
+		GB_LinkTrans->setObjectName(QStringLiteral("GB_LinkTrans"));
+		GB_LinkTrans->setGeometry(QRect(10, yGeoPos, 111, 46));
+		GB_LinkTrans->setTitle("Link_Vertical");
+		yGeoPos += 50;
+		checkMap[LINK_SIMPLE_FY] = new QCheckBox(GB_LinkTrans);
+		checkMap[LINK_SIMPLE_FY]->setObjectName(QStringLiteral("CH_LV_FY"));
+		checkMap[LINK_SIMPLE_FY]->setGeometry(QRect(10, 20, 51, 16));
+		checkMap[LINK_SIMPLE_FY]->setText("FY");
+	}
 
 	GB_LinkCamOrLinkHingeRev = new QGroupBox(this);
 	GB_LinkCamOrLinkHingeRev->setObjectName(QStringLiteral("GB_LinkCamOrLinkHingeRev"));
@@ -113,19 +126,36 @@ void selectReactionDialog::setupUi(int mtype)
 	checkMap[CAM_GROUND_REV_FY]->setGeometry(QRect(60, 20, 51, 16));
 	checkMap[CAM_GROUND_REV_FY]->setText("FY");
 
+// 	if (mtype == 1)
+// 	{
+// 		GB_ArcRollerRev = new QGroupBox(this);
+// 		GB_ArcRollerRev->setObjectName(QStringLiteral("GB_CamRollerRev"));
+// 		GB_ArcRollerRev->setGeometry(QRect(10, yGeoPos, 111, 46));
+// 		GB_ArcRollerRev->setTitle("Arc_Roller Rev.");
+// 		yGeoPos += 50;
+// 		checkMap[ARC_ROLLER_REV_FX] = new QCheckBox(GB_ArcRollerRev);
+// 		checkMap[ARC_ROLLER_REV_FX]->setObjectName(QStringLiteral("CH_ARR_FX"));
+// 		checkMap[ARC_ROLLER_REV_FX]->setGeometry(QRect(10, 20, 51, 16));
+// 		checkMap[ARC_ROLLER_REV_FX]->setText("FX");
+// 		checkMap[ARC_ROLLER_REV_FY] = new QCheckBox(GB_ArcRollerRev);
+// 		checkMap[ARC_ROLLER_REV_FY]->setObjectName(QStringLiteral("CH_ARR_FY"));
+// 		checkMap[ARC_ROLLER_REV_FY]->setGeometry(QRect(60, 20, 51, 16));
+// 		checkMap[ARC_ROLLER_REV_FY]->setText("FY");
+// 	}
+
 	GB_ArcTrans = new QGroupBox(this);
 	GB_ArcTrans->setObjectName(QStringLiteral("GB_ArcTrans"));
 	GB_ArcTrans->setGeometry(QRect(10, yGeoPos, 111, 46));
 	GB_ArcTrans->setTitle("Arc Trans.");
 	yGeoPos += 50;
-	checkMap[ARC_TRANS_FY] = new QCheckBox(GB_ArcTrans);
-	checkMap[ARC_TRANS_FY]->setObjectName(QStringLiteral("CH_PT_FY"));
-	checkMap[ARC_TRANS_FY]->setGeometry(QRect(10, 20, 51, 16));
-	checkMap[ARC_TRANS_FY]->setText("FY");
-	checkMap[ARC_TRANS_TR] = new QCheckBox(GB_ArcTrans);
-	checkMap[ARC_TRANS_TR]->setObjectName(QStringLiteral("CH_PT_TR"));
-	checkMap[ARC_TRANS_TR]->setGeometry(QRect(60, 20, 51, 16));
-	checkMap[ARC_TRANS_TR]->setText("TR");
+	checkMap[ARC_SIMPLE_FY] = new QCheckBox(GB_ArcTrans);
+	checkMap[ARC_SIMPLE_FY]->setObjectName(QStringLiteral("CH_PT_FY"));
+	checkMap[ARC_SIMPLE_FY]->setGeometry(QRect(10, 20, 51, 16));
+	checkMap[ARC_SIMPLE_FY]->setText("FY");
+	checkMap[ARC_SIMPLE_TR] = new QCheckBox(GB_ArcTrans);
+	checkMap[ARC_SIMPLE_TR]->setObjectName(QStringLiteral("CH_PT_TR"));
+	checkMap[ARC_SIMPLE_TR]->setGeometry(QRect(60, 20, 51, 16));
+	checkMap[ARC_SIMPLE_TR]->setText("TR");
 
 	GB_Profile = new QGroupBox(this);
 	GB_Profile->setObjectName(QStringLiteral("GB_Profile"));
@@ -146,6 +176,7 @@ void selectReactionDialog::setupUi(int mtype)
 	PB_Close->setText("Close");
 	//yGeoPos += 50;
 	PB_Close->setGeometry(QRect(10, yGeoPos, 111, 31));
+	resize(130, yGeoPos + 35);
 	connect(PB_Close, SIGNAL(clicked()), this, SLOT(pushClose()));
 }
 
@@ -180,11 +211,15 @@ void selectReactionDialog::pushClose()
 
 	if (modelType == 1)
 	{
+		odd->setSelectReaction(LINK_SIMPLE_FY, checkMap[LINK_SIMPLE_FY]->isChecked());
 		odd->setSelectReaction(LINK_HINGE_REV_FX, checkMap[LINK_HINGE_REV_FX]->isChecked());
 		odd->setSelectReaction(LINK_HINGE_REV_FY, checkMap[LINK_HINGE_REV_FY]->isChecked());
 
 		odd->setSelectReaction(HINGE_CAM_REV_FX, checkMap[HINGE_CAM_REV_FX]->isChecked());
 		odd->setSelectReaction(HINGE_CAM_REV_FY, checkMap[HINGE_CAM_REV_FY]->isChecked());
+
+// 		odd->setSelectReaction(ARC_ROLLER_REV_FX, checkMap[ARC_ROLLER_REV_FX]->isChecked());
+// 		odd->setSelectReaction(ARC_ROLLER_REV_FY, checkMap[ARC_ROLLER_REV_FY]->isChecked());
 	}
 	else if (modelType == 0)
 	{
@@ -195,8 +230,8 @@ void selectReactionDialog::pushClose()
 	odd->setSelectReaction(CAM_GROUND_REV_FX, checkMap[CAM_GROUND_REV_FX]->isChecked());
 	odd->setSelectReaction(CAM_GROUND_REV_FY, checkMap[CAM_GROUND_REV_FY]->isChecked());
 
-	odd->setSelectReaction(ARC_TRANS_FY, checkMap[ARC_TRANS_FY]->isChecked());
-	odd->setSelectReaction(ARC_TRANS_TR, checkMap[ARC_TRANS_TR]->isChecked());
+	odd->setSelectReaction(ARC_SIMPLE_FY, checkMap[ARC_SIMPLE_FY]->isChecked());
+	odd->setSelectReaction(ARC_SIMPLE_TR, checkMap[ARC_SIMPLE_TR]->isChecked());
 
 	odd->setSelectReaction(PROFILE_FX, checkMap[PROFILE_FX]->isChecked());
 	odd->setSelectReaction(PROFILE_FY, checkMap[PROFILE_FY]->isChecked());

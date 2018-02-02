@@ -39,7 +39,7 @@ public:
 
 	
 	void addSeries(QLineSeries *_series);
-	void setAxisRange(double x_min, double x_max, double y_min, double y_max);
+	void setAxisRange(double x_min, double x_max, double y_min, double y_max, bool _mof = false);
 	bool setChartData(QVector<double>* x, QVector<double>* y, int d = 1);
 	void setTableWidget(QTableWidget* _table) { table = _table; }
 	void setChartMode(ChartMode _cmode);

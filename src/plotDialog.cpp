@@ -114,7 +114,7 @@ void plotDialog::clicked(QModelIndex index)
 				double v = 0;
 				x_min = t < x_min ? t : x_min;
 				x_max = t > x_max ? t : x_max;
-				if (item->text() == "FM Reaction force") v = jrdt.fm;
+				if (item->text() == "FM Reaction force") v = jrdt.tr;
 				else if (item->text() == "FX Reaction force") v = jrdt.fx;
 				else if (item->text() == "FY Reaction force") v = jrdt.fy;
 // 				else if (item->text() == "TM Reaction force") v = jrdt.rm;
