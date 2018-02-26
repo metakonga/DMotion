@@ -39,24 +39,22 @@ void designVariable::setConstraint(constraint* cs)
 
 bool designVariable::updateVariable(bool _isFirst)
 {
-	if (_isFirst)
-	{
-		//cons->updatePosition(ctype, current);
-		isFirst = false;
-		return false;
-	}
+// 	if (_isFirst)
+// 	{
+// 		initializeCurrent();//cons->updatePosition(ctype, current);
+// 		isFirst = false;
+// 		return false;
+// 	}
 	current = current + step;
 	if (current > upper + 1e-9)
 	{
 		current = lower;
-		cons->updatePosition(ctype, -(upper - lower));
+		cons->updatePosition(ctype, current);
 		return true;
 	}
 	else
-	{
-		
-		cons->updatePosition(ctype, step);
-	}
+		cons->updatePosition(ctype, current);
+
 	return false;
 }
 

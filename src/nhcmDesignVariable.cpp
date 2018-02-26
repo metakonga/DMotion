@@ -9,7 +9,7 @@
 #include <QHBoxLayout>
 
 nhcmDesignVariable::nhcmDesignVariable(QFrame *frame)
-	: QWidget(frame)
+	: QWidget(NULL)
 {
 	GB_DESIGN_VARIABLE = new QGroupBox(frame);
 	GB_DESIGN_VARIABLE->setObjectName(QStringLiteral("GB_DESIGN_VARIABLE"));
@@ -268,7 +268,13 @@ nhcmDesignVariable::nhcmDesignVariable(QFrame *frame)
 
 nhcmDesignVariable::~nhcmDesignVariable()
 {
-
+// 	delete horizontalLayout;
+// 	delete gridLayout_2;
+// 	delete layoutWidget;
+// 	delete layoutWidget_2;
+// 	delete LE_CAMPV_LOWER_X;
+	//GB_DESIGN_VARIABLE->layout()->removeWidget(layoutWidget);
+//	delete GB_DESIGN_VARIABLE; GB_DESIGN_VARIABLE = NULL;
 }
 
 void nhcmDesignVariable::setInitValue()
@@ -536,4 +542,16 @@ int nhcmDesignVariable::setSystemParameters(model* md)
 		md->setLastCamAngleDesignVariableEnable(false);
 
 	return totalCase;
+}
+
+void nhcmDesignVariable::setEnableAndShow()
+{
+	GB_DESIGN_VARIABLE->setEnabled(true);
+	GB_DESIGN_VARIABLE->show();
+}
+
+void nhcmDesignVariable::setDisableAndHide()
+{
+	GB_DESIGN_VARIABLE->setEnabled(false);
+	GB_DESIGN_VARIABLE->hide();
 }

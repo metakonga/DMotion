@@ -6,6 +6,7 @@ QPlainTextEdit* commandWindow::e = NULL;
 commandWindow::commandWindow(QWidget *parent)
 	: QDockWidget(parent)
 {
+	setWindowTitle("Command DockWindow");
 	e = new QPlainTextEdit;
 	e->setReadOnly(true);
 	e->setMaximumHeight(150);
@@ -14,7 +15,7 @@ commandWindow::commandWindow(QWidget *parent)
 
 commandWindow::~commandWindow()
 {
-
+	if (e) delete e; e = NULL;
 }
 
 void commandWindow::clear()

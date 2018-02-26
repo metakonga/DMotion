@@ -252,8 +252,38 @@ void vp_profile::changeTableData(int row, QPointF new_v)
 	changeCellItem(item);
 }
 
+bool vp_profile::checkFirstEndData()
+{
+	QTableWidgetItem* f_item0 = TB_Table->item(0, 1);
+	QTableWidgetItem* f_item1 = TB_Table->item(0, 2);
+	int nrow = TB_Table->rowCount() - 1;
+	QTableWidgetItem* e_item0 = TB_Table->item(nrow, 1);
+	QTableWidgetItem* e_item1 = TB_Table->item(nrow, 2);
+	if (f_item0->text().toDouble() != 0) return false;
+	if (f_item1->text().toDouble() != 0) return false;
+	if (e_item0->text().toDouble() != 0.035) return false;
+	if (e_item1->text().toDouble() != 0) return false;
+	return true;
+}
+
 void vp_profile::clickRadioButton_RelativeVelocity()
 {
+	bool chk = checkFirstEndData();
+	if (!chk)
+	{
+		int ret = messageBox::run("The velocity profile of arc is incorrect.\nYou must determine the start and end points.", "Do you want to continue the process.\nProfile data will be changed to start(0, 0) and end(0.035, 0).", QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
+		switch (ret)
+		{
+		case QMessageBox::Yes:
+			changeTableData(0, QPointF(0, 0));
+			changeTableData(TB_Table->rowCount() - 1, QPointF(0.035, 0));
+			clickRadioButton_RelativeVelocity();
+			return;
+		case QMessageBox::No:
+			RB_RelativeVelocity->setChecked(false);
+			return;
+		}
+	}
 	QLineSeries* rv = vcht1->LineSeries()[RELATIVE_VELOCITY];
 	/*QLineSeries**/QList<QPointF> nv = dataMap/*vcht0->LineSeries()*/[NOZZLE_VELOCITY];
 	//QLineSeries* av = vcht0->LineSeries()[ARC_VELOCITY];
@@ -264,23 +294,24 @@ void vp_profile::clickRadioButton_RelativeVelocity()
 	QList<QPointF> data;
 	vcht0->MCHS()->calculate_curve(vcht0->ScatterSeries()[INTERPOLATION_POINT], data, 0.00001);
 	data.push_back(QPointF(0.035, 0));
+//	QPointF d0 = 
 	//dataMap[RELATIVE_VELOCITY].push_back(QPointF(0.035, 0));
 	int count = nv.size();
-	if (data.size()/*dataMap[RELATIVE_VELOCITY].size()*/ != nv.size())
-	{
-		int ret = messageBox::run("The velocity profile of arc is incorrect.\nYou must determine the start and end points.", "Do you want to continue the process.\nProfile data will be changed to start(0, 0) and end(0.035, 0).", QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
-		switch (ret)
-		{
-			case QMessageBox::Yes:
-				changeTableData(0, QPointF(0, 0));
-				changeTableData(TB_Table->rowCount() - 1, QPointF(0.035, 0));
-				clickRadioButton_RelativeVelocity();
-				return;
-			case QMessageBox::No:
-				RB_RelativeVelocity->setChecked(false);
-				return;
-		}
-	}
+// 	if (data.size()/*dataMap[RELATIVE_VELOCITY].size()*/ != nv.size())
+// 	{
+// 		int ret = messageBox::run("The velocity profile of arc is incorrect.\nYou must determine the start and end points.", "Do you want to continue the process.\nProfile data will be changed to start(0, 0) and end(0.035, 0).", QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
+// 		switch (ret)
+// 		{
+// 			case QMessageBox::Yes:
+// 				changeTableData(0, QPointF(0, 0));
+// 				changeTableData(TB_Table->rowCount() - 1, QPointF(0.035, 0));
+// 				clickRadioButton_RelativeVelocity();
+// 				return;
+// 			case QMessageBox::No:
+// 				RB_RelativeVelocity->setChecked(false);
+// 				return;
+// 		}
+// 	}
 	//int j = 0;
 	for (unsigned int i = 0; i < nv.size(); i++)
 	{
@@ -319,10 +350,10 @@ void vp_profile::changeCellItem(QTableWidgetItem* item)
 	vcht0->changeSeriesValue(x, y, v);
 	_isClicedCell = false;
 	_isChangeData = true;
-	if (RB_RelativeVelocity->isChecked())
-		clickRadioButton_RelativeVelocity();
-	else if (RB_VelocityRatio->isChecked())
-		clickRadioButton_VelocityRatio();
+// 	if (RB_RelativeVelocity->isChecked())
+// 		clickRadioButton_RelativeVelocity();
+// 	else if (RB_VelocityRatio->isChecked())
+// 		clickRadioButton_VelocityRatio();
 }
 
 void vp_profile::doubleClicked(QTableWidgetItem* item)
@@ -437,8 +468,8 @@ void vp_profile::importData()
 			ls->clear();
 			for (int i = 0; i < count; i++)
 			{
-				if (i % 10)
-					continue;
+// 				if (i % 10)
+// 					continue;
 				point = points[i];
 				ls->append(point.x(), point.y());
 			}
@@ -450,8 +481,8 @@ void vp_profile::importData()
 			ls->clear();
 			for (int i = 0; i < count; i++)
 			{
-				if (i % 10)
-					continue;
+// 				if (i % 10)
+// 					continue;
 				ls->append(points[i]);
 			}
 				
@@ -541,6 +572,22 @@ void vp_profile::changeSeries(int idx)
 
 void vp_profile::clickRadioButton_VelocityRatio()
 {
+	bool chk = checkFirstEndData();
+	if (!chk)
+	{
+		int ret = messageBox::run("The velocity profile of arc is incorrect.\nYou must determine the start and end points.", "Do you want to continue the process.\nProfile data will be changed to start(0, 0) and end(0.035, 0).", QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
+		switch (ret)
+		{
+		case QMessageBox::Yes:
+			changeTableData(0, QPointF(0, 0));
+			changeTableData(TB_Table->rowCount() - 1, QPointF(0.035, 0));
+			clickRadioButton_VelocityRatio();
+			return;
+		case QMessageBox::No:
+			RB_RelativeVelocity->setChecked(false);
+			return;
+		}
+	}
 	QLineSeries* vr = vcht1->LineSeries()[VELOCITY_RATIO];
 	//QLineSeries* nv = vcht0->LineSeries()[NOZZLE_VELOCITY];
 	/*QLineSeries**/QList<QPointF> nv = dataMap/*vcht0->LineSeries()*/[NOZZLE_VELOCITY];
@@ -554,21 +601,21 @@ void vp_profile::clickRadioButton_VelocityRatio()
 	data/*Map[VELOCITY_RATIO]*/.push_back(QPointF(0.035, 0));
 	//int count = av->count();
 //	qDebug() << "Velocity ratio size : [" << rdata.size() << ", " << nv->count() << "]";
-	if (data/*Map[VELOCITY_RATIO]*/.size() != nv.size())
-	{
-		int ret = messageBox::run("The velocity profile of arc is incorrect.\nYou must determine the start and end points.", "Do you want to continue the process.\nProfile data will be changed to start(0, 0) and end(0.035, 0).", QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
-		switch (ret)
-		{
-		case QMessageBox::Yes:
-			changeTableData(0, QPointF(0, 0));
-			changeTableData(TB_Table->rowCount() - 1, QPointF(0.035, 0));
-			clickRadioButton_VelocityRatio();
-			return;
-		case QMessageBox::No:
-			RB_VelocityRatio->setChecked(false);
-			return;
-		}
-	}
+// 	if (data/*Map[VELOCITY_RATIO]*/.size() != nv.size())
+// 	{
+// 		int ret = messageBox::run("The velocity profile of arc is incorrect.\nYou must determine the start and end points.", "Do you want to continue the process.\nProfile data will be changed to start(0, 0) and end(0.035, 0).", QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
+// 		switch (ret)
+// 		{
+// 		case QMessageBox::Yes:
+// 			changeTableData(0, QPointF(0, 0));
+// 			changeTableData(TB_Table->rowCount() - 1, QPointF(0.035, 0));
+// 			clickRadioButton_VelocityRatio();
+// 			return;
+// 		case QMessageBox::No:
+// 			RB_VelocityRatio->setChecked(false);
+// 			return;
+// 		}
+// 	}
 	//int j = 0;
 	for (unsigned int i = 0; i < nv.size(); i++)
 	{

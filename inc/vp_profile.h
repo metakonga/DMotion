@@ -18,6 +18,7 @@ public:
 
 	void setActiveProfile(QVector<double>& vp);
 	void changeTableData(int row, QPointF new_v);
+	bool checkFirstEndData();
 
 	private slots:
 	void finishDialog(int);

@@ -31,5 +31,6 @@
         <file>Resources/ani_tobegin.png</file>
         <file>Resources/ani_toEnd.png</file>
         <file>Resources/ani_init.png</file>
+        <file>Resources/stop.png</file>
     </qresource>
 </RCC>

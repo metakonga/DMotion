@@ -148,14 +148,14 @@ void selectReactionDialog::setupUi(int mtype)
 	GB_ArcTrans->setGeometry(QRect(10, yGeoPos, 111, 46));
 	GB_ArcTrans->setTitle("Arc Trans.");
 	yGeoPos += 50;
-	checkMap[ARC_SIMPLE_FY] = new QCheckBox(GB_ArcTrans);
-	checkMap[ARC_SIMPLE_FY]->setObjectName(QStringLiteral("CH_PT_FY"));
-	checkMap[ARC_SIMPLE_FY]->setGeometry(QRect(10, 20, 51, 16));
-	checkMap[ARC_SIMPLE_FY]->setText("FY");
-	checkMap[ARC_SIMPLE_TR] = new QCheckBox(GB_ArcTrans);
-	checkMap[ARC_SIMPLE_TR]->setObjectName(QStringLiteral("CH_PT_TR"));
-	checkMap[ARC_SIMPLE_TR]->setGeometry(QRect(60, 20, 51, 16));
-	checkMap[ARC_SIMPLE_TR]->setText("TR");
+	checkMap[mtype ? ARC_SIMPLE_FY : ARC_TRANS_FY] = new QCheckBox(GB_ArcTrans);
+	checkMap[mtype ? ARC_SIMPLE_FY : ARC_TRANS_FY]->setObjectName(QStringLiteral("CH_PT_FY"));
+	checkMap[mtype ? ARC_SIMPLE_FY : ARC_TRANS_FY]->setGeometry(QRect(10, 20, 51, 16));
+	checkMap[mtype ? ARC_SIMPLE_FY : ARC_TRANS_FY]->setText("FY");
+	checkMap[mtype ? ARC_SIMPLE_TR : ARC_TRANS_TR] = new QCheckBox(GB_ArcTrans);
+	checkMap[mtype ? ARC_SIMPLE_TR : ARC_TRANS_TR]->setObjectName(QStringLiteral("CH_PT_TR"));
+	checkMap[mtype ? ARC_SIMPLE_TR : ARC_TRANS_TR]->setGeometry(QRect(60, 20, 51, 16));
+	checkMap[mtype ? ARC_SIMPLE_TR : ARC_TRANS_TR]->setText("TR");
 
 	GB_Profile = new QGroupBox(this);
 	GB_Profile->setObjectName(QStringLiteral("GB_Profile"));
@@ -230,8 +230,8 @@ void selectReactionDialog::pushClose()
 	odd->setSelectReaction(CAM_GROUND_REV_FX, checkMap[CAM_GROUND_REV_FX]->isChecked());
 	odd->setSelectReaction(CAM_GROUND_REV_FY, checkMap[CAM_GROUND_REV_FY]->isChecked());
 
-	odd->setSelectReaction(ARC_SIMPLE_FY, checkMap[ARC_SIMPLE_FY]->isChecked());
-	odd->setSelectReaction(ARC_SIMPLE_TR, checkMap[ARC_SIMPLE_TR]->isChecked());
+	odd->setSelectReaction(!modelType ? ARC_TRANS_FY : ARC_SIMPLE_FY, checkMap[!modelType ? ARC_TRANS_FY : ARC_SIMPLE_FY]->isChecked());
+	odd->setSelectReaction(!modelType ? ARC_TRANS_TR : ARC_SIMPLE_TR, checkMap[!modelType ? ARC_TRANS_FY : ARC_SIMPLE_TR]->isChecked());
 
 	odd->setSelectReaction(PROFILE_FX, checkMap[PROFILE_FX]->isChecked());
 	odd->setSelectReaction(PROFILE_FY, checkMap[PROFILE_FY]->isChecked());

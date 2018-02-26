@@ -27,6 +27,9 @@ public:
 	void saveToFile(QTextStream& qts);
 	int setSystemParameters(model* md);
 
+	void setEnableAndShow();
+	void setDisableAndHide();
+
 private:
 	QFrame *DesignTabFrame;
 	QGroupBox *GB_DESIGN_VARIABLE;

@@ -94,12 +94,13 @@ DMotion::DMotion(QWidget *parent)
 	, _isNewAnalysis(false)
 {
  	ui.setupUi(this);
+	ui.DW_Modeling->setWindowTitle("Design and Modeling DockWindow");
 	userInterface = &ui;
 
 	myNbDocuments = 0;
 	stApp = this;
 	myIsDocuments = false;
-	cw = new commandWindow(this);
+	
 	timer = new QTimer(this);
 	
 	connect(timer, SIGNAL(timeout()), this, SLOT(updateAnimationFrame()));
@@ -143,14 +144,20 @@ DMotion::DMotion(QWidget *parent)
 	connect(ui.PB_ImportNozzelVelocity, SIGNAL(clicked()), this, SLOT(pushActiveVelocityBotton()));
 	connect(ui.PB_ImportArcVelocity, SIGNAL(clicked()), this, SLOT(pushPassiveVelocityBotton()));
 	connect(ui.PB_SelectParameters, SIGNAL(clicked()), this, SLOT(pushSelectParameters()));
-	connect(ui.CB_Body, SIGNAL(currentIndexChanged(int)), this, SLOT(changeComboBody(int)));
-	connect(ui.CB_HardPoint, SIGNAL(currentIndexChanged(int)), this, SLOT(changeComboHardPoint(int)));
-
+	//connect(ui.TAB_MODELING, SIGNAL(currentChanged(int)), this, SLOT(changeModelingTab(int)));
+	connect(ui.TAB_MODELING, SIGNAL(tabBarClicked(int)), this, SLOT(clickedTabBar(int)));
+	
+	connect(ui.PB_Shape, SIGNAL(clicked()), this, SLOT(clickApplyShape()));
+	dv_hcm = new hcmDesignVariable(ui.DesignTabFrame);
+	dv_nhcm = new nhcmDesignVariable(ui.DesignTabFrame);
+	dv_hcm->setInitValue();
+	dv_nhcm->setInitValue();
 	file_new();
 }
 
 DMotion::~DMotion()
 {
+	if (doc) delete doc; doc = NULL;
   	if (vp) delete vp; vp = NULL;
   	if (cw) delete cw; cw = NULL;
   	if (kin) delete kin; kin = NULL;
@@ -158,7 +165,7 @@ DMotion::~DMotion()
 // // 	if (graph) delete graph; graph = NULL;
   	if (timer) delete timer; timer = NULL;
   	if (plot) delete plot; plot = NULL;
-  	if (doc) delete doc; doc = NULL;
+  	
  	if (odd) delete odd; odd = NULL;
 	if (rTable) delete rTable; rTable = NULL;
 	if (srdlg) delete srdlg; srdlg = NULL;	
@@ -176,11 +183,12 @@ void DMotion::initialize(modelType mt)
 	if (doc) delete doc; doc = NULL;
 	if (md) delete md; md = NULL;
 	if (odd) delete odd; odd = NULL;
-	if (dv_nhcm) delete dv_nhcm; dv_nhcm = NULL;
-	if (dv_hcm) delete dv_hcm; dv_hcm = NULL;
+	if (cw) delete cw; cw = NULL;
+	//if (dv_nhcm) delete dv_nhcm; dv_nhcm = NULL;
+	//if (dv_hcm) delete dv_hcm; dv_hcm = NULL;
 	if (dcPlot) delete dcPlot; dcPlot = NULL;
-	com::clear();
-
+	if (srdlg) delete srdlg; srdlg = NULL;
+	
 	switch (mt)
 	{
 	case ORIGINAL_CAM_TYPE:
@@ -192,12 +200,19 @@ void DMotion::initialize(modelType mt)
 	default:
 		break;
 	}
+// 	disconnect(ui.CB_Body, SLOT(changeComboBody(int)));
+// 	disconnect(ui.CB_HardPoint, SLOT(changeComboBody(int)));
+	ui.CB_Body->clear();
+	ui.CB_HardPoint->clear();
 	ui.CB_Body->insertItems(0, md->BodyList());
 	ui.CB_HardPoint->insertItems(0, md->HardPointList());
+	connect(ui.CB_Body, SIGNAL(currentIndexChanged(int)), this, SLOT(changeComboBody(int)));
+	connect(ui.CB_HardPoint, SIGNAL(currentIndexChanged(int)), this, SLOT(changeComboHardPoint(int)));
 	doc = new document(this);
 	docu = doc;
 	doc->setDisplayDynamicModel(md->RigidBodies(), md->HardPoints());
 	plot = new plotWindow(md, this);
+	cw = new commandWindow(this);
 	if (!odd)
 		odd = new optimumDesignDoc(md, plot);
 	initializeDesignVariable();
@@ -227,20 +242,32 @@ void DMotion::file_new()
 	{
 		initialize(nd->SelectedModelType());
 		md->setModelName(nd->ModelName());
-		md->setModelPath(nd->Directory() + "/");
+		md->setModelPath(nd->Directory() + "/" + nd->ModelName() + "/");
 	}
 	else if (ret == 0)
 	{
-		this->file_open(nd->OpenFilePath());
+		this->file_open(nd->OpenFilePath(), true);
+	}
+	else
+	{
+		dv_hcm->setDisableAndHide();
+		dv_nhcm->setDisableAndHide();
+		//addDockWidget(Qt::BottomDockWidgetArea, cw);
+		//addDockWidget(Qt::LeftDockWidgetArea, plot);
 	}
 	current_animation = -1;
 	delete nd;
 }
 
-void DMotion::file_open(QString f)
+void DMotion::file_open(QString f, bool isNew)
 {
 	QString fileName;
-	if (f.isEmpty())
+	if (!md && !isNew)
+	{
+		QString dir = "C:/";
+		fileName = QFileDialog::getOpenFileName(this, tr("open"), dir, tr("Model file(*.mde)"));
+	}
+	else if (f.isEmpty())
 	{
 		QString dir = md->ModelPath() + md->ModelName() + ".mde";
 		fileName = QFileDialog::getOpenFileName(this, tr("open"), dir, tr("Model file(*.mde)"));
@@ -258,13 +285,20 @@ void DMotion::file_open(QString f)
 	QString str;
 	qts >> str >> mtype >> str;
 	initialize(modelType(mtype));
-	if (!f.isEmpty())
-	{
-		int begin = f.lastIndexOf("/");
-		md->setModelPath(f.left(begin));
-		int begin2 = f.lastIndexOf(".");
-		md->setModelName(f.mid(begin+1, begin2 - begin - 1));
-	}
+	int begin = fileName.lastIndexOf("/");
+	QString m_path = fileName.left(begin+1);
+	int mid = fileName.lastIndexOf(".");
+	QString m_name = fileName.mid(begin + 1, mid - begin - 1);
+	//md->setModelPath()
+	md->setModelName(m_name);
+	md->setModelPath(m_path);
+// 	if (!f.isEmpty())
+// 	{
+// 		int begin = f.lastIndexOf("/");
+// 		md->setModelPath(f.left(begin));
+// 		int begin2 = f.lastIndexOf(".");
+// 		md->setModelName(f.mid(begin+1, begin2 - begin - 1));
+// 	}
 	
 	if (str == "Body_information")
 	{
@@ -275,10 +309,10 @@ void DMotion::file_open(QString f)
 		{
 			qts >> x >> y >> angle >> mass >> inertia >> shapePath;
 			rigidBody* rb = md->RigidBodies()[str];
-			rb->setPosition(x.toDouble(), y.toDouble(), 0.0);
-			rb->setAngle(angle.toDouble());
+			rb->setPosition(x.toDouble() * 0.001, y.toDouble() * 0.001, 0.0);
+			rb->setAngle(angle.toDouble() * (M_PI / 180.0));
 			rb->setMass(mass.toDouble());
-			rb->setInertia(inertia.toDouble());
+			rb->setInertia(inertia.toDouble() * 0.000001);
 			rb->setShapePath(shapePath);
 			com::write("Success : Body information of " + str);
 			qts >> str;
@@ -294,7 +328,7 @@ void DMotion::file_open(QString f)
 		{
 			qts >> x >> y;
 			hardPoint *hp = md->HardPoints()[str];
-			hp->loc = vecd3(x.toDouble(), y.toDouble(), 0.0);
+			hp->loc = vecd3(x.toDouble() * 0.001, y.toDouble() * 0.001, 0.0);
 			hp->loc0 = hp->loc;
 			com::write("Success : Information of " + str);
 			qts >> str;
@@ -387,6 +421,15 @@ void DMotion::file_open(QString f)
 		ui.LE_Space_Height->setText(sh);
 	}
 	qf.close();
+	//updateModelingLineEdit();
+}
+
+void DMotion::changeModelingTab(int idx)
+{
+	if (idx == 1)
+	{
+
+	}
 }
 
 void DMotion::file_save(QString f)
@@ -415,7 +458,7 @@ void DMotion::file_save(QString f)
 	foreach(QString rb_list, md->BodyList())
 	{
 		rigidBody *rb = md->RigidBodies()[rb_list];
-		qts << rb_list << " " << rb->Position().X() << " " << rb->Position().Y() << " " << rb->Angle() << " " << rb->Mass() << " " << rb->Inertia() << " " << rb->ShapePath() << endl;
+		qts << rb_list << " " << rb->Position().X() * 1000.0 << " " << rb->Position().Y() * 1000.0 << " " << rb->Angle() * (180.0 / M_PI) << " " << rb->Mass() << " " << rb->Inertia() * 1000000.0 << " " << rb->ShapePath() << endl;
 	}
 	qts << "end" << endl;
 
@@ -424,7 +467,7 @@ void DMotion::file_save(QString f)
 	foreach(QString hp_list, md->HardPointList())
 	{
 		hardPoint* hp = md->HardPoints()[hp_list];
-		qts << hp_list << " " << hp->loc.X() << " " << hp->loc.Y() << endl;
+		qts << hp_list << " " << hp->loc.X() * 1000.0 << " " << hp->loc.Y() * 1000.0 << endl;
 	}
 	qts << "end" << endl;
 
@@ -474,6 +517,8 @@ void DMotion::closeEvent(QCloseEvent *event)
 
 void DMotion::openResultTable()
 {
+	if (!odd->OptimumCases().size())
+		return;
 	if (!rTable)
 		rTable = new resultTable(odd);
 	else
@@ -490,20 +535,21 @@ void DMotion::openResultTable()
 		rTable->appendTable(cName, dataList);
 	}
 	ui.TAB_MODELING->addTab(rTable, "Results");
-	connect(ui.TAB_MODELING, SIGNAL(tabBarClicked(int)), this, SLOT(clickedTabBar(int)));
+	/*connect(ui.TAB_MODELING, SIGNAL(tabBarClicked(int)), this, SLOT(clickedTabBar(int)));*/
 	rTable->ResultTable()->sortByColumn(0, Qt::SortOrder::AscendingOrder);
 	rTable->ResultTable()->setSortingEnabled(true);
 	//rTable->setWindowModality(Qt::NonModal);
+	ui.TAB_MODELING->setCurrentIndex(2);
 	_isNewAnalysis = false;
 }
 
 void DMotion::pushActiveVelocityBotton()
 {
-	QString dir = md->ModelPath();
-	QString fileName = QFileDialog::getOpenFileName(this, tr("open"), dir, tr("Model file (*.mde);;Result file binary (*.bin);;All files (*.*)"));
+	QString dir = "../data";// md->ModelPath();
+	QString fileName = QFileDialog::getOpenFileName(this, tr("open"), dir, tr("Profile text file(*.txt)"));
 	if (!fileName.isEmpty())
 	{
-		drivingConstraint* ad = md->DrivingConstraints()["Nozzel_driving"];
+		drivingConstraint* ad = md->DrivingConstraints()["Nozzle_driving"];
 		ad->setVelocityProfile(fileName);
 		QVector<QPointF> nozzleV;
 		for (int i = 0; i < ad->VelocityProfile().size(); i++)
@@ -519,7 +565,7 @@ void DMotion::pushActiveVelocityBotton()
 
 void DMotion::pushPassiveVelocityBotton()
 {
-	QString dir = md->ModelPath();
+	QString dir = "../data";
 	QString fileName = QFileDialog::getOpenFileName(this, tr("open"), dir, tr("Profile text file(*.txt)"));
 	if (!fileName.isEmpty())
 	{
@@ -621,6 +667,8 @@ void DMotion::pushCaseSave()
 
 void DMotion::changeComboBody(int idx)
 {
+	if (idx < 0)
+		return;
 	double radian2degree = 180.0 / M_PI;
 	double m2mm = 1000.0;
 	double kgm2kgmm = 1000000.0;
@@ -637,6 +685,8 @@ void DMotion::changeComboBody(int idx)
 
 void DMotion::changeComboHardPoint(int idx)
 {
+	if (idx < 0)
+		return;
 	double m2mm = 1000.0;
 	QString str = ui.CB_HardPoint->itemText(idx);
 	hardPoint* hp = md->HardPoints()[str];
@@ -652,16 +702,17 @@ void DMotion::editLineEdit()
 	{
 		str = ui.CB_Body->currentText();
 		rigidBody* rb = md->RigidBodies()[str];
-		double x = sendBy->text().toDouble();
-		rb->setPosition(x, rb->Position().Y() * (1.0  / 1000.0), 0);
+		double x = sendBy->text().toDouble() * 0.001;
+		rb->setPosition(x, rb->Position().Y(), 0, true);
+
 	}
 	
 	if (sendBy == myLineEdits.at(LE_Y))
 	{
 		str = ui.CB_Body->currentText();
 		rigidBody* rb = md->RigidBodies()[str];
-		double y = sendBy->text().toDouble();
-		rb->setPosition(rb->Position().X() * (1.0 / 1000.0), y, 0);
+		double y = sendBy->text().toDouble() * 0.001;
+		rb->setPosition(rb->Position().X(), y, 0, true);
 	}
 
 	if (sendBy == myLineEdits.at(LE_ANGLE))
@@ -669,7 +720,7 @@ void DMotion::editLineEdit()
 		str = ui.CB_Body->currentText();
 		rigidBody* rb = md->RigidBodies()[str];
 		double angle = sendBy->text().toDouble();
-		rb->setAngle(angle * ((double)M_PI / 180.0));
+		rb->setAngle(angle * ((double)M_PI / 180.0), true);
 	}
 
 	if (sendBy == myLineEdits.at(LE_MASS))
@@ -677,7 +728,7 @@ void DMotion::editLineEdit()
 		str = ui.CB_Body->currentText();
 		rigidBody* rb = md->RigidBodies()[str];
 		double mass = sendBy->text().toDouble();
-		rb->setMass(mass);
+		rb->setMass(mass, true);
 	}
 
 	if (sendBy == myLineEdits.at(LE_INERTIA))
@@ -685,7 +736,7 @@ void DMotion::editLineEdit()
 		str = ui.CB_Body->currentText();
 		rigidBody* rb = md->RigidBodies()[str];
 		double inertia = sendBy->text().toDouble();
-		rb->setInertia(inertia * (1.0 / 1000000.0));
+		rb->setInertia(inertia * 0.000001, true);
 	}
 // 	optimumCase* oc = odd->SelectedCase();
 // 	QMap<QString, Handle(AIS_Shape)> hps = DMotion::getDocument()->getHardPoints();
@@ -704,7 +755,7 @@ void DMotion::editLineEdit()
 	{
 		str = ui.CB_HardPoint->currentText();
 		hardPoint* hp = md->HardPoints()[str];
-		double x = sendBy->text().toDouble();
+		double x = sendBy->text().toDouble() * 0.001;
 		hp->loc.SetX(x);
 		hp->loc0 = hp->loc;
 		Handle(AIS_Shape) shape = doc->getHardPoints()[hp->name];
@@ -718,7 +769,7 @@ void DMotion::editLineEdit()
 	{
 		str = ui.CB_HardPoint->currentText();
 		hardPoint* hp = md->HardPoints()[str];
-		double y = sendBy->text().toDouble();
+		double y = sendBy->text().toDouble() * 0.001;
 		hp->loc.SetY(y);
 		hp->loc0 = hp->loc;
 		Handle(AIS_Shape) shape = doc->getHardPoints()[hp->name];
@@ -736,7 +787,23 @@ void DMotion::clickedTabBar(int idx)
 		ui.DW_Modeling->setMaximumWidth(524287);
 	else
 		ui.DW_Modeling->setMaximumWidth(500);
+	if (txt == "Modeling")
+	{
+		changeComboBody(0);
+		changeComboHardPoint(0);
+	}
+}
 
+void DMotion::clickApplyShape()
+{
+	QString dir = "../data";
+	QString shapePath = QFileDialog::getOpenFileName(this, tr("open"), dir, tr("IGES file (*.iges *.igs);;STEP file (*.stp *.step);;All files (*.*)"));
+	if (shapePath.isEmpty())
+		return;
+	QString cur = ui.CB_Body->currentText();
+	rigidBody *rb = md->RigidBodies()[cur];
+	doc->DisplayShape(rb, shapePath);
+	com::write("Success importing the " + cur + "shape.");
 }
 
 Handle(AIS_InteractiveContext) DMotion::getAISContext()
@@ -763,42 +830,25 @@ void DMotion::setCaseResult()
 	//srm.setFieldWidth(30);
 	srm.setFieldAlignment(QTextStream::AlignCenter);
 	srm << qSetFieldWidth(30) << "Name";
-	QMapIterator<QString, QVector<vecd3>> hprs(oc->HardPointsResults());
-	while (hprs.hasNext())
+	//QMapIterator<QString, QVector<vecd3>> hprs(oc->HardPointsResults());
+	foreach(QString str, md->HardPointList())
 	{
-		hprs.next();
-		srm << qSetFieldWidth(22 + hprs.key().size()) << /*qSetFieldWidth(20) << center <<*/ hprs.key();
+		//QVector<vecd3> hprs = oc->HardPointsResults()[str];
+		srm << qSetFieldWidth(22 + str.size()) << /*qSetFieldWidth(20) << center <<*/ str;
 	}
 	srm << qSetFieldWidth(0) << endl;
-	hprs.toFront();
+	//hprs.toFront();
 	srm.setFieldAlignment(QTextStream::AlignCenter);
 	srm << qSetFieldWidth(30) << oc->Name();
-	while (hprs.hasNext())
+	foreach(QString str, md->HardPointList())
 	{
-		hprs.next();
-		vecd3 pos = hprs.value().at(0);
-		srm << qSetFieldWidth(30) << "[" + QString("%1").arg(pos.X(), 6, 'f', 6) + ", " + QString("%1").arg(pos.Y(), 6, 'f', 6) + "]";
+		QVector<vecd3> hprs = oc->HardPointsResults()[str];
+		vecd3 pos = hprs.at(0);
+		srm << qSetFieldWidth(30) << "[" + QString("%1").arg(pos.X() * 1000, 2, 'f', 2) + ", " + QString("%1").arg(pos.Y() * 1000, 2, 'f', 2) + "]";
 	}
 	com::write(info);
 	com::printLine();
-	qDebug() << "maxConstraintCamDistance : " << oc->profileMaxDistance();
-// 	com::write("| Name : " + )
-// 	ui.LE_CaseName->setText(oc->Name());
-// 	vecd3 hp_pos0 = oc->HardPointsResults()["active_link"].at(0);
-// 	ui.LE_CI_HeadLink_X->setText(QString("%1").arg(hp_pos0.X(), 6, 'f', 6));
-// 	ui.LE_CI_HeadLink_Y->setText(QString("%1").arg(hp_pos0.Y(), 6, 'f', 6));
-// 
-// 	hp_pos0 = oc->HardPointsResults()["link_cam"].at(0);
-// 	ui.LE_CI_LinkCam_X->setText(QString("%1").arg(hp_pos0.X(), 6, 'f', 6));
-// 	ui.LE_CI_LinkCam_Y->setText(QString("%1").arg(hp_pos0.Y(), 6, 'f', 6));
-// 
-// 	hp_pos0 = oc->HardPointsResults()["cam_ground"].at(0);
-// 	ui.LE_CI_CamRC_X->setText(QString("%1").arg(hp_pos0.X(), 6, 'f', 6));
-// 	ui.LE_CI_CamRC_Y->setText(QString("%1").arg(hp_pos0.Y(), 6, 'f', 6));
-// 
-// 	hp_pos0 = oc->HardPointsResults()["cam_passive"].at(0);
-// 	ui.LE_CI_CamPV_X->setText(QString("%1").arg(hp_pos0.X(), 6, 'f', 6));
-// 	ui.LE_CI_CamPV_Y->setText(QString("%1").arg(hp_pos0.Y(), 6, 'f', 6));
+	// qDebug() << "maxConstraintCamDistance : " << oc->profileMaxDistance();
 }
 
 void DMotion::createCasCadeOperations()
@@ -824,11 +874,22 @@ void DMotion::createCasCadeOperations()
 	connect(a, SIGNAL(triggered()), this, SLOT(analysis()));
 	myToolActions.insert(SOLVE, a);
 
+// 	a = new QAction(QIcon(":/Resources/stop.png"), tr("&analysis stop"), this);
+// 	a->setStatusTip(tr("analysis stop"));
+// 	connect(a, SIGNAL(triggered()), this, SLOT(analysis_stop()));
+// 	myToolActions.insert(SOLVE_STOP, a);
+
 	a = new QAction(QIcon(":/Resources/caseSave.png"), tr("&SaveCase"), this);
 	a->setStatusTip(tr("Save the selected case information"));
 	connect(a, SIGNAL(triggered()), this, SLOT(pushCaseSave()));
 	myToolActions.insert(SAVE_CASE, a);
 
+	a = new QAction(QIcon(":/Resources/plot.png"), tr("&velocity profile"), this);
+	a->setStatusTip(tr("velocity profile"));
+	connect(a, SIGNAL(triggered()), this, SLOT(onVelocityProfile()));
+	myToolActions.insert(PROFILE, a);
+
+	ui.mainToolBar->setWindowTitle("Tool Operations");
 	int i = 0;
 	for (; i < myToolActions.size(); i++)
 	{
@@ -857,10 +918,7 @@ void DMotion::createCasCadeOperations()
 	connect(a, SIGNAL(triggered()), this, SLOT(onToolAction()));
 	myToolActions.insert(TOOL_TRANSPARENCY, a);
 
-	a = new QAction(QIcon(":/Resources/plot.png"), tr("&velocity profile"), this);
-	a->setStatusTip(tr("velocity profile"));
-	connect(a, SIGNAL(triggered()), this, SLOT(onToolAction()));
-	myToolActions.insert(TOOL_PROFILE, a);
+	
 
 	for (; i < myToolActions.size(); i++)
 	{
@@ -971,9 +1029,6 @@ void DMotion::onToolAction()
 
 	if (sentBy == myToolActions.at(TOOL_TRANSPARENCY))
 		onTransparency();
-
-	if (sentBy == myToolActions.at(TOOL_PROFILE))
-		onVelocityProfile();
 
 // 	if (sentBy == myToolActions.at(TOOL_SOLVE))
 // 		analysis();
@@ -1106,14 +1161,32 @@ void DMotion::initializeDesignVariable()
 {
 	if (md->ModelType() == ORIGINAL_CAM_TYPE)
 	{
-		dv_nhcm = new nhcmDesignVariable(ui.DesignTabFrame);
+		dv_hcm->setDisableAndHide();
+		dv_nhcm->setEnableAndShow();
 		dv_nhcm->setInitValue();
+// 		dv_nhcm = new nhcmDesignVariable(ui.DesignTabFrame);
+// 		//bool bb = ui.DesignTabFrame->layout()->isEmpty();
+// 		dv_nhcm->setInitValue();
 	}
 	else if (md->ModelType() == HOLE_CAM_TYPE)
-	{
-		dv_hcm = new hcmDesignVariable(ui.DesignTabFrame);
+	{		
+		dv_nhcm->setDisableAndHide();
+		dv_hcm->setEnableAndShow();
 		dv_hcm->setInitValue();
+		//ui.DesignTabFrame->raise();
+	//	bool bb = ui.DesignTabFrame->layout()->isEmpty();
+		
+// 		dv_hcm = new hcmDesignVariable(ui.DesignTabFrame);
+// 		//bool bb = ui.DesignTabFrame->layout()->isEmpty();
+// 		//dv_hcm->show();
+// 		dv_hcm->setInitValue();
 	}
+// 	dv_hcm = new hcmDesignVariable(ui.DesignTabFrame);
+// 	//bool bb = ui.DesignTabFrame->layout()->isEmpty();
+// 	//dv_hcm->show();
+// 	dv_hcm->setInitValue();
+// 	dv_hcm->setEnabled(false);
+// 	dv_hcm->hide();
 	if (!srdlg)
 	{
 		srdlg = new selectReactionDialog(odd);
@@ -1129,6 +1202,11 @@ void DMotion::initializeBodyInformation()
 	double radian2degree = 180.0 / M_PI;
 	double m2mm = 1000.0;
 	double kgm2kgmm = 1000000.0;
+	foreach(QString str, md->BodyList())
+	{
+		rigidBody* rb = md->RigidBodies()[str];
+		rb->setBody0();
+	}
 	changeComboBody(0);
 }
 
@@ -1237,16 +1315,18 @@ void DMotion::quitThread()
 	kin->wait();
 	disconnect(kin);
 	if (kin) delete kin; kin = NULL;
-	//ui.statusBar->removeWidget(pBar);
 	pBar->hide();
-//	delete pBar; pBar = NULL;
 	myAnimationBar->show();
 	openResultTable();
+	QAction *a = myToolActions.at(SOLVE);
+	a->disconnect();
+	a->setIcon(QIcon(":/Resources/solve.png"));
+	a->setStatusTip(tr("analysis."));
+	connect(a, SIGNAL(triggered()), this, SLOT(analysis()));
 }
 
 void DMotion::analysisProcess(char c, QString str)
 {
-	//QString mode;
 	switch (c)
 	{
 	case '@': cw->write("" + str); break;
@@ -1264,24 +1344,58 @@ void DMotion::updateProgressBar(int count)
 
 void DMotion::analysis()
 {
+	if (rTable)
+	{
+		disconnect(ui.TAB_MODELING);
+		ui.TAB_MODELING->removeTab(2);
+		delete rTable;
+		rTable = NULL;
+	}
+	unsigned int t = this->setSystemParameters();
+	double expectTime = t * 0.05;
+	int minute = static_cast<int>(expectTime / 60.0);
+	int hour = minute / 60;
+	if (minute > 60) minute = minute - (60 * hour);
+	com::printLine();
+	com::write(kor("예상되는 계산시간은 ") + QString("%1").arg(hour) + kor("시간 ") + QString("%1").arg(minute) + kor("분 입니다."));
+	if (hour > 1)
+	{
+		int ret = messageBox::run(kor("해석에 소요되는 시간이 약 ") + QString("%1").arg(hour) + kor("시간 ") + QString("%1").arg(minute) + kor("분으로 예상됩니다."), kor("설계변수 범위 변경없이 해석을 수행하시겠습니까?"), QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
+		switch (ret)
+		{
+		case QMessageBox::No:
+			return;
+		}
+	}
+	com::printLine();
 	file_save(md->ModelPath() + md->ModelName() + ".mde");
 	odd->clear();
 	kin = new kinematics(md, odd);
 	kin->setPlotWindow(plot);
-	unsigned int t = this->setSystemParameters();
+	
 	if (!pBar)
 		pBar = new QProgressBar;
-
-	//ui.statusBar->addWidget(pBar);
 	pBar->setMaximum(t);
 	pBar->show();
 	connect(kin, SIGNAL(sendProcess(char, QString)), this, SLOT(analysisProcess(char, QString)));
 	connect(kin, SIGNAL(sendCaseCount(int)), this, SLOT(updateProgressBar(int)));
 	connect(kin, SIGNAL(finishedThread()), this, SLOT(quitThread()));
+	connect(this, SIGNAL(analysisStopSignal()), kin, SLOT(setStopCondition()));
+	QAction* a = myToolActions.at(SOLVE);
+	a->disconnect();
+	a->setIcon(QIcon(":/Resources/stop.png"));
+	a->setStatusTip(tr("analysis stop."));
+	connect(a, SIGNAL(triggered()), this, SLOT(analysis_stop()));
+
 	kin->setSimulationCondition(0.00001, 0.035);
 	kin->init();
 	kin->start();
 	_isNewAnalysis = true;
+}
+
+void DMotion::analysis_stop()
+{
+	emit analysisStopSignal();
 }
 
 void DMotion::onSelectionChanged()
@@ -1300,19 +1414,13 @@ void DMotion::onSelectionChanged()
 		 }
 		 myToolActions.at(TOOL_WIRE_FRAME)->setEnabled(OneOrMoreInShading);
 		 myToolActions.at(TOOL_SHADING)->setEnabled(OneOrMoreInWireframe);
-// 		 myToolActions.at(ToolColorId)->setEnabled(true);
-// 		 myToolActions.at(ToolMaterialId)->setEnabled(true);
 		 myToolActions.at(TOOL_TRANSPARENCY)->setEnabled(OneOrMoreInShading);
-// 		 myToolActions.at(ToolDeleteId)->setEnabled(true);
 	 }
 	 else
 	 {
 		 myToolActions.at(TOOL_WIRE_FRAME)->setEnabled(false);
 		 myToolActions.at(TOOL_SHADING)->setEnabled(false);
-// 		 myToolActions.at(ToolColorId)->setEnabled(false);
-// 		 myToolActions.at(ToolMaterialId)->setEnabled(false);
 		 myToolActions.at(TOOL_TRANSPARENCY)->setEnabled(false);
-// 		 myToolActions.at(ToolDeleteId)->setEnabled(false);
 	 }
 }
 
@@ -1339,9 +1447,6 @@ void DMotion::onPrevious2X()
 	onAnimationPause();
 	current_animation = ANIMATION_PREVIOUS_2X;
 	onSetPlayAnimation();
-	//onAnimationPause();
-	//animation_controller::previous2x();
-	//updateAnimationFrame();
 }
 
 void DMotion::onPrevious1X()
@@ -1355,39 +1460,29 @@ void DMotion::onPrevious1X()
 
 void DMotion::updateAnimationFrame()
 {
-	unsigned int i = animation_controller::CurrentFrame();
-// 	QMapIterator<QString, rigidBody*> r(md->RigidBodies());
-// 	QMap<QString, Handle(AIS_Shape)> r_objs = doc->getRigidBodies();
-// 	while (r.hasNext())
-// 	{
-// 		rigidBody* rb = r.next().value();
-// 		if (rb->IsGround())
-// 			continue;
-// 		if (rb->ShapePath().isEmpty())
-// 			continue;
-// 		resultDataType rdt = rb->ResultData()->at(i);
-// 		Handle(AIS_Shape) ais = r_objs[rb->Name()];
-// 		gp_Trsf t;
-// 		
-// 		//gp_Trsf a;
-// 		vecd3 pos = 1000.0 * rdt.pos;
-// 		gp_Ax1 ax(gp_Pnt(0,0,0), gp_Vec(0, 0, 1));
-// 		//gp_Ax3 base(pos, gp_Vec(0, 0, 1), gp_Vec(1, 0, 0));
-// 		double ang = rdt.ang;
-// 		//t.SetTransformation(base/*.Rotated(gp_Ax1(pos, gp_Dir(0, 0, 1)), ang)*/);
-//  		//t.SetRotation(ax, ang);
-// 		t.SetValues(
-// 			cos(ang), -sin(ang), 0, pos.X(),
-// 			sin(ang), cos(ang), 0, pos.Y(),
-// 			0, 0, 1, pos.Z());
-//  		//t.SetTranslation(gp_Vec(pos.X(), pos.Y(), 0.0));
-// 		//gp_TrsfForm f = t.Form();
-// 		ais->SetLocalTransformation(t);
-// 		//ais->SetLocalTransformation(a);
-// 		//
-// 		
-// 	}
 	optimumCase* oc = odd->SelectedCase();
+	unsigned int i = animation_controller::CurrentFrame();
+	QMapIterator<QString, rigidBody*> r(md->RigidBodies());
+	QMap<QString, Handle(AIS_Shape)> r_objs = doc->getRigidBodies();
+	while (r.hasNext())
+	{
+		rigidBody* rb = r.next().value();
+		if (rb->IsGround())
+			continue;
+		if (rb->ShapePath() == "None")
+			continue;
+		resultDataType rdt = oc->BodyResults()[rb->Name()].at(i);
+		Handle(AIS_Shape) ais = r_objs[rb->Name()];
+		gp_Trsf t;
+		
+		vecd3 pos = 1000.0 * rdt.pos;
+		gp_Ax1 ax(gp_Pnt(0,0,0), gp_Vec(0, 0, 1));
+		double ang = rdt.ang;
+ 		t.SetRotation(ax, ang);
+ 		t.SetTranslation(gp_Vec(pos.X(), pos.Y(), 0.0));
+		ais->SetLocalTransformation(t);
+	}
+	
 	QMap<QString, Handle(AIS_Shape)> hps = DMotion::getDocument()->getHardPoints();
 	QMapIterator<QString, Handle(AIS_Shape)> ais(hps);
 	while (ais.hasNext())
@@ -1400,24 +1495,7 @@ void DMotion::updateAnimationFrame()
 		t.SetTranslation(1000.0 * gp_Vec(loc0.X(), loc0.Y(), 0.0));
 		shape->SetLocalTransformation(t);
 	}
-// 	QMapIterator<QString, constraint*> c(md->Constraints());
-// 	QMap<QString, Handle(AIS_Shape)> objs = doc->getHardPoints();
-// 	optimumCase* oc = odd->SelectedCase();   
-// 
-// 	while (c.hasNext())
-// 	{
-// 		constraint* cs = c.next().value();
-// 		if (cs->JointType() == DRIVING)
-// 			continue;
-// 		jointResultDataType jrdt = cs->ResultData()->at(i);
-// 		hardPoint* hp = cs->BindedHardPoint();
-// 		if (!hp) continue;
-// 		Handle(AIS_Shape) ais = objs[hp->name];
-// 		gp_Trsf t;
-// 		vecd3 pos = 1000.0 * jrdt.loc;
-// 		t.SetTranslation(gp_Vec(pos.X(), pos.Y(), 0.0));
-// 		ais->SetLocalTransformation(t);		
-// 	}
+
 	myContext->UpdateCurrentViewer();
 	if (animation_controller::IsPlay())
 	{
@@ -1460,7 +1538,7 @@ void DMotion::onSetPlayAnimation()
 		a = myAnimationActions[ANIMATION_PLAY_BACK];
 		break;
 	}
-	disconnect(a);
+	a->disconnect();
 	a->setIcon(QIcon(":/Resources/ani_pause.png"));
 	a->setStatusTip(tr("Restart the animation."));
 	connect(a, SIGNAL(triggered()), this, SLOT(onAnimationPause()));
@@ -1503,9 +1581,8 @@ void DMotion::onAnimationPause()
 	default:
 		return;
 	}
-//	animation_controller::setPlayEnable(false);
-	//QAction *a = myAnimationActions[ANIMATION_PLAY];
-	disconnect(a);
+
+	a->disconnect();
 	a->setIcon(QIcon(icon_path));
 	a->setStatusTip(tr("Pause the animation."));
 	switch (current_animation)

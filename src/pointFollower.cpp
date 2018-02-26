@@ -559,7 +559,7 @@ void pointFollower::defineLast()
 			maxDistance = y;
 		endXY.push_back(QPointF(x, y));
 	}
-	maxDistance = maxDistance + action_hp.Y();
+	//maxDistance = maxDistance + action_hp.Y();
 // 	unsigned int sz = ss.size();
 // 	double _ds = ss.at(sz - 1).y() - ss.at(sz - 2).y();
 // 	double _dth = ss.at(sz - 1).x() - ss.at(sz - 2).x();

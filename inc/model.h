@@ -12,6 +12,7 @@
 #include "drivingConstraint.h"
 #include "constantConstraint.h"
 #include "designVariable.h"
+#include "distanceConstraint.h"
 
 //class QStandardItem;
 
@@ -40,6 +41,9 @@ public:
 	bool IsSatisfyCamAngle();
 	void initializeDesignVariable();
 	double NoSatisfiedCamAngle();
+	bool checkDesignConstraint();
+	void initializeHardPointsLocation();
+	void initializeBodyInformation();
 
 	//reactionForceType Constraint2ReactionType(QString _name, coordinateType ctype);
 
@@ -59,6 +63,7 @@ public:
 	simplifiedConstraint* createSimplifiedConstraint(QString _name);
 	constantConstraint* createConstantConstraint(QString _name);
 	designVariable* createDesignVariable(QString _name);
+	distanceConstraint* createDistanceDesignConstraint(QString _name);
 
 	pointFollower* PointFollower();
 
@@ -87,6 +92,7 @@ protected:
 	modelType mtype;
 	bool isEmptyEnableDesignVariable;
 	bool isSatisfyCamAngle;
+	bool isSatisfyDistance;
 	//bool isSatisfyLastCamAngle;
 	unsigned int nCoordinates;
 	QString modelName;
@@ -109,6 +115,7 @@ protected:
 	QMap<QString, rigidBody*> bodies;
 	QMap<QString, constraint*> cons;
 	QMap<QString, designVariable*> designs;
+	QMap<QString, designConstraint*> designConsts;
 	pointFollower* pfollower;
 	QMap<QString, drivingConstraint*> drivings;
 	QMap<int, reactionForceType> reactionMap;

@@ -50,6 +50,7 @@ public:
 	static unsigned int NTotalNonZero();
 	static void setIgnoreAllOptions(bool b);
 	static void setSolverStep(unsigned int ss);
+	static void initStaticVariable();
 	bool IsFixedWhenKinematicAnalysis();
 
 	virtual int constraintEquation(VECD &q, VECD &rhs, unsigned int i, double mul = 0) = 0;

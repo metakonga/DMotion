@@ -274,6 +274,12 @@
     <ClCompile Include="..\src\simplifiedConstraint.cpp">
       <Filter>Source Files\constraint</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\designConstraint.cpp">
+      <Filter>Source Files\constraint</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\distanceConstraint.cpp">
+      <Filter>Source Files\constraint</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="dmotion.h">
@@ -465,6 +471,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\inc\simplifiedConstraint.h">
+      <Filter>Header Files\constraint</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\designConstraint.h">
+      <Filter>Header Files\constraint</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\distanceConstraint.h">
       <Filter>Header Files\constraint</Filter>
     </ClInclude>
   </ItemGroup>

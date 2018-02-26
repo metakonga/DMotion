@@ -28,7 +28,7 @@ public:
 	QMap<QString, Handle(AIS_Shape)> getRigidBodies() { return rigidBodies; }
 	QTableWidget* getHPTable() { return hpTable; }
 	void setDisplayDynamicModel(QMap<QString, rigidBody*>& r, QMap<QString, hardPoint*>& d);
-	
+	void DisplayShape(rigidBody* obj, QString shapePath);
 	//bool translate(const QString& file, const int format, const bool import);
 
 private:

@@ -30,6 +30,14 @@ void constraint::setSolverStep(unsigned int ss)
 	s_step = ss;
 }
 
+void constraint::initStaticVariable()
+{
+	nDimension = 0;
+	nTotalNNZ = 0;
+	s_step = 0;
+	ignoreAllOptions = false;
+}
+
 bool constraint::IsFixedWhenKinematicAnalysis()
 {
 	return isFixedWhenKinematicAnalysis;
@@ -193,12 +201,12 @@ reactionForceType constraint::ReactionForceType2()
 	return rft2;
 }
 
-void constraint::updatePosition(coordinateType ct, double dv)
+void constraint::updatePosition(coordinateType ct, double cur)
 {
 	switch (ct)
 	{
-	case AXIS_X: pos.SetX(pos.X() + dv); break;
-	case AXIS_Y: pos.SetY(pos.Y() + dv); break;
+	case AXIS_X: pos.SetX(hp->loc0.X() + cur); break;
+	case AXIS_Y: pos.SetY(hp->loc0.Y() + cur); break;
 	}
 	hp->loc = pos;
 }

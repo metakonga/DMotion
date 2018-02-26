@@ -193,12 +193,12 @@ public:
 		drivingConstraint *nozzle_driving = createDrivingConstraint("Nozzle_driving");
 		nozzle_driving->setTargetBody(nozzle, AXIS_X);
 		// 		//active_driving->setConstantVelocity(-0.1);
-		nozzle_driving->setVelocityProfile("C:/DMotion/data/NozzleVelocityProfile.txt");
+		nozzle_driving->setVelocityProfile("../data/NozzleVelocityProfile.txt");
 		//nozzle_driving->setVelocityProfile("C:/DMotion/data/untitled2.txt");
 
 		drivingConstraint *arc_driving = createDrivingConstraint("Arc_driving");
 		arc_driving->setTargetBody(arc, AXIS_X);
-		arc_driving->setVelocityProfile("C:/DMotion/data/ArcVelocityProfile_avoid.txt");
+		arc_driving->setVelocityProfile("../data/ArcVelocityProfile_avoid.txt");
 		//arc_driving->setVelocityProfile("C:/DMotion/data/untitled.txt");
 
 		pointFollower* pf = createPointFollower("Arc-Cam PF");
@@ -282,6 +282,12 @@ public:
 		designVariable* dv_arcCamy = createDesignVariable("arcCam_y");
 		dv_arcCamy->setConstraint(pf);
 		dv_arcCamy->setDirection(AXIS_Y);
+
+		distanceConstraint* dc_dist = createDistanceDesignConstraint("dc_dist");
+		dc_dist->setTwoHardPoints(cam_arc, cam_ground);
+		dc_dist->setcheckUpper();
+		dc_dist->setConstraintValue(0.035);
+		dc_dist->setComparisonTarget(designConstraint::DC_VERTICAL);
 
 		reactionMap[0] = NOZZLE_TRANS_FY;// "Nozzle Trans.(FY)";
 		reactionMap[1] = NOZZLE_TRANS_TR;// "Nozzle Trans.(TR)";

@@ -144,7 +144,9 @@
     <ClCompile Include="..\src\columnViewItem.cpp" />
     <ClCompile Include="..\src\constantConstraint.cpp" />
     <ClCompile Include="..\src\constraint.cpp" />
+    <ClCompile Include="..\src\designConstraint.cpp" />
     <ClCompile Include="..\src\designVariable.cpp" />
+    <ClCompile Include="..\src\distanceConstraint.cpp" />
     <ClCompile Include="..\src\document.cpp" />
     <ClCompile Include="..\src\chart.cpp" />
     <ClCompile Include="..\src\chartView.cpp" />
@@ -341,6 +343,8 @@
   <ItemGroup>
     <ClInclude Include="..\inc\algebraMath.h" />
     <ClInclude Include="..\inc\axis.h" />
+    <ClInclude Include="..\inc\designConstraint.h" />
+    <ClInclude Include="..\inc\distanceConstraint.h" />
     <ClInclude Include="..\inc\drivingConditionPlot.h" />
     <ClInclude Include="..\inc\dual_motion_hole.hpp" />
     <ClInclude Include="..\inc\errors.h" />

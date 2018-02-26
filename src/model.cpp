@@ -16,7 +16,8 @@ model::model(modelType mt)
 	, spaceWidth(140)
 	, spaceHeight(618)
 {
-	
+	constraint::initStaticVariable();
+	rigidBody::initStaticVariable();
 }
 
 model::~model()
@@ -25,6 +26,7 @@ model::~model()
 	qDeleteAll(cons); cons.clear();
 	qDeleteAll(hardPoints); hardPoints.clear();
 	qDeleteAll(designs); designs.clear();
+	qDeleteAll(designConsts); designConsts.clear();
 	if (pfollower) delete pfollower; pfollower = NULL;
 }
 
@@ -68,7 +70,7 @@ void model::setModelName(QString _modelName)
 
 void model::setModelPath(QString _modelPath)
 {
-	modelPath = _modelPath + modelName + "/";
+	modelPath = _modelPath/* + modelName + "/"*/;
 	if (!QDir(modelPath).exists())
 		QDir().mkdir(modelPath);
 }
@@ -149,6 +151,13 @@ designVariable* model::createDesignVariable(QString _name)
 	designVariable* dv = new designVariable(_name);
 	designs[_name] = dv;
 	return dv;
+}
+
+distanceConstraint* model::createDistanceDesignConstraint(QString _name)
+{
+	distanceConstraint* dc = new distanceConstraint(_name);
+	designConsts[_name] = dc;
+	return dc;
 }
 
 vecd3 model::getHalfBetween2HP(hardPoint* hpi, hardPoint* hpj)
@@ -314,29 +323,35 @@ bool model::updateDesignVariable(QString &hps, bool isFirst)
 	bool isOver = true;
 	isEmptyEnableDesignVariable = true;
 	QTextStream qts(&hps);
-
-	foreach(designVariable* dv, designs)
+	if (isFirst)
 	{
-		if (!dv) continue;
-		if (!dv->Enable())
-			continue;
-		isEmptyEnableDesignVariable = false;
-		bool isEnd = dv->updateVariable(isFirst);
-
-		if (!isEnd)
-		{
-			isOver = false;
-			break;
-		}
-		else
-		{
-			//dv->initializeCurrent();
-		}
+		initializeDesignVariable();
+		isOver = false;
 	}
-	if (isEmptyEnableDesignVariable)
+	else
 	{
-		return true;
+		foreach(designVariable* dv, designs)
+		{
+			if (!dv) continue;
+			if (!dv->Enable())
+				continue;
+			isEmptyEnableDesignVariable = false;
+			bool isEnd = dv->updateVariable(isFirst);
+
+			if (!isEnd)
+			{
+				isOver = false;
+				break;
+			}
+			else
+			{
+				//dv->initializeCurrent();
+			}
+		}
+		if (isEmptyEnableDesignVariable)
+			return true;
 	}
+
 	qts << "| ";
 	foreach(designVariable* dv, designs)
 	{
@@ -376,7 +391,7 @@ bool model::updateDesignVariable(QString &hps, bool isFirst)
 		vecd3 hp0 = hardPoints["cam_ground"]->loc;
 		vecd3 hp1;// = hardPoints["cam_passive"]->loc;
 		if (mtype == ORIGINAL_CAM_TYPE)
-			hp1 = hardPoints["cam_passive"]->loc;
+			hp1 = hardPoints["cam_arc"]->loc;
 		else if (mtype == HOLE_CAM_TYPE)
 			hp1 = hardPoints["cam_arc"]->loc;
 		pfollower->initialize(hp0, hp1);
@@ -442,7 +457,7 @@ void model::updateCenterOfMass()
 	if (mtype == ORIGINAL_CAM_TYPE)
 	{
 		rigidBody* rb = bodies["Nozzle"];
-		hardPoint* hp = hardPoints["active_link"];
+		hardPoint* hp = hardPoints["nozzle_link"];
 		vecd3 dif = hp->loc - hp->loc0;
 		rb->setPosition(rb->Position().X() + dif.X(), rb->Position().Y() + dif.Y(), 0.0);
 
@@ -549,6 +564,30 @@ void model::initializeDesignVariable()
 double model::NoSatisfiedCamAngle()
 {
 	return noSatisfiedCamAngle;
+}
+
+bool model::checkDesignConstraint()
+{
+	foreach(designConstraint* dc, designConsts)
+	{
+		if (!dc->checkConatraint())
+			return false;
+	}
+	return true;
+}
+
+void model::initializeHardPointsLocation()
+{
+	foreach(hardPoint* hp, hardPoints)
+		hp->loc = hp->loc0;
+}
+
+void model::initializeBodyInformation()
+{
+	foreach(rigidBody* rb, bodies)
+	{
+		rb->setBodyFromBody0();
+	}
 }
 
 // reactionForceType model::Constraint2ReactionType(QString _name, coordinateType ctype)

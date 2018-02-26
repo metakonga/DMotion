@@ -34,8 +34,9 @@ optimumDesignDoc::~optimumDesignDoc()
 }
 
 void optimumDesignDoc::clear()
-{
+{	
 	qDeleteAll(optimumCases); optimumCases.clear();
+	selectedCase = NULL;
 }
 
 optimumCase* optimumDesignDoc::createOptimumCase(QString cName)

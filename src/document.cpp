@@ -27,6 +27,22 @@ document::~document()
 {
 	if (geometries.size())
 		qDeleteAll(geometries);
+	//qDeleteAll(hardPoints);
+	//hardPoints.clear();
+	//DMotion::getAISContext()->UpdateCurrentViewer();
+ 	foreach(Handle(AIS_Shape) ais, rigidBodies)
+	{
+		DMotion::getAISContext()->Remove(ais);
+		//DMotion::getAISContext()->UpdateCurrentViewer();
+	}
+	foreach(Handle(AIS_Shape) ais, hardPoints)
+	{
+		DMotion::getAISContext()->Remove(ais);
+		//DMotion::getAISContext()->UpdateCurrentViewer();
+	}
+	
+	//hardPoints.clear();
+	//rigidBodies.clear();
 	if (hpTable) delete hpTable; hpTable = NULL;
 }
 
@@ -139,6 +155,44 @@ void document::setDisplayDynamicModel(QMap<QString, rigidBody*>& r, QMap<QString
 			DMotion::getAISContext()->Display(ais_s, false);
 			DMotion::getAISContext()->SetDisplayMode(ais_s, 1, false);
 		}
+	}
+}
+
+void document::DisplayShape(rigidBody* obj, QString shapePath)
+{
+	if (obj->ShapePath() != "None")
+	{
+		Handle(AIS_Shape) ais_s = rigidBodies[obj->Name()];
+		DMotion::getAISContext()->Remove(ais_s);
+		DMotion::getAISContext()->UpdateCurrentViewer();
+		obj->setShapePath("None");
+		//return;
+	}
+	if (!shapePath.isEmpty())
+	{
+		int type = -1;
+		Handle(TopTools_HSequenceOfShape) shapes;
+		int begin = shapePath.lastIndexOf(".");
+		QString ext = shapePath.mid(begin);
+		if (ext == ".igs" || ext == ".iges")
+		{
+			shapes = importIGES(shapePath);
+		}
+		else if (ext == ".step" || ext == ".stp")
+		{
+			shapes = importSTEP(shapePath);
+		}
+		Handle(AIS_Shape) ais_s = new AIS_Shape(shapes->Value(1));
+		gp_Trsf t;
+		vecd3 p = 1000.0 * obj->Position();
+		t.SetTranslation(gp_Vec(p.X(), p.Y(), 0.0));
+		ais_s->SetLocalTransformation(t);
+		ais_s->SetMaterial(Graphic3d_NOM_STEEL);
+
+		rigidBodies[obj->Name()] = ais_s;
+		obj->setShapePath(shapePath);
+		DMotion::getAISContext()->Display(ais_s, false);
+		DMotion::getAISContext()->SetDisplayMode(ais_s, 1, false);
 	}
 }
 

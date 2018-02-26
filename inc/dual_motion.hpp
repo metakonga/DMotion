@@ -20,10 +20,10 @@ public:
 // 		QString userPath = getenv("USERPROFILE");
 // 		userPath += "/Documents/dualMotion/";
 // 		model::setModelPath(userPath);
-		hardPoint *active_link = createHardPoint("active_link", 0, 0, 0);
+		hardPoint *active_link = createHardPoint("nozzle_link", 0, 0, 0);
 		hardPoint *link_cam = createHardPoint("link_cam", 0.38424, -0.04956, 0);
 		hardPoint *cam_ground = createHardPoint("cam_ground", 0.29739, 0, 0);
-		hardPoint *cam_passive = createHardPoint("cam_passive", 0.17739, 0.0, 0.0);
+		hardPoint *cam_passive = createHardPoint("cam_arc", 0.17739, 0.0, 0.0);
 		//hardPoint *passive_dummy = createHardPoint("passive_dummy", 0.000509901920295489, 0.00773584919364184, 0.0);
 		rigidBody *ground = createRigidBody("Ground");
 		ground->setGround(true);
@@ -125,7 +125,7 @@ public:
 
 		drivingConstraint *passive_driving = createDrivingConstraint("Arc_driving");
 		passive_driving->setTargetBody(passive, AXIS_X);
-		passive_driving->setVelocityProfile("../data/ArcVelocityProfile.txt");
+		passive_driving->setVelocityProfile("../data/ArcVelocityProfile_avoid.txt");
 
 		pointFollower* pf = createPointFollower("Arc-Cam PF");
 		pos = cam_passive->loc;
@@ -133,11 +133,12 @@ public:
 		pf->setBaseBody(passive);
 		pf->setActionBody(cam);
 		pf->setBaseMarker(vecd3(1.0, 0, 0), vecd3(0, 1.0, 0));
-		pf->setLocalFromBaseBody();
-		pf->setActionHardPoint(cam_ground->loc);
-		pf->setInitialAngle(M_PI);
-		pf->setCM2HardPoint();
-		pf->updateBaseMarker();
+		pf->initialize(cam_ground->loc, cam_passive->loc);
+// 		pf->setLocalFromBaseBody();
+// 		pf->setActionHardPoint(cam_ground->loc);
+// 		pf->setInitialAngle(M_PI);
+// 		pf->setCM2HardPoint();
+// 		pf->updateBaseMarker();
 		pf->bindHardPoint(cam_passive);
 		pf->setReactionForceTypes(PROFILE_FX, PROFILE_FY);
 
@@ -191,6 +192,12 @@ public:
 		designVariable* dv_camPVy = createDesignVariable("camPV_y");
 		dv_camPVy->setConstraint(pf);
 		dv_camPVy->setDirection(AXIS_Y);
+
+// 		distanceConstraint* dc_dist = createDistanceDesignConstraint("dc_dist");
+// 		dc_dist->setTwoHardPoints(cam_passive, cam_ground);
+// 		dc_dist->setcheckUpper();
+// 		dc_dist->setConstraintValue(0.035);
+// 		dc_dist->setComparisonTarget(designConstraint::DC_VERTICAL);
 
 		reactionMap[0] = NOZZLE_TRANS_FY;
 		reactionMap[1] = NOZZLE_TRANS_TR;// "Nozzle Trans.(TR)";

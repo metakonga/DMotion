@@ -19,8 +19,11 @@ kinematics::kinematics(model *_md, optimumDesignDoc* _odd)
 	, cStep(0)
 	, reaction_step(0)
 	, ct(0)
+	, caseCount(0)
+	, simStopCount(-1)
 	, dt(0)
 	, et(0)
+	//, simStop(false)
 {
 
 }
@@ -68,12 +71,22 @@ int kinematics::init()
 	{
 		rigidBody* rb = md->RigidBodies()[str];
 		rb->clearResultData();
-		rb->setPosition0();
-		q(i) = rb->Position().X(); qd(i) = rb->Velocity().X(); qdd(i) = rb->Acceleration().X();
-		q(i + 1) = rb->Position().Y(); qd(i + 1) = rb->Velocity().Y(); qdd(i + 1) = rb->Acceleration().Y();
-		q(i + 2) = rb->Angle(); qd(i + 2) = rb->AngularVelocity(); qdd(i + 2) = rb->AngularAcceleration();
+		if (rb->IsGround()) continue;
+		rb->setBodyFromBody0();
+		rb->setMass(rb->Mass0());
+		rb->setInertia(rb->Inertia0());
+		q(i) = rb->Position0().X(); qd(i) = rb->Velocity0().X(); qdd(i) = rb->Acceleration0().X();
+		q(i + 1) = rb->Position0().Y(); qd(i + 1) = rb->Velocity0().Y(); qdd(i + 1) = rb->Acceleration0().Y();
+		q(i + 2) = rb->Angle0(); qd(i + 2) = rb->AngularVelocity0(); qdd(i + 2) = rb->AngularAcceleration0();
 		i += 3;
 	}
+
+	foreach(QString str, md->HardPointList())
+	{
+		hardPoint* hp = md->HardPoints()[str];
+		hp->loc = hp->loc0;
+	}
+
 	unsigned int srow = q.sizes();
 	while (c.hasNext())
 	{
@@ -255,11 +268,19 @@ void kinematics::initGeneralizedCoordinates()
 	{
 		rigidBody* rb = md->RigidBodies()[str];
 		//rb->setPosition0();
-		q(i) = rb->Position().X(); qd(i) = rb->Velocity().X(); qdd(i) = rb->Acceleration().X();
-		q(i + 1) = rb->Position().Y(); qd(i + 1) = rb->Velocity().Y(); qdd(i + 1) = rb->Acceleration().Y();
-		q(i + 2) = rb->Angle(); qd(i + 2) = rb->AngularVelocity(); qdd(i + 2) = rb->AngularAcceleration();
+		//if (rb->IsGround()) continue;
+		q(i) = rb->Position().X();		qd(i) = rb->Velocity().X();			qdd(i) = rb->Acceleration().X();
+		q(i + 1) = rb->Position().Y();	qd(i + 1) = rb->Velocity().Y();		qdd(i + 1) = rb->Acceleration().Y();
+		q(i + 2) = rb->Angle();			qd(i + 2) = rb->AngularVelocity();	qdd(i + 2) = rb->AngularAcceleration();
 		i += 3;
 	}
+}
+
+void kinematics::setStopCondition()
+{
+	m_mutex.lock();
+	simStopCount = caseCount + 10;
+	m_mutex.unlock();
 }
 
 void kinematics::setDesignVariables(MATD& m_design)
@@ -267,6 +288,11 @@ void kinematics::setDesignVariables(MATD& m_design)
 	if (design.sizes() == 0)
 		design.alloc(m_design.rows(), m_design.cols());
 	design = m_design;
+}
+
+void kinematics::stopSimulation()
+{
+	simStopCount = caseCount + 10;
 }
 
 void kinematics::run()
@@ -283,17 +309,22 @@ void kinematics::run()
 	tme.start();
 	QTime startingTime = tme.currentTime();
 	QDate startingDate = QDate::currentDate();
-	unsigned int caseCount = 0;
+	//unsigned int caseCount = 0;
 	reaction_step = 0;
+	double preTime = 0.0;
 	unsigned int save_gap = 10;
 	unsigned int validCase = 0;
 	bool isOver = false;
 	bool interupt = false;
 	QFile qfCase(md->ModelPath() + "caseResults.bin");
 	qfCase.open(QIODevice::WriteOnly);
-	md->initializeDesignVariable();
+	
 	while (!isOver)
 	{
+		QMutexLocker locker(&m_mutex);
+		QTime startTime = tme.currentTime();
+		if (caseCount == simStopCount)
+			break;
 		sendCaseCount(caseCount);
 		int ret = 0;
 		QString hps;
@@ -302,18 +333,25 @@ void kinematics::run()
 		ct = 0.0;
 		part = 0;
 		interupt = false;
+// 		if (caseCount == 1)
+// 			md->initializeDesignVariable();
 		if (caseCount)
 		{
-			isOver = md->updateDesignVariable(hps, !caseCount ? true : false);
+			isOver = md->updateDesignVariable(hps, caseCount == 1 ? true : false);
 		}			
 		if (isOver)
 			break;
+		if (caseCount && !md->checkDesignConstraint())
+		{
+			caseCount++;
+			continue;
+		}
 		if (caseCount && !md->IsSatisfyCamAngle())
 		{
 			caseCount++;
 			continue;
 		}
-		qDebug() << caseCount;
+		//qDebug() << caseCount;
 		initGeneralizedCoordinates();
 		optimumCase* oc = odd->createOptimumCase(QString("Case%1").arg(caseCount, 8, 10, QChar('0')));
 		kinematicAnalysis();
@@ -332,7 +370,7 @@ void kinematics::run()
 			pt = ct;
 			ct = cStep * dt;
 			constraint::setSolverStep(cStep);
-			QMutexLocker locker(&m_mutex);
+			
 			ret = kinematicAnalysis();
 			if (ret)
 			{
@@ -381,12 +419,18 @@ void kinematics::run()
 			//	qDebug() << "This case is valid - " << validCase;
 				QTime endingTime = tme.currentTime();
 				QDate endingDate = QDate::currentDate();
-				double dtime = tme.elapsed() * 0.001;
-				int minute = static_cast<int>(dtime / 60.0);
+				double dtime = (endingTime.msecsSinceStartOfDay() - startTime.msecsSinceStartOfDay()) * 0.001;
+				double elapSec = tme.elapsed() * 0.001;
+			//	preTime = dtime;
+				int minute = static_cast<int>(elapSec / 60.0);
 				int hour = static_cast<int>(minute / 60.0);
+				if (minute > 60) minute = (minute - (60 * hour));
+				if (elapSec > 60) elapSec = (elapSec - 60 * minute - 3600 * hour);
 				int cgtime = endingTime.second() - startingTime.msec();
+				if (dtime < 0)
+					bool dd = true;
 				qs.setFieldWidth(0);
-				qs << oc->Name() << " : " << "CPU time = " << dtime << " second  ( " << hour << " h. " << minute << " m. " << dtime << " s. )";
+				qs << oc->Name() << " : " << "CPU time = " << dtime << " second. <><>" << "Total CPU time = " << hour << " h. " << minute << " m. " << elapSec << " s. )";
 				sendProcess('@', msg);
 				sendProcess('L');
 				msg.clear();
@@ -405,9 +449,17 @@ void kinematics::run()
 			break;	
 		caseCount++;
 	}
-	qs << "Optimum design analysis is completed." << endl 
-		<< "Total number of case : " << caseCount << endl
-		<< "The number of valid case : " << validCase;
+	if (!isOver)
+		sendProcess('@', "Optimum analysis is stopped.");
+	else
+	{
+		qs << "Optimum design analysis is completed." << endl
+			<< "Total number of case : " << caseCount << endl
+			<< "The number of valid case : " << validCase;
+	}
+	
+	md->initializeHardPointsLocation();
+	md->initializeBodyInformation();
 	sendProcess('@', msg);
 	qfCase.close();
 	emit finishedThread();

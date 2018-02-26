@@ -1,13 +1,13 @@
 /********************************************************************************
-** Form generated from reading UI file 'dmotion.ui'
+** Form generated from reading UI file 'dmotionp14228.ui'
 **
 ** Created by: Qt User Interface Compiler version 5.7.1
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
 
-#ifndef UI_DMOTION_H
-#define UI_DMOTION_H
+#ifndef DMOTIONP14228_H
+#define DMOTIONP14228_H
 
 #include <QtCore/QVariant>
 #include <QtWidgets/QAction>
@@ -53,13 +53,6 @@ public:
     QAction *Tool_Graph;
     QAction *actionResult_table;
     QWidget *centralWidget;
-    QMenuBar *menuBar;
-    QMenu *menuHome;
-    QMenu *menuFile;
-    QMenu *menuEdit;
-    QMenu *menuHelp;
-    QMenu *menuAnalysis;
-    QMenu *menuTool;
     QToolBar *mainToolBar;
     QStatusBar *statusBar;
     QDockWidget *DW_Modeling;
@@ -75,7 +68,7 @@ public:
     QRadioButton *RB_OnlyOne;
     QRadioButton *RB_SmallerThanFirst;
     QGroupBox *groupBox;
-    QWidget *widget;
+    QWidget *layoutWidget;
     QHBoxLayout *horizontalLayout;
     QCheckBox *CB_SPACE;
     QLabel *L_Space_Width;
@@ -99,7 +92,7 @@ public:
     QFrame *Nozzle_Graph_Frame;
     QFrame *Arc_Graph_Frame;
     QGroupBox *GB_BodyInformation;
-    QWidget *layoutWidget;
+    QWidget *layoutWidget1;
     QGridLayout *gridLayout_3;
     QLabel *L_Body;
     QComboBox *CB_Body;
@@ -115,6 +108,8 @@ public:
     QLineEdit *LE_Inertia;
     QLabel *L_Shape;
     QPushButton *PB_Shape;
+    QMenuBar *menuBar;
+    QMenu *menuFile;
 
     void setupUi(QMainWindow *DMotionClass)
     {
@@ -150,22 +145,6 @@ public:
         centralWidget = new QWidget(DMotionClass);
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
         DMotionClass->setCentralWidget(centralWidget);
-        menuBar = new QMenuBar(DMotionClass);
-        menuBar->setObjectName(QStringLiteral("menuBar"));
-        menuBar->setGeometry(QRect(0, 0, 1321, 21));
-        menuHome = new QMenu(menuBar);
-        menuHome->setObjectName(QStringLiteral("menuHome"));
-        menuFile = new QMenu(menuBar);
-        menuFile->setObjectName(QStringLiteral("menuFile"));
-        menuEdit = new QMenu(menuBar);
-        menuEdit->setObjectName(QStringLiteral("menuEdit"));
-        menuHelp = new QMenu(menuBar);
-        menuHelp->setObjectName(QStringLiteral("menuHelp"));
-        menuAnalysis = new QMenu(menuBar);
-        menuAnalysis->setObjectName(QStringLiteral("menuAnalysis"));
-        menuTool = new QMenu(menuBar);
-        menuTool->setObjectName(QStringLiteral("menuTool"));
-        DMotionClass->setMenuBar(menuBar);
         mainToolBar = new QToolBar(DMotionClass);
         mainToolBar->setObjectName(QStringLiteral("mainToolBar"));
         DMotionClass->addToolBar(Qt::TopToolBarArea, mainToolBar);
@@ -222,36 +201,36 @@ public:
         groupBox->setObjectName(QStringLiteral("groupBox"));
         groupBox->setGeometry(QRect(2, 77, 481, 51));
         groupBox->setCheckable(false);
-        widget = new QWidget(groupBox);
-        widget->setObjectName(QStringLiteral("widget"));
-        widget->setGeometry(QRect(10, 20, 461, 22));
-        horizontalLayout = new QHBoxLayout(widget);
+        layoutWidget = new QWidget(groupBox);
+        layoutWidget->setObjectName(QStringLiteral("layoutWidget"));
+        layoutWidget->setGeometry(QRect(10, 20, 461, 22));
+        horizontalLayout = new QHBoxLayout(layoutWidget);
         horizontalLayout->setSpacing(6);
         horizontalLayout->setContentsMargins(11, 11, 11, 11);
         horizontalLayout->setObjectName(QStringLiteral("horizontalLayout"));
         horizontalLayout->setContentsMargins(0, 0, 0, 0);
-        CB_SPACE = new QCheckBox(widget);
+        CB_SPACE = new QCheckBox(layoutWidget);
         CB_SPACE->setObjectName(QStringLiteral("CB_SPACE"));
         CB_SPACE->setChecked(true);
 
         horizontalLayout->addWidget(CB_SPACE);
 
-        L_Space_Width = new QLabel(widget);
+        L_Space_Width = new QLabel(layoutWidget);
         L_Space_Width->setObjectName(QStringLiteral("L_Space_Width"));
 
         horizontalLayout->addWidget(L_Space_Width);
 
-        LE_Space_Width = new QLineEdit(widget);
+        LE_Space_Width = new QLineEdit(layoutWidget);
         LE_Space_Width->setObjectName(QStringLiteral("LE_Space_Width"));
 
         horizontalLayout->addWidget(LE_Space_Width);
 
-        L_Space_Height = new QLabel(widget);
+        L_Space_Height = new QLabel(layoutWidget);
         L_Space_Height->setObjectName(QStringLiteral("L_Space_Height"));
 
         horizontalLayout->addWidget(L_Space_Height);
 
-        LE_Space_Height = new QLineEdit(widget);
+        LE_Space_Height = new QLineEdit(layoutWidget);
         LE_Space_Height->setObjectName(QStringLiteral("LE_Space_Height"));
 
         horizontalLayout->addWidget(LE_Space_Height);
@@ -334,87 +313,87 @@ public:
         GB_BodyInformation = new QGroupBox(tab_2);
         GB_BodyInformation->setObjectName(QStringLiteral("GB_BodyInformation"));
         GB_BodyInformation->setGeometry(QRect(12, 10, 261, 221));
-        layoutWidget = new QWidget(GB_BodyInformation);
-        layoutWidget->setObjectName(QStringLiteral("layoutWidget"));
-        layoutWidget->setGeometry(QRect(10, 20, 241, 191));
-        gridLayout_3 = new QGridLayout(layoutWidget);
+        layoutWidget1 = new QWidget(GB_BodyInformation);
+        layoutWidget1->setObjectName(QStringLiteral("layoutWidget1"));
+        layoutWidget1->setGeometry(QRect(10, 20, 241, 191));
+        gridLayout_3 = new QGridLayout(layoutWidget1);
         gridLayout_3->setSpacing(6);
         gridLayout_3->setContentsMargins(11, 11, 11, 11);
         gridLayout_3->setObjectName(QStringLiteral("gridLayout_3"));
         gridLayout_3->setContentsMargins(0, 0, 0, 0);
-        L_Body = new QLabel(layoutWidget);
+        L_Body = new QLabel(layoutWidget1);
         L_Body->setObjectName(QStringLiteral("L_Body"));
         L_Body->setAlignment(Qt::AlignCenter);
 
         gridLayout_3->addWidget(L_Body, 0, 0, 1, 1);
 
-        CB_Body = new QComboBox(layoutWidget);
+        CB_Body = new QComboBox(layoutWidget1);
         CB_Body->setObjectName(QStringLiteral("CB_Body"));
 
         gridLayout_3->addWidget(CB_Body, 0, 1, 1, 1);
 
-        L_X = new QLabel(layoutWidget);
+        L_X = new QLabel(layoutWidget1);
         L_X->setObjectName(QStringLiteral("L_X"));
         L_X->setAlignment(Qt::AlignCenter);
 
         gridLayout_3->addWidget(L_X, 1, 0, 1, 1);
 
-        LE_X = new QLineEdit(layoutWidget);
+        LE_X = new QLineEdit(layoutWidget1);
         LE_X->setObjectName(QStringLiteral("LE_X"));
 
         gridLayout_3->addWidget(LE_X, 1, 1, 1, 1);
 
-        L_Y = new QLabel(layoutWidget);
+        L_Y = new QLabel(layoutWidget1);
         L_Y->setObjectName(QStringLiteral("L_Y"));
         L_Y->setAlignment(Qt::AlignCenter);
 
         gridLayout_3->addWidget(L_Y, 2, 0, 1, 1);
 
-        LE_Y = new QLineEdit(layoutWidget);
+        LE_Y = new QLineEdit(layoutWidget1);
         LE_Y->setObjectName(QStringLiteral("LE_Y"));
 
         gridLayout_3->addWidget(LE_Y, 2, 1, 1, 1);
 
-        L_Angle = new QLabel(layoutWidget);
+        L_Angle = new QLabel(layoutWidget1);
         L_Angle->setObjectName(QStringLiteral("L_Angle"));
         L_Angle->setAlignment(Qt::AlignCenter);
 
         gridLayout_3->addWidget(L_Angle, 3, 0, 1, 1);
 
-        LE_Angle = new QLineEdit(layoutWidget);
+        LE_Angle = new QLineEdit(layoutWidget1);
         LE_Angle->setObjectName(QStringLiteral("LE_Angle"));
 
         gridLayout_3->addWidget(LE_Angle, 3, 1, 1, 1);
 
-        L_Mass = new QLabel(layoutWidget);
+        L_Mass = new QLabel(layoutWidget1);
         L_Mass->setObjectName(QStringLiteral("L_Mass"));
         L_Mass->setAlignment(Qt::AlignCenter);
 
         gridLayout_3->addWidget(L_Mass, 4, 0, 1, 1);
 
-        LE_Mass = new QLineEdit(layoutWidget);
+        LE_Mass = new QLineEdit(layoutWidget1);
         LE_Mass->setObjectName(QStringLiteral("LE_Mass"));
 
         gridLayout_3->addWidget(LE_Mass, 4, 1, 1, 1);
 
-        L_Inertai = new QLabel(layoutWidget);
+        L_Inertai = new QLabel(layoutWidget1);
         L_Inertai->setObjectName(QStringLiteral("L_Inertai"));
         L_Inertai->setAlignment(Qt::AlignCenter);
 
         gridLayout_3->addWidget(L_Inertai, 5, 0, 1, 1);
 
-        LE_Inertia = new QLineEdit(layoutWidget);
+        LE_Inertia = new QLineEdit(layoutWidget1);
         LE_Inertia->setObjectName(QStringLiteral("LE_Inertia"));
 
         gridLayout_3->addWidget(LE_Inertia, 5, 1, 1, 1);
 
-        L_Shape = new QLabel(layoutWidget);
+        L_Shape = new QLabel(layoutWidget1);
         L_Shape->setObjectName(QStringLiteral("L_Shape"));
         L_Shape->setAlignment(Qt::AlignCenter);
 
         gridLayout_3->addWidget(L_Shape, 6, 0, 1, 1);
 
-        PB_Shape = new QPushButton(layoutWidget);
+        PB_Shape = new QPushButton(layoutWidget1);
         PB_Shape->setObjectName(QStringLiteral("PB_Shape"));
 
         gridLayout_3->addWidget(PB_Shape, 6, 1, 1, 1);
@@ -425,24 +404,14 @@ public:
 
         DW_Modeling->setWidget(dockWidgetContents);
         DMotionClass->addDockWidget(static_cast<Qt::DockWidgetArea>(2), DW_Modeling);
+        menuBar = new QMenuBar(DMotionClass);
+        menuBar->setObjectName(QStringLiteral("menuBar"));
+        menuBar->setGeometry(QRect(0, 0, 1321, 21));
+        menuFile = new QMenu(menuBar);
+        menuFile->setObjectName(QStringLiteral("menuFile"));
+        DMotionClass->setMenuBar(menuBar);
 
-        menuBar->addAction(menuHome->menuAction());
         menuBar->addAction(menuFile->menuAction());
-        menuBar->addAction(menuEdit->menuAction());
-        menuBar->addAction(menuTool->menuAction());
-        menuBar->addAction(menuAnalysis->menuAction());
-        menuBar->addAction(menuHelp->menuAction());
-        menuHome->addAction(actionAbout_DMotion);
-        menuHome->addAction(actionExit);
-        menuFile->addAction(File_New);
-        menuFile->addAction(File_Open);
-        menuFile->addAction(File_Save);
-        menuFile->addSeparator();
-        menuFile->addAction(File_Import);
-        menuEdit->addAction(Edit_VelocityProfile);
-        menuAnalysis->addAction(Analysis_dynamic);
-        menuTool->addAction(Tool_Graph);
-        menuTool->addAction(actionResult_table);
 
         retranslateUi(DMotionClass);
 
@@ -468,12 +437,6 @@ public:
         Analysis_dynamic->setText(QApplication::translate("DMotionClass", "Dynamic", Q_NULLPTR));
         Tool_Graph->setText(QApplication::translate("DMotionClass", "Graph", Q_NULLPTR));
         actionResult_table->setText(QApplication::translate("DMotionClass", "Result table", Q_NULLPTR));
-        menuHome->setTitle(QApplication::translate("DMotionClass", "Home", Q_NULLPTR));
-        menuFile->setTitle(QApplication::translate("DMotionClass", "File", Q_NULLPTR));
-        menuEdit->setTitle(QApplication::translate("DMotionClass", "Edit", Q_NULLPTR));
-        menuHelp->setTitle(QApplication::translate("DMotionClass", "Help", Q_NULLPTR));
-        menuAnalysis->setTitle(QApplication::translate("DMotionClass", "Analysis", Q_NULLPTR));
-        menuTool->setTitle(QApplication::translate("DMotionClass", "Tool", Q_NULLPTR));
         groupBox_5->setTitle(QApplication::translate("DMotionClass", "Optimum condition", Q_NULLPTR));
         PB_SelectParameters->setText(QApplication::translate("DMotionClass", "Select\n"
 " parameters", Q_NULLPTR));
@@ -502,6 +465,7 @@ public:
         L_Shape->setText(QApplication::translate("DMotionClass", "Shape", Q_NULLPTR));
         PB_Shape->setText(QApplication::translate("DMotionClass", "Nozzle shpae", Q_NULLPTR));
         TAB_MODELING->setTabText(TAB_MODELING->indexOf(tab_2), QApplication::translate("DMotionClass", "Modeling", Q_NULLPTR));
+        menuFile->setTitle(QApplication::translate("DMotionClass", "Home", Q_NULLPTR));
     } // retranslateUi
 
 };
@@ -512,4 +476,4 @@ namespace Ui {
 
 QT_END_NAMESPACE
 
-#endif // UI_DMOTION_H
+#endif // DMOTIONP14228_H

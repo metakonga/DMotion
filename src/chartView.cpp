@@ -492,7 +492,7 @@ void chartView::mouseMoveEvent(QMouseEvent *event)
 			m_checkItem->setPos(QPointF(x, y));
 			return;
 		}
-		else if (onMouseMiddleButton && cmode == REALTIME_EDIT_CHART)
+		else if (/*onMouseMiddleButton &&*/ cmode == REALTIME_EDIT_CHART)
 		{
 			QPointF dist = (p - nonMovingPos) * 0.2;
 			double xmin = ax->min() + dist.x();
@@ -525,7 +525,7 @@ int chartView::checkingNearPoint(double px, double py)
 	//QLineSeries *series = lineSeries[ctr_line_idx];
 	QScatterSeries *p_series = scatterSeries[ctr_scatter_idx];
 	QVector<QPointF> points = p_series->pointsVector();
-	qDebug() << "checked_point_number : " << checked_point_number;
+	//qDebug() << "checked_point_number : " << checked_point_number;
 	if (checked_point_number >= 0)
 	{
 		double dx = px - m_chart->mapToPosition(points.at(checked_point_number)).x();
@@ -555,7 +555,7 @@ int chartView::checkingNearPoint(double px, double py)
 		if (dist < 5)
 		{
 			checked_point_number = cnumber;
-			qDebug() << "checked_point_number : " << checked_point_number;
+			//qDebug() << "checked_point_number : " << checked_point_number;
 			return checked_point_number;
 		}
 		cnumber++;

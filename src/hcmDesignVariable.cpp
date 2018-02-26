@@ -9,7 +9,7 @@
 #include <QHBoxLayout>
 
 hcmDesignVariable::hcmDesignVariable(QFrame *frame)
-	: QWidget(frame)
+	: QWidget(NULL)
 {
 	GB_DESIGN_VARIABLE = new QGroupBox(frame);
 	GB_DESIGN_VARIABLE->setObjectName(QStringLiteral("GB_DESIGN_VARIABLE"));
@@ -359,11 +359,13 @@ hcmDesignVariable::hcmDesignVariable(QFrame *frame)
 	LE_LAST_ANGLE_Upper->setObjectName(QStringLiteral("LE_LAST_ANGLE_Upper"));
 
 	gridLayout_2->addWidget(LE_LAST_ANGLE_Upper, 11, 3, 1, 1);
+// 	GB_DESIGN_VARIABLE->setEnabled(false);
+// 	GB_DESIGN_VARIABLE->hide();
 }
 
 hcmDesignVariable::~hcmDesignVariable()
 {
-
+	
 }
 
 void hcmDesignVariable::setInitValue()
@@ -694,4 +696,16 @@ int hcmDesignVariable::setSystemParameters(model* md)
 		md->setLastCamAngleDesignVariableEnable(false);
 
 	return totalCase;
+}
+
+void hcmDesignVariable::setEnableAndShow()
+{
+	GB_DESIGN_VARIABLE->setEnabled(true);
+	GB_DESIGN_VARIABLE->show();
+}
+
+void hcmDesignVariable::setDisableAndHide()
+{
+	GB_DESIGN_VARIABLE->setEnabled(false);
+	GB_DESIGN_VARIABLE->hide();
 }

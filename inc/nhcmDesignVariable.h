@@ -27,8 +27,11 @@ public:
 	void saveToFile(QTextStream& qts);
 	int setSystemParameters(model* md);
 
+	void setEnableAndShow();
+	void setDisableAndHide();
+
 private:
-	QFrame *DesignTabFrame;
+	//QFrame *DesignTabFrame;
 	QGroupBox *GB_DESIGN_VARIABLE;
 	QWidget* layoutWidget;
 	QHBoxLayout *horizontalLayout;

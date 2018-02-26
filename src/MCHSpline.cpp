@@ -195,7 +195,7 @@ void MCHSpline::calculate_curve_auto(QLineSeries* series, int sid, bool _base /*
 	double previous = DBL_MAX;
 	for (int i = sid; i < n - 1; i++)
 	{
-		start_ids.push_back(cnt);
+		//start_ids.push_back(cnt);
 		double cur_x = x_src[i];
 		double next_x = x_src[i + 1];
 		//int v = (int)(1e-9 + x_src[i + 1]);
@@ -227,7 +227,7 @@ void MCHSpline::calculate_curve_auto(QLineSeries* series, int sid, int eid)
 	int cnt = 0;
 	int s = (sid == 0) ? 0 : sid - 1;
 	int e = (eid == x_src.size()) ? eid - 1 : eid;
-	int start_id = start_ids.at(s);
+	//int start_id = start_ids.at(s);
 	//int 
 	series->clear();
 	for (int i = 0; i < n - 1; i++)
@@ -263,7 +263,7 @@ void MCHSpline::calculate_curve_auto(QVector<QPointF>& data)
 	int cnt = 0;
 	for (int i = 0; i < n - 1; i++)
 	{
-		start_ids.push_back(cnt);
+		//start_ids.push_back(cnt);
 		double x0 = x_src[i];
 		double x1 = x_src[i + 1];
 		//int v = (int)(1e-9 + x_src[i + 1]);

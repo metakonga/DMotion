@@ -17,6 +17,7 @@ plotWindow::plotWindow(model* _md, QWidget* parent)
 	, md(_md)
 	, currentDataType(-1)
 {
+	setWindowTitle("Plot DockWindow");
 	vcht = new chartView(this);
 	QFrame *plotFrame = new QFrame(this);
 	plotFrame->setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);

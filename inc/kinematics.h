@@ -29,6 +29,7 @@ public:
 	//void saveResultDataToTXTFile(QString path);
 	void saveBodyResults();
 	void setDesignVariables(MATD& m_design);
+	void stopSimulation();
 
 private:
 	void run() Q_DECL_OVERRIDE;
@@ -46,8 +47,12 @@ signals:
 	void sendProcess(char, QString m = "");
 	void sendCaseCount(int count);
 
+	public slots:
+	void setStopCondition();
+
 private:
 	gravity g;
+	int simStopCount;
 	unsigned int s_c;
 	unsigned int s_k;
 	unsigned int s_d;
@@ -56,6 +61,7 @@ private:
 	unsigned int reaction_step;
 	unsigned int nStep;
 	unsigned int mdim;
+	unsigned int caseCount;
 	int tIteration;
 	unsigned int cStep;
 	double tNormValue;
